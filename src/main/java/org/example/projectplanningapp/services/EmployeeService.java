@@ -1,4 +1,4 @@
 package org.example.projectplanningapp.services;
 
-public class ProfileService {
+public class EmployeeService {
 }

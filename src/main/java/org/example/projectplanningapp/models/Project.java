@@ -1,7 +1,5 @@
 package org.example.projectplanningapp.models;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,18 +11,18 @@ public class Project {
     private String description;
     private LocalDate startDate;
     private LocalDateTime endDate;
-    private Profile projectLeader;
+    private Employee projectLeader;
 
     private Project parentProject;
     private List<Project> subProjects;
 
     private List<Task> tasks;
-    private List<Profile> assignedProfiles;
+    private List<Employee> assignedProfiles;
 
 
     public Project() {}
 
-    public Project(int id, String name, String description, LocalDate startDate, LocalDateTime endDate, Profile projectLeader) {
+    public Project(int id, String name, String description, LocalDate startDate, LocalDateTime endDate, Employee projectLeader) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,11 +72,11 @@ public class Project {
         this.endDate = endDate;
     }
 
-    public Profile getProjectLeader() {
+    public Employee getProjectLeader() {
         return projectLeader;
     }
 
-    public void setProjectLeader(Profile projectLeader) {
+    public void setProjectLeader(Employee projectLeader) {
         this.projectLeader = projectLeader;
     }
 
@@ -111,11 +109,11 @@ public class Project {
         tasks.add(task);
     }
 
-    public List<Profile> getAssignedProfiles() {
+    public List<Employee> getAssignedProfiles() {
         return assignedProfiles;
     }
 
-    public void addAssignedProfiles(Profile profile) {
+    public void addAssignedProfiles(Employee profile) {
         assignedProfiles.add(profile);
     }
 }

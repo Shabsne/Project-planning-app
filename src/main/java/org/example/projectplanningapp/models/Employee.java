@@ -2,7 +2,7 @@ package org.example.projectplanningapp.models;
 
 import java.util.List;
 
-public class Profile {
+public class Employee {
 
     private String name;
     private String email;
@@ -13,9 +13,9 @@ public class Profile {
     private List<Project> assignedProjects;
     private List<Task> assignedTasks;
 
-    public Profile() {}
+    public Employee() {}
     
-   public Profile(String name, String email, String password, Role role, int profileId) {
+   public Employee(String name, String email, String password, Role role, int profileId) {
        this.name = name;
        this.email = email;
        this.password = password;
