@@ -17,7 +17,7 @@ public class Task {
     private Task parentTask;
     private List<Task> subTasks;
 
-    private List<Employee> assignedProfiles;
+    private List<Employee> assignedEmployees;
 
 
 
@@ -118,15 +118,15 @@ public class Task {
         subTask.setParentTask(this);
     }
 
-    public List<Employee> getAssignedProfiles() {
-        return assignedProfiles;
+    public List<Employee> getAssignedEmployees() {
+        return assignedEmployees;
     }
 
-    public void setAssignedProfiles(List<Employee> assignedProfiles) {
-        this.assignedProfiles = assignedProfiles;
+    public void setAssignedEmployees(List<Employee> assignedEmployees) {
+        this.assignedEmployees = assignedEmployees;
     }
 
-    public void addAssignedProfile(Employee profile) {
-        assignedProfiles.add(profile);
+    public void addAssignedEmployee(Employee employee) {
+        assignedEmployees.add(employee);
     }
 }

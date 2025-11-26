@@ -17,7 +17,7 @@ public class Project {
     private List<Project> subProjects;
 
     private List<Task> tasks;
-    private List<Employee> assignedProfiles;
+    private List<Employee> assignedEmployees;
 
 
     public Project() {}
@@ -109,11 +109,11 @@ public class Project {
         tasks.add(task);
     }
 
-    public List<Employee> getAssignedProfiles() {
-        return assignedProfiles;
+    public List<Employee> getAssignedEmployees() {
+        return assignedEmployees;
     }
 
-    public void addAssignedProfiles(Employee profile) {
-        assignedProfiles.add(profile);
+    public void addAssignedEmployees(Employee employee) {
+        assignedEmployees.add(employee);
     }
 }
