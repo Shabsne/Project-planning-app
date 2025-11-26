@@ -8,19 +8,19 @@ public class Employee {
     private String email;
     private String password;
     private Role role;
-    private int profileId;
+    private int employeeId;
 
     private List<Project> assignedProjects;
     private List<Task> assignedTasks;
 
     public Employee() {}
     
-   public Employee(String name, String email, String password, Role role, int profileId) {
+   public Employee(String name, String email, String password, Role role, int employeeId) {
        this.name = name;
        this.email = email;
        this.password = password;
        this.role = role;
-       this.profileId = profileId;
+       this.employeeId = employeeId;
 
    }
 
@@ -56,12 +56,12 @@ public class Employee {
         this.role = role;
     }
 
-    public int getProfileId() {
-        return profileId;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setProfileId(int profileId) {
-        this.profileId = profileId;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
     public List<Project> getAssignedProjects() {
