@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 
 @Repository
 public class EmployeeRepository {
@@ -19,7 +20,7 @@ public class EmployeeRepository {
         this.jdbc = jdbc;
     }
 
-    public void createEmployee(Employee employee) {
+    public void registerEmployee(Employee employee) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbc.update(connection -> {
@@ -39,5 +40,11 @@ public class EmployeeRepository {
         if (id != null) {
             employee.setEmployeeId(id.intValue());
         }
+    }
+
+    public boolean getEmployeeFromEmail(String email) {
+        List<Employee> list = jdbc.query(
+                "SELECT * FROM employees WHERE email = ?", rowMapper, email);
+        return !list.isEmpty();
     }
 }
