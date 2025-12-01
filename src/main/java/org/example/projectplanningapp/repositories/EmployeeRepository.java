@@ -42,13 +42,19 @@ public class EmployeeRepository {
         }
     }
 
-    public boolean getEmployeeFromEmail(String email) {
+    public Employee getEmployeeFromEmail(String email) {
         List<Employee> list = jdbc.query(
                 "SELECT * FROM employees WHERE email = ?", rowMapper, email);
-        return !list.isEmpty();
+        return list.isEmpty() ? null : list.get(0);
     }
 
     public List<Employee> getAllEmployees() {
         return jdbc.query("SELECT * FROM employees", rowMapper);
+    }
+
+    public Employee getEmployeeFromId(int id) {
+        List<Employee> list = jdbc.query(
+                "SELECT * FROM employees WHERE id = ?", rowMapper, id);
+        return list.isEmpty() ? null : list.get(0);
     }
 }

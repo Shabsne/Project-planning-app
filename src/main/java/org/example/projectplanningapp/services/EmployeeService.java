@@ -20,10 +20,14 @@ public class EmployeeService {
     }
 
     public boolean emailExists(String email) {
-        return employeeRepository.getEmployeeFromEmail(email);
+        return employeeRepository.getEmployeeFromEmail(email) != null;
     }
 
-    public List<Employee> findAll() {
+    public List<Employee> getAllEmployees() {
         return employeeRepository.getAllEmployees();
+    }
+
+    public Employee getEmployeeFromId(int id) {
+        return employeeRepository.getEmployeeFromId(id);
     }
 }
