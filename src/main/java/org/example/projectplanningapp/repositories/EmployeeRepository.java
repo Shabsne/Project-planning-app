@@ -57,4 +57,8 @@ public class EmployeeRepository {
                 "SELECT * FROM employees WHERE id = ?", rowMapper, id);
         return list.isEmpty() ? null : list.get(0);
     }
+
+    public void deleteEmployee(int id) {
+        jdbc.update("DELETE FROM employees WHERE id = ?", id);
+    }
 }
