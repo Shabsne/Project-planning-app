@@ -47,4 +47,8 @@ public class EmployeeRepository {
                 "SELECT * FROM employees WHERE email = ?", rowMapper, email);
         return !list.isEmpty();
     }
+
+    public List<Employee> getAllEmployees() {
+        return jdbc.query("SELECT * FROM employees", rowMapper);
+    }
 }
