@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Subproject</title>
+</head>
+<body>
+
+<h1>Opret Underprojekt</h1>
+
+<form th:action="@{/projects/create-sub}" th:object="${project}" method="post">
+
+    <input type="hidden" th:field="*{parentProject.id}">
+
+    Navn: <input type="text" th:field="*{name}"><br><br>
+
+    Beskrivelse: <textarea th:field="*{description}"></textarea><br><br>
+
+    Startdato: <input type="date" th:field="*{startDate}"><br><br>
+
+    Slutdato: <input type="datetime-local" th:field="*{endDate}"><br><br>
+
+    Projektleder:
+    <select th:field="*{projectLeader.employeeId}">
+        <option value="">-- vælg leder --</option>
+        <option th:each="emp : ${leaders}"
+                th:value="${emp.employeeId}"
+                th:text="${emp.name}">
+        </option>
+    </select><br><br>
+
+    <button type="submit">Gem underprojekt</button>
+</form>
+
+</body>
+</html>
