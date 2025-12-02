@@ -25,7 +25,7 @@ public class ProjectController {
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("project", new Project());
-        model.addAttribute("leaders", employeeService.findAll());
+        model.addAttribute("leaders", employeeService.getAllEmployees());
         return "project/create";
     }
 
@@ -49,7 +49,7 @@ public class ProjectController {
         sub.setParentProject(parentRef);
 
         model.addAttribute("project", sub);
-        model.addAttribute("leaders", employeeService.findAll());
+        model.addAttribute("leaders", employeeService.getAllEmployees());
         return "project/create-sub";
     }
 

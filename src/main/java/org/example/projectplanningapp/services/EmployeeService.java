@@ -4,6 +4,8 @@ import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeService {
 
@@ -18,6 +20,14 @@ public class EmployeeService {
     }
 
     public boolean emailExists(String email) {
-        return employeeRepository.getEmployeeFromEmail(email);
+        return employeeRepository.getEmployeeFromEmail(email) != null;
+    }
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.getAllEmployees();
+    }
+
+    public Employee getEmployeeFromId(int id) {
+        return employeeRepository.getEmployeeFromId(id);
     }
 }
