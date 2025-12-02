@@ -1,49 +1,74 @@
+DROP TABLE IF EXISTS Role
+DROP TABLE IF EXISTS Employee
+DROP TABLE IF EXISTS Project
+DROP TABLE IF EXISTS Task
+DROP TABLE IF EXISTS ProjectEmployee
+DROP TABLE IF EXISTS TaskEmployee
 -- ------------------------------------------------------
 -- INSERT ROLES
 -- ------------------------------------------------------
-INSERT INTO Role (roleName) VALUES ('Admin');
-INSERT INTO Role (roleName) VALUES ('Project Manager');
-INSERT INTO Role (roleName) VALUES ('Developer');
-INSERT INTO Role (roleName) VALUES ('Tester');
-
+CREATE TABLE IF NOT EXISTS Role (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    roleName VARCHAR(50) NOT NULL
+);
 -- ------------------------------------------------------
 -- INSERT EMPLOYEES
 -- ------------------------------------------------------
-INSERT INTO Employee (employeeRoleId, name, email, password) VALUES
-                                                                 (1, 'Alice Johnson', 'alice@example.com', 'password1'),
-                                                                 (2, 'Bob Smith', 'bob@example.com', 'password2'),
-                                                                 (3, 'Charlie Brown', 'charlie@example.com', 'password3'),
-                                                                 (4, 'Diana Prince', 'diana@example.com', 'password4');
-
+CREATE TABLE IF NOT EXISTS Employee (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employeeRoleId INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(200) NOT NULL,
+    password VARCHAR(200) NOT NULL,
+    FOREIGN KEY (employeeRoleId) REFERENCES Role(id)
+    );
 -- ------------------------------------------------------
 -- INSERT PROJECTS
 -- ------------------------------------------------------
-INSERT INTO Project (projectLeaderId, parentProjectId, name, description, startDate, endDate) VALUES
-                                                                                                  (2, NULL, 'Project Alpha', 'First main project', '2025-01-01', '2025-06-30'),
-                                                                                                  (2, 1, 'Project Alpha Phase 1', 'Phase 1 of Project Alpha', '2025-01-01', '2025-03-31'),
-                                                                                                  (2, 1, 'Project Alpha Phase 2', 'Phase 2 of Project Alpha', '2025-04-01', '2025-06-30');
-
+CREATE TABLE IF NOT EXISTS Project (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    projectLeaderId INT NOT NULL,
+    parentProjectId INT NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    startDate DATE,
+    endDate DATE,
+    FOREIGN KEY (projectLeaderId) REFERENCES Employee(id),
+    FOREIGN KEY (parentProjectId) REFERENCES Project(id)
+);
 -- ------------------------------------------------------
 -- INSERT TASKS
 -- ------------------------------------------------------
-INSERT INTO Task (projectId, parentTaskId, title, description, status, expectedHours, actualHours, deadline) VALUES
-                                                                                                                 (2, NULL, 'Setup Environment', 'Set up dev environment', 'OPEN', 10, 0, '2025-01-05 17:00:00'),
-                                                                                                                 (2, 1, 'Install Dependencies', 'Install all required libraries', 'OPEN', 5, 0, '2025-01-03 12:00:00'),
-                                                                                                                 (3, NULL, 'Develop Feature A', 'Implement feature A', 'OPEN', 20, 0, '2025-04-15 17:00:00');
-
+CREATE TABLE IF NOT EXISTS Task (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    projectId INT NOT NULL,
+    parentTaskId INT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) NOT NULL,
+    expectedHours INT NOT NULL,
+    actualHours INT NOT NULL,
+    deadline DATETIME,
+    FOREIGN KEY (projectId) REFERENCES Project(id)
+    FOREIGN KEY (parentTaskId) REFERENCES Task(id)
+);
 -- ------------------------------------------------------
 -- ASSIGN PROJECTS TO EMPLOYEES
 -- ------------------------------------------------------
-INSERT INTO ProjectEmployee (projectId, employeeId) VALUES
-                                                        (1, 2),
-                                                        (1, 3),
-                                                        (2, 3),
-                                                        (3, 4);
-
+CREATE TABLE ProjectEmployee (
+    projectId INT NOT NULL,
+    employeeId INT NOT NULL,
+    PRIMARY KEY(projectId, employeeId),
+    FOREIGN KEY(projectId) REFERENCES Project(id),
+    FOREIGN KEY(employeeId) REFERENCES Employee(id)
+);
 -- ------------------------------------------------------
 -- ASSIGN TASKS TO EMPLOYEES
 -- ------------------------------------------------------
-INSERT INTO TaskEmployee (taskId, employeeId) VALUES
-                                                  (1, 3),
-                                                  (2, 3),
-                                                  (3, 4);
+CREATE TABLE TaskEmployee (
+    taskId INT NOT NULL,
+    employeeId INT NOT NULL,
+    PRIMARY KEY (taskId, employeeId),
+    FOREIGN KEY (taskId) REFERENCES Task(id),
+    FOREIGN KEY (employeeId) REFERENCES Employee(id)
+);
