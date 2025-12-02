@@ -19,8 +19,9 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public String showLogInPage() {
+        System.out.println("Hej");
         return "logIn";
     }
 
@@ -56,6 +57,7 @@ public class EmployeeController {
         return "homepage";
     }
 
+    @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
