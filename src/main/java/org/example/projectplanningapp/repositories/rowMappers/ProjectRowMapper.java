@@ -46,7 +46,7 @@ public class ProjectRowMapper implements RowMapper<Project> {
         int leaderId = rs.getInt("projectLeaderId");
         if (leaderId != 0) {
             Employee leader = new Employee();
-            leader.setProfileId(leaderId);
+            leader.setEmployeeId(leaderId);
             project.setProjectLeader(leader);
         }
 
