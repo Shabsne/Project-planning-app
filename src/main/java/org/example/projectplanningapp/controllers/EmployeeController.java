@@ -87,6 +87,6 @@ public class EmployeeController {
 
         //Opret brugeren i databasen
         employeeService.registerEmployee(employee);
-    return "redirect:/logIn"; //redirect til login-side efter oprettelse
+        return "redirect:/logIn"; //redirect til login-side efter oprettelse
     }
 }
