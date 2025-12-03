@@ -37,8 +37,11 @@ public class Task {
         this.parentTask = parentTask;
     }
 
-    public Task(int i, String subtask, String doSomething, String open, int i1, int i2, LocalDateTime localDateTime, Project project, Object o, Object o1, Object o2) {
+    public Task(int id) {
+        this.id = id;
     }
+
+
 
     public int getId() {
         return id;
@@ -136,4 +139,5 @@ public class Task {
     public void addAssignedEmployee(Employee employee) {
         assignedEmployees.add(employee);
     }
+
 }

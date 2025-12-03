@@ -7,7 +7,7 @@
 
 <h1>Create Task</h1>
 
-<form th:action="@{/tasks/create}" th:object="${task}" method="post">
+<form th:action="@{/createTask}" th:object="${task}" method="post">
 
     <label>Title:</label>
     <input type="text" th:field="*{title}" required>
