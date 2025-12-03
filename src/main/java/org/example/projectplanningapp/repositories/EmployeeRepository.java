@@ -2,6 +2,7 @@ package org.example.projectplanningapp.repositories;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.repositories.rowMappers.EmployeeRowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -55,6 +56,15 @@ public class EmployeeRepository {
         List<Employee> list = jdbc.query(
                 "SELECT * FROM Employee WHERE email = ?", rowMapper, email);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    public Employee findByEmail(String email) {
+        String sql = "SELECT * FROM Employee WHERE email = ?";
+        try {
+            return jdbc.queryForObject(sql, new EmployeeRowMapper(), email);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public List<Employee> getAllEmployees() {

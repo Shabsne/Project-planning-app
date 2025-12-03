@@ -33,10 +33,10 @@ public class Project {
 
     }
 
-    public Project(int id, String name) {
+    public Project(int id) {
         this.id = id;
-        this.name = name;
     }
+
 
     public int getId() {
         return id;

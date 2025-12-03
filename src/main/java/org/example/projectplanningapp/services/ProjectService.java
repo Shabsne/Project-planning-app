@@ -39,13 +39,8 @@ public class ProjectService {
 
         Project p = repository.findProjectById(id);
 
-        // Tilføj subprojects
         p.setSubProjects(repository.findSubprojects(id));
-
-        // Tilføj tasks
         p.setTasks(repository.findTasksByProject(id));
-
-        // Tilføj employees
         p.setAssignedEmployees(repository.findEmployeesByProject(id));
 
 

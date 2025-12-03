@@ -30,6 +30,22 @@ public class EmployeeService {
         employeeRepository.updateEmployeeRole(employeeId, newRoleId);
     }
 
+    public Employee login(String email, String password) {
+        Employee employee = employeeRepository.findByEmail(email);
+
+        if (employee == null) {
+            return null;
+        }
+
+        if (!employee.getPassword().equals(password)) {
+            return null;
+        }
+
+        return employee;
+
+    }
+
+
     public List<Employee> getAllEmployees() {
         return employeeRepository.getAllEmployees();
     }
