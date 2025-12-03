@@ -29,6 +29,8 @@ public class EmployeeController {
     @GetMapping("/register")
     public String showRegisterEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee());
+        return "register";
+    }
 
     @PostMapping("/login")
     public String loginUser(@RequestParam String email, @RequestParam String password, Model model, HttpSession session) {
@@ -64,8 +66,8 @@ public class EmployeeController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
+
         return "redirect:/";
-        return "registerEmployee";
     }
 
     @PostMapping("/register")

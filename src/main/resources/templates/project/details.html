@@ -13,8 +13,11 @@
 <hr>
 
 <!-- Edit / Delete -->
-<a th:href="@{'/projects/edit/' + ${project.id}}">Edit Project</a>
-<a th:href="@{'/projects/delete/' + ${project.id}}">Delete Project</a>
+<a th:href="@{'/projects/' + ${project.id} + '/edit'}">Edit Project</a>
+
+<form th:action="@{'/projects/' + ${project.id} + '/delete'}" method="post" style="display:inline;">
+    <button type="submit">Delete Project</button>
+</form>
 
 <hr>
 
@@ -22,7 +25,7 @@
 <h2>Parent Project</h2>
 <div th:if="${project.parentProject != null}">
     <a th:href="@{'/projects/' + ${project.parentProject.id}}"
-       th:text="${project.parentProject.name}">Parent</a>
+       th:text="${project.parentProject.name}"></a>
 </div>
 <div th:if="${project.parentProject == null}">
     <p>No parent (this is a root project)</p>
@@ -32,14 +35,14 @@
 
 <!-- Subprojects -->
 <h2>Subprojects</h2>
-<a th:href="@{'/' + ${project.id} + '/create-sub'}">Create Subproject</a>
+<a th:href="@{'/projects/' + ${project.id} + '/sub/create'}">Create Subproject</a>
 
 <table>
     <tr><th>Name</th></tr>
     <tr th:each="sp : ${project.subProjects}">
         <td>
             <a th:href="@{'/projects/' + ${sp.id}}"
-               th:text="${sp.name}">Sub</a>
+               th:text="${sp.name}"></a>
         </td>
     </tr>
 </table>
@@ -66,11 +69,14 @@
 <h2>Assigned Employees</h2>
 <table>
     <tr><th>Name</th><th>Email</th></tr>
-    <tr th:each="e : ${project.assignedProfiles}">
+    <tr th:each="e : ${project.assignedEmployees}">
         <td th:text="${e.name}"></td>
         <td th:text="${e.email}"></td>
     </tr>
 </table>
+
+<br>
+<a href="/projects">⬅ Back to list</a>
 
 </body>
 </html>

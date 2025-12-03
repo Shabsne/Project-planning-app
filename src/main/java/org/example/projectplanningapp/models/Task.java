@@ -13,6 +13,8 @@ public class Task {
     private int actualHours;
     private LocalDateTime deadline;
 
+    private int projectId;
+    private Employee leader;
     private Project parentProject;
     private Task parentTask;
     private List<Task> subTasks;
@@ -25,7 +27,7 @@ public class Task {
     public Task(){
     }
 
-    public Task(int id, String title, String description, Status status, int estimatedHours, int actualHours, LocalDateTime deadline, Project parentProject, Task parentTask) {
+    public Task(int id, String title, String description, Status status, int estimatedHours, int actualHours, LocalDateTime deadline, int projectId, Project parentProject, Task parentTask) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -33,6 +35,7 @@ public class Task {
         this.estimatedHours = estimatedHours;
         this.actualHours = actualHours;
         this.deadline = deadline;
+        this.projectId = projectId;
         this.parentProject = parentProject;
         this.parentTask = parentTask;
     }
@@ -97,6 +100,14 @@ public class Task {
 
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 
     public Project getParentProject() {
