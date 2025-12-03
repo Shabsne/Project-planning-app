@@ -9,6 +9,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class TaskRepository {
@@ -19,15 +21,14 @@ public class TaskRepository {
         this.jdbc = jdbc;
     }
 
-    public int createTask(Task task) {
+    public void createTask(Task task) {
         //Keyholder oprettes til at gemme TaksId
         KeyHolder keyholder = new GeneratedKeyHolder();
 
         //Lambda funktion til at skrive til databasen
-        //LAST_INSERT_ID() bruges ikke, da det er MySQL afhængigt
         jdbc.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO Emmployee (" +
+                    "INSERT INTO Task (" +
                             "title, description, status," +
                             "estimatedHours, actualHours, deadline," +
                             "parentProject, parentTask, subTasks," +
@@ -49,9 +50,72 @@ public class TaskRepository {
 
         Number id = keyholder.getKey();
         if (id != null) {
+            //LAST_INSERT_ID() bruges ikke, da det er MySQL afhængigt
             task.setId(id.intValue());
-            return id.intValue();
         }
-        throw new RuntimeException("Failed to generate ID for task");
     }
+    //READS METHODS
+
+    public List<Task> getAllTasks(){
+        List <Task> tasks = jdbc.query("SELECT * FROM task",taskRowMapper);
+        return tasks.isEmpty() ? Collections.emptyList() : tasks;
+    }
+
+    public Task getTaskFromId (int taskId){
+        String sql = "SELECT * FROM Task WHERE taskId = ?";
+        List<Task> tasks = jdbc.query(sql,taskRowMapper,taskId);
+        return tasks.isEmpty() ? null : tasks.getFirst();
+    }
+
+    public List<Task> getTasksInProject (int projectId){
+        String sql = "SELECT * FROM Task WHERE projectId = ?";
+        List<Task> tasks = jdbc.query(sql,taskRowMapper,projectId);
+        return tasks.isEmpty() ? Collections.emptyList() : tasks;
+    }
+
+    public List<Task> getAssignedTasksForEmployee (int employeeId) {
+        String sql = "SELECT * FROM Task WHERE employeeId = ?";
+        List<Task> list = jdbc.query(sql, taskRowMapper, employeeId);
+        return list.isEmpty() ? Collections.emptyList() : list;
+    }
+
+    //UPDATE METHOD
+    public void updateTask(Task task) {
+        String sql = "UPDATE Task SET " +
+                "title = ?, " +
+                "description = ?, " +
+                "status = ?, " +
+                "estimatedHours = ?, " +
+                "actualHours = ?, " +
+                "deadline = ?, " +
+                "parentProject = ?, " +
+                "parentTask = ?, " +
+                "subTasks = ?, " +
+                "assignedEmployees = ? " +
+                "WHERE taskId = ?";
+
+        jdbc.update(sql,
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getEstimatedHours(),
+                task.getActualHours(),
+                task.getDeadline(),
+                task.getParentProject(),
+                task.getParentTask(),
+                task.getSubTasks(),
+                task.getAssignedEmployees(),
+                task.getId()
+        );
+    }
+
+    public void deleteTask (int taskId){
+        String sql = "DELETE FROM Task WHERE taskId = ?";
+        jdbc.update(sql,taskId);
+    }
+
+
+
+
+
 }
