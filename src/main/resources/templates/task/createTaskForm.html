@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Task</title>
+</head>
+<body>
+
+<h1>Create Task</h1>
+
+<form th:action="@{/projects/{projectId}/createTask(projectId=${project.id})}"
+      th:object="${task}" method="post">
+
+    <!-- Title -->
+    <label for="title">Title:</label>
+    <input type="text" th:field="*{title}" id="title" required>
+    <br><br>
+
+    <!-- Description -->
+    <label for="description">Description:</label>
+    <textarea th:field="*{description}" id="description"></textarea>
+    <br><br>
+
+    <!-- Status -->
+    <label for="status">Status:</label>
+    <select th:field="*{status}" id="status" required>
+        <option th:each="s : ${statuses}"
+                th:value="${s}"
+                th:text="${s}">Status</option>
+    </select>
+    <br><br>
+
+    <!-- Deadline -->
+    <label for="deadline">Deadline:</label>
+    <input type="datetime-local" th:field="*{deadline}" id="deadline">
+    <br><br>
+
+
+
+    <!-- Parent Task -->
+    <label>Parent Task:</label>
+    <select th:field="*{parentTaskId}">
+        <option value="">-- None --</option>
+        <option th:each="t : ${project.tasks}"
+                th:value="${t.taskId}"
+                th:text="${t.title}">Task</option>
+    </select>
+    <br><br>
+
+    <!-- Assigned Employees collapsible -->
+    <label for="assignedEmployeesToggle" style="cursor:pointer; font-weight:bold;">Assign Employees ▼</label>
+    <div id="assignedEmployeesBox" style="display:none; border:1px solid #ccc; padding:10px; margin-top:5px; max-height:150px; overflow:auto;">
+        <select th:field="*{assignedEmployeeIds}" multiple size="5" style="width:100%;">
+            <option th:each="emp : ${project.assignedEmployees}"
+                    th:value="${emp.employeeId}"
+                    th:text="${emp.name}">Employee</option>
+        </select>
+    </div>
+
+    <script>
+        const toggleLabel = document.querySelector('label[for="assignedEmployeesToggle"]');
+        const employeesBox = document.getElementById('assignedEmployeesBox');
+
+        toggleLabel.addEventListener('click', () => {
+            employeesBox.style.display = employeesBox.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+    <br><br>
+
+    <!-- Estimated Hours -->
+    <label for="estimatedHours">Estimated Hours:</label>
+    <input type="number" th:field="*{estimatedHours}" id="estimatedHours">
+    <br><br>
+
+    <!-- Actual Hours -->
+    <label for="actualHours">Actual Hours:</label>
+    <input type="number" th:field="*{actualHours}" id="actualHours">
+    <br><br>
+
+    <button type="submit">Create Task</button>
+</form>
+
+</body>
+</html>

@@ -9,8 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class TaskRepository {
@@ -22,42 +21,39 @@ public class TaskRepository {
     }
 
     public void createTask(Task task) {
-        //Keyholder oprettes til at gemme TaksId
-        KeyHolder keyholder = new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        //Lambda funktion til at skrive til databasen
         jdbc.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO Task (" +
-                            "title, description, status," +
-                            "estimatedHours, actualHours, deadline," +
-                            "parentProject, parentTask, subTasks," +
-                            "assignedEmployees) " +
-                            "VALUES (?,?,?,?,?,?,?,?,?,?)",
+                            "projectId, parentTaskId, title, description, status, " +
+                            "estimatedHours, actualHours, deadline) " +
+                            "VALUES (?,?,?,?,?,?,?,?)",
                     PreparedStatement.RETURN_GENERATED_KEYS);
-            ps.setString(1, task.getTitle());
-            ps.setString(2, task.getDescription());
-            ps.setObject(3, task.getStatus());
-            ps.setInt(4, task.getEstimatedHours());
-            ps.setInt(5, task.getActualHours());
-            ps.setObject(6, task.getDeadline());
-            ps.setObject(7, task.getParentProject());
-            ps.setObject(8, task.getParentTask());
-            ps.setObject(9, task.getSubTasks());
-            ps.setObject(10, task.getAssignedEmployees());
-            return ps;
-        }, keyholder);
 
-        Number id = keyholder.getKey();
+
+            ps.setInt(1, task.getProjectId());
+            ps.setObject(2, task.getParentTaskId() != null ? task.getParentTaskId() : null, java.sql.Types.INTEGER);
+            ps.setString(3, task.getTitle());
+            ps.setString(4, task.getDescription());
+            ps.setString(5, task.getStatus() != null ? task.getStatus().toString(): null);
+            ps.setObject(6, task.getEstimatedHours() != null ? task.getEstimatedHours() : null, java.sql.Types.INTEGER);
+            ps.setObject(7, task.getActualHours() != null ? task.getActualHours() : null, java.sql.Types.INTEGER);
+            ps.setTimestamp(8, task.getDeadline() != null ? java.sql.Timestamp.valueOf(task.getDeadline()) : null);
+
+            return ps;
+        }, keyHolder);
+
+        // hent genereret taskId
+        Number id = keyHolder.getKey();
         if (id != null) {
-            //LAST_INSERT_ID() bruges ikke, da det er MySQL afhængigt
-            task.setId(id.intValue());
+            task.setTaskId(id.intValue());
         }
     }
-    //READS METHODS
+
 
     public List<Task> getAllTasks(){
-        List <Task> tasks = jdbc.query("SELECT * FROM task",taskRowMapper);
+        List <Task> tasks = jdbc.query("SELECT * FROM Task",taskRowMapper);
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
@@ -79,42 +75,43 @@ public class TaskRepository {
         return list.isEmpty() ? Collections.emptyList() : list;
     }
 
-    //UPDATE METHOD
+    public List<Task> getSubTasks(int parentTaskId) {
+        String sql = "SELECT * FROM Task WHERE parentTaskId = ?";
+        List<Task> tasks = jdbc.query(sql, taskRowMapper, parentTaskId);
+        return tasks.isEmpty() ? Collections.emptyList() : tasks;
+    }
+
+
     public void updateTask(Task task) {
         String sql = "UPDATE Task SET " +
+                "projectId = ?, " +
+                "parentTaskId = ?, " +
                 "title = ?, " +
                 "description = ?, " +
                 "status = ?, " +
                 "estimatedHours = ?, " +
                 "actualHours = ?, " +
-                "deadline = ?, " +
-                "parentProject = ?, " +
-                "parentTask = ?, " +
-                "subTasks = ?, " +
-                "assignedEmployees = ? " +
+                "deadline = ? " +
                 "WHERE taskId = ?";
 
         jdbc.update(sql,
+                task.getProjectId(),
+                task.getParentTaskId(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getStatus(),
                 task.getEstimatedHours(),
                 task.getActualHours(),
                 task.getDeadline(),
-                task.getParentProject(),
-                task.getParentTask(),
-                task.getSubTasks(),
-                task.getAssignedEmployees(),
-                task.getId()
+                task.getTaskId()
         );
     }
+
 
     public void deleteTask (int taskId){
         String sql = "DELETE FROM Task WHERE taskId = ?";
         jdbc.update(sql,taskId);
     }
-
-
 
 
 

@@ -1,12 +1,16 @@
 package org.example.projectplanningapp.controllers;
 
+import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
+import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Controller
@@ -20,21 +24,24 @@ public class TaskController {
         this.projectService = projectService;
     }
 
-    // Viser formularen
     @GetMapping("/projects/{projectId}/createTask")
     public String showCreateTaskForm(@PathVariable int projectId, Model model) {
         Task task = new Task();
-        Project project = projectService.findById(projectId);
-        task.setParentProject(project);
-        model.addAttribute("task",task);
-        return "createTaskForm"; // peger på createTaskForm.html
+        Project project = projectService.getProjectDetails(projectId);
+
+        model.addAttribute("task", task);
+        model.addAttribute("project", project);
+        model.addAttribute("statuses", Status.values()); // Enum dropdown
+        return "task/createTaskForm";
     }
+
+
 
     // Modtager form-data
     @PostMapping("/createTask")
     public String createTask(@ModelAttribute Task task) {
         taskService.createTask(task);
-        return "redirect:/projects/" + task.getParentProject().getId();
+        return "redirect:/projects/" + task.getProjectId();
     }
 
 }

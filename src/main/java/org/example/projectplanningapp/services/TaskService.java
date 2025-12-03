@@ -38,6 +38,25 @@ public class TaskService {
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
+    public List<Task> getTasksWithSubTasks(int projectId) {
+        List<Task> tasks = taskRepository.getTasksInProject(projectId);
+        for (Task task : tasks) {
+            List<Task> subTasks = taskRepository.getSubTasks(task.getTaskId());
+            task.setSubTasks(subTasks);
+        }
+        return tasks;
+    }
+
+    public Task getTaskWithSubTasks(int taskId) {
+        Task task = taskRepository.getTaskFromId(taskId);
+        if (task != null) {
+            List<Task> subTasks = taskRepository.getSubTasks(taskId);
+            task.setSubTasks(subTasks);
+        }
+        return task;
+    }
+
+
 
     //Getters sorted by deadline
     public List<Task> getTasksInProjectSortedByDeadline(int projectId){
