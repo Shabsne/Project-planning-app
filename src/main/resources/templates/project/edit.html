@@ -1,0 +1,27 @@
+<h1>Rediger Projekt</h1>
+
+<form th:action="@{/projects/{id}/edit(id=${project.id})}" method="post">
+
+    <!-- Hidden input til id -->
+    <input type="hidden" name="id" th:value="${project.id}"/>
+
+    <!-- Navn -->
+    Navn:
+    <input type="text" name="name" th:value="${project.name}"/><br/>
+
+    <!-- Beskrivelse -->
+    Beskrivelse:
+    <textarea name="description" th:text="${project.description}"></textarea><br/>
+
+    <!-- Projektleder -->
+    Projektleder:
+    <select name="projectLeader.employeeId">
+        <option th:each="e : ${leaders}"
+                th:value="${e.employeeId}"
+                th:text="${e.name}"
+                th:selected="${project.projectLeader?.employeeId == e.employeeId}">
+        </option>
+    </select><br/><br/>
+
+    <button type="submit">Gem</button>
+</form>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${project.name}">Project Details</title>
+</head>
+<body>
+
+<h1 th:text="${project.name}">Project Name</h1>
+<p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
+<p><strong>Start:</strong> <span th:text="${project.startDate}"></span></p>
+<p><strong>End:</strong> <span th:text="${project.endDate}"></span></p>
+
+<hr>
+
+<!-- Edit / Delete -->
+<a th:href="@{'/projects/edit/' + ${project.id}}">Edit Project</a>
+<a th:href="@{'/projects/delete/' + ${project.id}}">Delete Project</a>
+
+<hr>
+
+<!-- Parent Project -->
+<h2>Parent Project</h2>
+<div th:if="${project.parentProject != null}">
+    <a th:href="@{'/projects/' + ${project.parentProject.id}}"
+       th:text="${project.parentProject.name}">Parent</a>
+</div>
+<div th:if="${project.parentProject == null}">
+    <p>No parent (this is a root project)</p>
+</div>
+
+<hr>
+
+<!-- Subprojects -->
+<h2>Subprojects</h2>
+<a th:href="@{'/' + ${project.id} + '/create-sub'}">Create Subproject</a>
+
+<table>
+    <tr><th>Name</th></tr>
+    <tr th:each="sp : ${project.subProjects}">
+        <td>
+            <a th:href="@{'/projects/' + ${sp.id}}"
+               th:text="${sp.name}">Sub</a>
+        </td>
+    </tr>
+</table>
+
+<hr>
+
+<!-- Tasks -->
+<h2>Tasks</h2>
+<table>
+    <tr><th>Title</th><th>Status</th></tr>
+    <tr th:each="t : ${project.tasks}">
+        <td th:text="${t.title}"></td>
+        <td th:text="${t.status}"></td>
+    </tr>
+</table>
+
+<hr>
+
+<!-- Employees -->
+<h2>Assigned Employees</h2>
+<table>
+    <tr><th>Name</th><th>Email</th></tr>
+    <tr th:each="e : ${project.assignedProfiles}">
+        <td th:text="${e.name}"></td>
+        <td th:text="${e.email}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

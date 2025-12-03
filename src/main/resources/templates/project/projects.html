@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Projects</title>
+</head>
+<body>
+
+<h1>All Active Projects</h1>
+
+<a href="/projects/create">
+    <button>Create Project</button>
+</a>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Leader</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="p : ${projects}">
+        <td th:text="${p.id}"></td>
+        <td>
+            <a th:href="@{/projects/{id}(id=${p.id})}" th:text="${p.name}"></a>
+        </td>
+        <td th:text="${p.projectLeader != null ? p.projectLeader.name : 'N/A'}"></td>
+        <td th:text="${p.startDate}"></td>
+        <td th:text="${p.endDate}"></td>
+        <td>
+            <a th:href="@{/projects/edit/{id}(id=${p.id})}">Edit</a> |
+            <a th:href="@{/projects/delete/{id}(id=${p.id})}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+

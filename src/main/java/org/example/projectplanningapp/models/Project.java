@@ -13,6 +13,7 @@ public class Project {
     private LocalDateTime endDate;
     private Employee projectLeader;
 
+    private Integer projectLeaderId;
     private Project parentProject;
     private List<Project> subProjects;
 
@@ -110,6 +111,11 @@ public class Project {
         return tasks;
     }
 
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+
     public void addTasks(Task task) {
         tasks.add(task);
     }
@@ -117,6 +123,19 @@ public class Project {
     public List<Employee> getAssignedEmployees() {
         return assignedEmployees;
     }
+
+    public void setAssignedEmployees(List<Employee> assignedEmployees) {
+        this.assignedEmployees = assignedEmployees;
+    }
+
+    public Integer getProjectLeaderId() {
+        return projectLeaderId;
+    }
+
+    public void setProjectLeaderId(Integer projectLeaderId) {
+        this.projectLeaderId = projectLeaderId;
+    }
+
 
     public void addAssignedEmployees(Employee employee) {
         assignedEmployees.add(employee);
