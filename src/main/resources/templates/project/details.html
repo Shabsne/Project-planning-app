@@ -53,6 +53,10 @@
     <tr th:each="t : ${project.tasks}">
         <td th:text="${t.title}"></td>
         <td th:text="${t.status}"></td>
+    <tr>
+        <td colspan="2">
+            <a th:href="@{'/projects/' + ${project.id} + '/createTask'}">+ Create New Task</a>
+        </td>
     </tr>
 </table>
 
