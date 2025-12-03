@@ -1,10 +1,12 @@
 package org.example.projectplanningapp.controllers;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,9 +20,9 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-
-    @GetMapping("/")
+    @GetMapping("")
     public String showLogInPage() {
+        System.out.println("Hej");
         return "logIn";
     }
 
@@ -28,6 +30,41 @@ public class EmployeeController {
     public String showRegisterEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee());
 
+    @PostMapping("/login")
+    public String loginUser(@RequestParam String email, @RequestParam String password, Model model, HttpSession session) {
+
+        Employee employee = employeeService.login(email, password);
+
+        if (employee == null) {
+            model.addAttribute("error", true);
+            return "logIn";
+        }
+
+        session.setAttribute("employee", employee);
+
+        return "redirect:/home/" + employee.getEmployeeId();
+    }
+
+    @GetMapping("/home/{employeeId}")
+    public String homePage(@PathVariable int employeeId, HttpSession session) {
+
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
+        if (loggedIn.getEmployeeId() != employeeId) {
+            return "redirect:/home/" + loggedIn.getEmployeeId();
+        }
+
+        return "homepage";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
         return "registerEmployee";
     }
 

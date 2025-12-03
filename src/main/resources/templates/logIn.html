@@ -15,7 +15,9 @@
   <br>
   <button type="submit">Login</button>
 </form>
-<div th:if="${loginError != null}" style="color:red;" th:text="${loginError}"></div>
+
+<p th:if="${error}" style="color:red;">Forkert email eller password</p>
+
 
 <hr>
 
