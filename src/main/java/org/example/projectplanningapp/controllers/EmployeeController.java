@@ -3,7 +3,7 @@ package org.example.projectplanningapp.controllers;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,21 +20,23 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("")
+    // Login side
+    @GetMapping("/employees/login")
     public String showLogInPage() {
         System.out.println("Hej");
         return "logIn";
     }
 
-    @GetMapping("/register")
+    // Registrering af medarbejder
+    @GetMapping("/employees/register")
     public String showRegisterEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee());
-        return "register";
+        return "employees/register";
     }
 
-    @PostMapping("/login")
-    public String loginUser(@RequestParam String email, @RequestParam String password, Model model, HttpSession session) {
-
+    @PostMapping("/employees/login")
+    public String loginUser(@RequestParam String email, @RequestParam String password,
+                            Model model, HttpSession session) {
         Employee employee = employeeService.login(email, password);
 
         if (employee == null) {
@@ -43,50 +45,62 @@ public class EmployeeController {
         }
 
         session.setAttribute("employee", employee);
-
         return "redirect:/home/" + employee.getEmployeeId();
     }
 
-    @GetMapping("/home/{employeeId}")
+    @GetMapping("/employees/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session) {
-
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
-
-        if (loggedIn.getEmployeeId() != employeeId) {
-            return "redirect:/home/" + loggedIn.getEmployeeId();
-        }
+        if (loggedIn == null) return "redirect:/employees/login";
+        if (loggedIn.getEmployeeId() != employeeId)
+            return "redirect:/employees/home/" + loggedIn.getEmployeeId();
 
         return "homepage";
     }
 
-    @GetMapping("/logout")
+    @GetMapping("/employees/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-
-        return "redirect:/";
+        return "redirect:/employees/login";
     }
 
-    @PostMapping("/register")
+    @PostMapping("/employees/register")
     public String registerEmployee(@ModelAttribute Employee employee,
                                    @RequestParam String confirmPassword, Model model) {
-        //Tjek om email allerede findes
         if (employeeService.emailExists(employee.getEmail())) {
             model.addAttribute("error", "Emailen findes allerede");
-            return "registerEmployee";
+            return "employees/register";
         }
 
-        //Tjek om adgangskode matcher
         if (!employee.getPassword().equals(confirmPassword)) {
             model.addAttribute("error", "Adgangskoder matcher ikke!");
-            return "registerEmployee";
+            return "employees/register";
         }
 
-        //Opret brugeren i databasen
         employeeService.registerEmployee(employee);
-    return "redirect:/logIn"; //redirect til login-side efter oprettelse
+        return "redirect:/employees/login";
     }
+
+    // Rediger profil
+    @GetMapping("/employees/{id}/edit")
+    public String showEditProfileForm(@PathVariable int id, Model model) {
+        model.addAttribute("employee", employeeService.getEmployeeFromId(id));
+        return "employee/edit";
+    }
+
+    @PostMapping("/employees/{id}/edit")
+    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee) {
+        employee.setEmployeeId(id);
+        employeeService.updateOwnProfile(employee);
+        return "redirect:/employees/" + id + "/edit";
+    }
+
+    // Liste af medarbejdere
+    @GetMapping("/employees/list")
+    public String listEmployees(Model model) {
+        model.addAttribute("employees", employeeService.getAllEmployees());
+        return "employees/list";
+    }
+
 }

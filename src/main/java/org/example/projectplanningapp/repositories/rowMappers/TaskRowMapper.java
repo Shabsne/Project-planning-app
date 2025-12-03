@@ -24,7 +24,7 @@ public class TaskRowMapper implements RowMapper<Task> {
         task.setDeadline(rs.getTimestamp("deadline").toLocalDateTime());
 
         // Parent project
-        int projectId = rs.getInt("parentProjectId");
+        int projectId = rs.getInt("projectId");
         task.setParentProject(new Project(projectId));
 
         // Parent task (optional)

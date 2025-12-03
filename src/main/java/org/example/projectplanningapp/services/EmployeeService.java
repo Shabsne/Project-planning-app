@@ -23,6 +23,13 @@ public class EmployeeService {
         return employeeRepository.getEmployeeFromEmail(email) != null;
     }
 
+    public void updateOwnProfile(Employee updatedEmployee) {
+        employeeRepository.updateOwnProfile(updatedEmployee);
+    }
+    public void updateEmployeeRole(int employeeId, int newRoleId) {
+        employeeRepository.updateEmployeeRole(employeeId, newRoleId);
+    }
+
     public Employee login(String email, String password) {
         Employee employee = employeeRepository.findByEmail(email);
 
@@ -35,6 +42,10 @@ public class EmployeeService {
         }
 
         return employee;
+
+    }
+
+
     public List<Employee> getAllEmployees() {
         return employeeRepository.getAllEmployees();
     }
