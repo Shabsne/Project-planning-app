@@ -1,0 +1,33 @@
+</head>
+<body>
+
+<h1>Opret Projekt</h1>
+
+<form th:action="@{/projects/create}" th:object="${project}" method="post">
+
+    <label for="name">Navn</label>
+    <input type="text" id="name" th:field="*{name}" placeholder="Indtast projektnavn">
+
+    <label for="description">Beskrivelse</label>
+    <textarea id="description" th:field="*{description}" placeholder="Indtast beskrivelse"></textarea>
+
+    <label for="startDate">Startdato</label>
+    <input type="date" id="startDate" th:field="*{startDate}">
+
+    <label for="endDate">Slutdato</label>
+    <input type="datetime-local" id="endDate" th:field="*{endDate}">
+
+    <label for="projectLeaderId">Projektleder</label>
+    <select id="projectLeaderId" th:field="*{projectLeaderId}">
+        <option value="">-- vælg leder --</option>
+        <option th:each="emp : ${leaders}"
+                th:value="${emp.employeeId}"
+                th:text="${emp.name}">
+        </option>
+    </select>
+
+    <button type="submit">Gem projekt</button>
+</form>
+
+</body>
+</html>

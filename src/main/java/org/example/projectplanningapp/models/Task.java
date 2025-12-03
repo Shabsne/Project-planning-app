@@ -17,7 +17,7 @@ public class Task {
     private Task parentTask;
     private List<Task> subTasks;
 
-    private List<Employee> assignedProfiles;
+    private List<Employee> assignedEmployees;
 
 
 
@@ -35,6 +35,9 @@ public class Task {
         this.deadline = deadline;
         this.parentProject = parentProject;
         this.parentTask = parentTask;
+    }
+
+    public Task(int i, String subtask, String doSomething, String open, int i1, int i2, LocalDateTime localDateTime, Project project, Object o, Object o1, Object o2) {
     }
 
     public int getId() {
@@ -93,6 +96,10 @@ public class Task {
         this.deadline = deadline;
     }
 
+    public Project getParentProject() {
+        return parentProject;
+    }
+
     public void setParentProject(Project parentProject) {
         this.parentProject = parentProject;
     }
@@ -118,15 +125,15 @@ public class Task {
         subTask.setParentTask(this);
     }
 
-    public List<Employee> getAssignedProfiles() {
-        return assignedProfiles;
+    public List<Employee> getAssignedEmployees() {
+        return assignedEmployees;
     }
 
-    public void setAssignedProfiles(List<Employee> assignedProfiles) {
-        this.assignedProfiles = assignedProfiles;
+    public void setAssignedEmployees(List<Employee> assignedEmployees) {
+        this.assignedEmployees = assignedEmployees;
     }
 
-    public void addAssignedProfile(Employee profile) {
-        assignedProfiles.add(profile);
+    public void addAssignedEmployee(Employee employee) {
+        assignedEmployees.add(employee);
     }
 }
