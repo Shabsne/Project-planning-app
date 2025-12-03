@@ -52,7 +52,7 @@ public class EmployeeRepository {
     public Employee findByEmail(String email) {
         String sql = "SELECT * FROM Employee WHERE email = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new EmployeeRowMapper(), email);
+            return jdbc.queryForObject(sql, new EmployeeRowMapper(), email);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
