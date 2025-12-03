@@ -23,6 +23,13 @@ public class EmployeeService {
         return employeeRepository.getEmployeeFromEmail(email) != null;
     }
 
+    public void updateOwnProfile(Employee updatedEmployee) {
+        employeeRepository.updateOwnProfile(updatedEmployee);
+    }
+    public void updateEmployeeRole(int employeeId, int newRoleId) {
+        employeeRepository.updateEmployeeRole(employeeId, newRoleId);
+    }
+
     public List<Employee> getAllEmployees() {
         return employeeRepository.getAllEmployees();
     }
