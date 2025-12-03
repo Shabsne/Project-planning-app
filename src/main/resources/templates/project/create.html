@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Create Project</title>
 </head>
 <body>
 
@@ -9,23 +5,26 @@
 
 <form th:action="@{/projects/create}" th:object="${project}" method="post">
 
-    Navn: <input type="text" th:field="*{name}"><br><br>
+    <label for="name">Navn</label>
+    <input type="text" id="name" th:field="*{name}" placeholder="Indtast projektnavn">
 
-    Beskrivelse: <textarea th:field="*{description}"></textarea><br><br>
+    <label for="description">Beskrivelse</label>
+    <textarea id="description" th:field="*{description}" placeholder="Indtast beskrivelse"></textarea>
 
-    Startdato: <input type="date" th:field="*{startDate}"><br><br>
+    <label for="startDate">Startdato</label>
+    <input type="date" id="startDate" th:field="*{startDate}">
 
-    Slutdato: <input type="datetime-local" th:field="*{endDate}"><br><br>
+    <label for="endDate">Slutdato</label>
+    <input type="datetime-local" id="endDate" th:field="*{endDate}">
 
-    Projektleder:
-    <select th:field="*{projectLeader.employeeId}">
+    <label for="projectLeaderId">Projektleder</label>
+    <select id="projectLeaderId" th:field="*{projectLeaderId}">
         <option value="">-- vælg leder --</option>
         <option th:each="emp : ${leaders}"
                 th:value="${emp.employeeId}"
                 th:text="${emp.name}">
         </option>
     </select>
-    <br><br>
 
     <button type="submit">Gem projekt</button>
 </form>
