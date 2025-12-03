@@ -1,29 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Alle Projekter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .project, .subproject {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .subproject {
+            margin-left: 30px;
+            background-color: #f9f9f9;
+        }
+        .project-header, .subproject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+        .create-btn {
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .create-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
 <h1>Alle Projekter</h1>
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Navn</th>
-        <th>Leader</th>
-        <th>Actions</th>
-    </tr>
+<!-- Opret nyt projekt -->
+<a href="/projects/create" class="create-btn">Opret Nyt Projekt</a>
 
-    <tr th:each="p : ${projects}">
-        <td th:text="${p.id}"></td>
+<ul>
+    <li th:each="proj : ${projects}" class="project">
+        <div class="project-header">
+            <div>
 
-        <td>
-            <a th:href="@{'/projects/' + ${p.id}}" th:text="${p.name}"></a>
-        </td>
+                <!-- Gør projektet klikbart -->
+                <a th:href="@{/projects/{id}(id=${proj.id})}">
+                    <strong th:text="${proj.name}">Projekt Navn</strong>
+                </a>
 
-        <td th:text="${p.projectLeader?.name}"></td>
+                <p>Projektleder:
+                    <span th:text="${proj.projectLeader != null ? proj.projectLeader.name : 'Ikke valgt'}"></span>
+                </p>
+                <p>Start: <span th:text="${proj.startDate}"></span> |
+                    Slut: <span th:text="${proj.endDate}"></span>
+                </p>
+            </div>
 
-        <td>
-            <a th:href="@{'/projects/' + ${p.id} + '/edit'}">Rediger</a> |
-            <form th:action="@{'/projects/' + ${p.id} + '/delete'}" method="post" style="display:inline">
-                <button type="submit">Slet</button>
-            </form>
-        </td>
-    </tr>
-</table>
-
-<a th:href="@{/projects/create}">Opret nyt projekt</a>
+            <div class="actions">
+                <a th:href="@{/projects/{id}/edit(id=${proj.id})}">Rediger</a>
+                <a th:href="@{/projects/{id}/delete(id=${proj.id})}">Slet</a>
+                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}">Opret Sub-projekt</a>
+            </div>
+        </div>
+    </li>
+</ul>

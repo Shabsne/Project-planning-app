@@ -27,7 +27,7 @@ public class TaskController {
         Project project = projectService.findById(projectId);
         task.setParentProject(project);
         model.addAttribute("task",task);
-        return "createTaskForm"; // peger på createTaskForm.html
+        return "createTaskForm";
     }
 
     // Modtager form-data

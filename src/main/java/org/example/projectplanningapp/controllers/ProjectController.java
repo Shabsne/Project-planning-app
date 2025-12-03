@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class ProjectController {
 
@@ -23,12 +25,23 @@ public class ProjectController {
     }
 
 
-    // List all projects
+    // list projects - Kun parents projekter
     @GetMapping("/projects")
     public String listProjects(Model model) {
-        model.addAttribute("projects", projectService.getAllProjects());
+        List<Project> allProjects = projectService.getAllProjects();
+
+        // Filtrer så kun parent projekter vises
+        List<Project> parentProjects = allProjects.stream()
+                .filter(p -> p.getParentProject() == null)
+                .toList();
+
+        model.addAttribute("projects", parentProjects);
+
         return "project/list";
     }
+
+
+
 
     // Create project
     @GetMapping("/projects/create")
@@ -49,26 +62,43 @@ public class ProjectController {
     }
 
 
-
     // Create Sub-project
     @GetMapping("/projects/{parentId}/sub/create")
     public String showCreateSubForm(@PathVariable int parentId, Model model) {
+        // Opret nyt sub-projekt
+        Project subProject = new Project();
 
-        Project sub = new Project();
-        Project parentRef = new Project();
-        parentRef.setId(parentId);
-        sub.setParentProject(parentRef);
+        // Sæt parent project reference
+        Project parentProject = new Project();
+        parentProject.setId(parentId);
+        subProject.setParentProject(parentProject);
 
-        model.addAttribute("project", sub);
+        // Tilføj til model
+        model.addAttribute("project", subProject);
         model.addAttribute("leaders", employeeService.getAllEmployees());
+
         return "project/create-sub";
     }
 
-    @PostMapping("/projects/sub/create")
-    public String createSubProject(@ModelAttribute Project subproject) {
-        projectService.createProject(subproject);
-        return "redirect:/projects/" + subproject.getParentProject().getId();
+    @PostMapping("/projects/{parentId}/sub/create")
+    public String createSubProject(@PathVariable int parentId, @ModelAttribute Project project) {
+        // Hent projektleder hvis valgt
+        if (project.getProjectLeaderId() != null) {
+            Employee leader = employeeService.getEmployeeFromId(project.getProjectLeaderId());
+            project.setProjectLeader(leader);
+        }
+
+        // Sæt parent project korrekt
+        Project parentProject = new Project();
+        parentProject.setId(parentId);
+        project.setParentProject(parentProject);
+
+        // Gem sub-projekt
+        projectService.createProject(project);
+
+        return "redirect:/projects";
     }
+
 
     // Details
     @GetMapping("/projects/{id}")
@@ -91,7 +121,7 @@ public class ProjectController {
         project.setId(id);
         projectService.updateProject(project);
 
-        return "redirect:/projects";
+        return "redirect:/projects" + id;
     }
 
     // Delete
