@@ -43,6 +43,15 @@ public class EmployeeRepository {
         }
     }
 
+    public void updateOwnProfile(Employee employee) {
+        jdbc.update("UPDATE employee SET employeeName = ?, email = ?, password = ? WHERE employeeId = ?",
+                employee.getName(), employee.getEmail(), employee.getPassword(), employee.getEmployeeId());
+    }
+
+    public void updateEmployeeRole(int employeeId, int newRoleId) {
+        jdbc.update("UPDATE Employee SET employeeRoleId = ? WHERE employeeId = ?", newRoleId, employeeId);
+    }
+
     public Employee getEmployeeFromEmail(String email) {
         List<Employee> list = jdbc.query(
                 "SELECT * FROM Employee WHERE email = ?", rowMapper, email);
