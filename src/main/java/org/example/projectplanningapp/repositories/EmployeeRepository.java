@@ -54,11 +54,11 @@ public class EmployeeRepository {
 
     public Employee getEmployeeFromId(int id) {
         List<Employee> list = jdbc.query(
-                "SELECT * FROM Employee WHERE id = ?", rowMapper, id);
+                "SELECT * FROM Employee WHERE employeeId = ?", rowMapper, id);
         return list.isEmpty() ? null : list.get(0);
     }
 
     public void deleteEmployee(int id) {
-        jdbc.update("DELETE FROM Employee WHERE id = ?", id);
+        jdbc.update("DELETE FROM Employee WHERE employeeId = ?", id);
     }
 }

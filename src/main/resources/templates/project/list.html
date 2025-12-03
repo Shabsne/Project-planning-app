@@ -1,0 +1,25 @@
+<h1>Alle Projekter</h1>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Navn</th>
+        <th>Leader</th>
+        <th>Actions</th>
+    </tr>
+
+    <tr th:each="p : ${projects}">
+        <td th:text="${p.id}"></td>
+        <td th:text="${p.name}"></td>
+        <td th:text="${p.projectLeader?.name}"></td>
+
+        <td>
+            <a th:href="@{'/projects/' + ${p.id} + '/edit'}">Rediger</a> |
+            <form th:action="@{'/projects/' + ${p.id} + '/delete'}" method="post" style="display:inline">
+                <button type="submit">Slet</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<a th:href="@{/projects/create}">Opret nyt projekt</a>
