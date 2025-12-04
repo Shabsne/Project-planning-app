@@ -2,6 +2,7 @@ package org.example.projectplanningapp.controllers;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
+import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.example.projectplanningapp.services.ProjectService;
 import org.springframework.stereotype.Controller;
@@ -74,11 +75,9 @@ public class ProjectController {
     @GetMapping("/projects/{id}")
     public String projectDetails(@PathVariable int id, Model model) {
         model.addAttribute("project", projectService.getProjectDetails(id));
+        model.addAttribute("status", Status.values());
         return "project/details";
     }
-
-
-
 
 
     // Edit

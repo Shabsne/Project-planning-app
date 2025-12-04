@@ -127,4 +127,28 @@ public class TaskController {
         return "redirect:/projects/" +projectId+"/tasks/" +taskId;
     }
 
+    @PostMapping("/{taskId}/update-status")
+    public String updateTaskStatus(@PathVariable int projectId,
+                                   @PathVariable int taskId,
+                                   @RequestParam("status") Status status) {
+
+        Task task = taskService.getTaskFromId(taskId);
+        task.setStatus(status);
+        taskService.updateTask(task); // Opdater i databasen
+
+        return "redirect:/projects/" + projectId;
+    }
+
+    @PostMapping("/{taskId}/updateFromProjectView")
+    public String updateTask(@PathVariable int projectId,
+                             @PathVariable int taskId,
+                             @RequestParam String status) {
+        Task task = taskService.getTaskFromId(taskId);
+        task.setStatus(Status.valueOf(status));
+        taskService.updateTask(task);
+        return "redirect:/projects/" + projectId;
+    }
+
+
+
 }

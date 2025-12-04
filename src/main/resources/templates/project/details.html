@@ -60,11 +60,22 @@
     <!-- Kun root tasks -->
     <tr th:each="t : ${project.tasks}" th:if="${t.parentTask == null}">
         <td>
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${t.taskId})}" th:text="${t.title}"></a>
-
+            <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${t.taskId})}"
+               th:text="${t.title}"></a>
         </td>
-        <td th:text="${t.status}"></td>
-        <td th:text="${t.deadline}"></td>
+        <td>
+            <form th:action="@{/projects/{projectId}/tasks/{taskId}/updateFromProjectView(projectId=${project.id}, taskId=${t.taskId})}"
+                  method="post">
+                <select name="status" onchange="this.form.submit()">
+                    <option th:each="s : ${status}"
+                            th:value="${s}"
+                            th:text="${s}"
+                            th:selected="${s == t.status}">
+                    </option>
+                </select>
+            </form>
+        </td>
+        <td th:text="${#temporals.format(t.deadline, 'dd-MM-yyyy HH:mm')}"></td>
     </tr>
     <tr>
         <td colspan="3">
@@ -72,6 +83,8 @@
         </td>
     </tr>
 </table>
+
+
 
 
 <hr>

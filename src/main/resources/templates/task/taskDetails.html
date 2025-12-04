@@ -30,7 +30,10 @@
 
     <!-- Deadline -->
     <label>Deadline:</label><br>
-    <input type="date" th:field="*{deadline}" /><br><br>
+    <input type="datetime-local"
+           th:value="${task.deadline != null} ? ${#temporals.format(task.deadline, 'yyyy-MM-dd')} + 'T' + ${#temporals.format(task.deadline, 'HH:mm')} : ''"
+           th:field="*{deadline}" /><br><br>
+
 
     <!-- Status -->
     <label>Status:</label><br>
@@ -51,7 +54,7 @@
 <table>
     <tr>
         <th>Name</th>
-        <th>Action</th>
+        <th> </th>
     </tr>
     <tr th:each="emp : ${assignedEmployees}">
         <td th:text="${emp.name}"></td>
@@ -67,7 +70,7 @@
 <table>
     <tr>
         <th>Name</th>
-        <th>Action</th>
+        <th> </th>
     </tr>
     <tr th:each="emp : ${availableEmployees}">
         <td th:text="${emp.name}"></td>
