@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Opret Task</h1>
+
+<form th:action="@{/projects/{projectId}/tasks/create(projectId=${task.projectId})}"
+      th:object="${task}" method="post">
+
+    <label for="title">Title</label>
+    <input type="text" id="title" th:field="*{title}" placeholder="Task name">
+    <br><br>
+    <label for="description">Beskrivelse</label>
+    <textarea id="description" th:field="*{description}" placeholder="Description"></textarea>
+    <br><br>
+    <label for="status">Status</label>
+    <select id="status" th:field="*{status}">
+        <option value="">-- vælg status --</option>
+        <option th:each="s : ${status}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select>
+
+    <br><br>
+    <label for="estimatedHours">Estimated hours</label>
+    <input type="number" id="estimatedHours" th:field="*{estimatedHours}" min="0" step="1">
+    <br><br>
+    <label for="actualHours">Actual hours</label>
+    <input type="number" id="actualHours" th:field="*{actualHours}" min="0" step="1">
+    <br><br>
+    <label for="projectEmployees">Assign employees</label>
+    <select id="projectEmployees" th:field="*{assignedEmployeeIds}" multiple size="5">
+        <option th:each="emp : ${projectEmployees}"
+                th:value="${emp.employeeId}"
+                th:text="${emp.name}">
+        </option>
+    </select>
+
+    <br><br>
+    <label for="deadline">deadline</label>
+    <input type="datetime-local" id="deadline" th:field="*{deadline}">
+    <br><br>
+    <button type="submit">Create Task</button>
+</form>
+
+</body>
+</html>
+
+

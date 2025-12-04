@@ -52,16 +52,27 @@
 <!-- Tasks -->
 <h2>Tasks</h2>
 <table>
-    <tr><th>Title</th><th>Status</th></tr>
-    <tr th:each="t : ${project.tasks}">
-        <td th:text="${t.title}"></td>
-        <td th:text="${t.status}"></td>
     <tr>
-        <td colspan="2">
-            <a th:href="@{'/projects/' + ${project.id} + '/createTask'}">+ Create New Task</a>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Deadline</th>
+    </tr>
+    <!-- Kun root tasks -->
+    <tr th:each="t : ${project.tasks}" th:if="${t.parentTask == null}">
+        <td>
+            <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${t.taskId})}" th:text="${t.title}"></a>
+
+        </td>
+        <td th:text="${t.status}"></td>
+        <td th:text="${t.deadline}"></td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <a th:href="@{/projects/{projectId}/tasks/create(projectId=${project.id})}">+ Create New Task</a>
         </td>
     </tr>
 </table>
+
 
 <hr>
 

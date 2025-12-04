@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Details</title>
+</head>
+<body>
+
+<h1>Edit Task</h1>
+
+<form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/update'}"
+      th:object="${task}"
+      method="post">
+
+    <!-- Title -->
+    <label>Title:</label><br>
+    <input type="text" th:field="*{title}" /><br><br>
+
+    <!-- Description -->
+    <label>Description:</label><br>
+    <textarea th:field="*{description}" rows="3" cols="40"></textarea><br><br>
+
+    <!-- Estimated Hours -->
+    <label>Estimated Hours:</label><br>
+    <input type="number" th:field="*{estimatedHours}" /><br><br>
+
+    <!-- Actual Hours -->
+    <label>Actual Hours:</label><br>
+    <input type="number" th:field="*{actualHours}" /><br><br>
+
+    <!-- Deadline -->
+    <label>Deadline:</label><br>
+    <input type="date" th:field="*{deadline}" /><br><br>
+
+    <!-- Status -->
+    <label>Status:</label><br>
+    <select th:field="*{status}">
+        <option th:each="s : ${status}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select>
+    <br><br>
+
+    <!-- Assigned Employees -->
+    <label>Assigned Employees:</label><br>
+    <select th:field="*{assignedEmployeeIds}" multiple size="6">
+        <option th:each="emp : ${projectEmployees}"
+                th:value="${emp.employeeId}"
+                th:text="${emp.name}"
+                th:selected="${task.assignedEmployees != null and task.assignedEmployees.contains(emp)}">
+        </option>
+    </select>
+    <br><br>
+
+    <button type="submit">Save changes</button>
+</form>
+
+<br>
+<a th:href="@{'/projects/' + ${task.projectId}}">Back to Project</a>
+
+</body>
+</html>

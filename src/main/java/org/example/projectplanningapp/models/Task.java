@@ -17,8 +17,10 @@ public class Task {
     private Status status;
 
     // Til Thymeleaf checkbox binding
-    private List<Integer> assignedEmployeeIds = new ArrayList<>();
-    private List<Employee> assignedEmployees = new ArrayList<>();
+    private List<Integer> assignedEmployeeIds = new ArrayList<>(); // <-- modtager fra form
+    private List<Employee> assignedEmployees = new ArrayList<>();   // <-- konverterer i controller
+
+
 
     private Integer estimatedHours;
     private Integer actualHours;
@@ -33,7 +35,7 @@ public class Task {
 
     public Task(int taskId, int projectId, Integer parentTaskId, Task parentTask,
                 String title, String description, Status status,
-                List<Employee> assignedEmployees, List<Integer> assignedEmployeeIds,
+                List<Employee> assignedEmployees,
                 Integer estimatedHours, Integer actualHours, LocalDateTime deadline,
                 List<Task> subTasks) {
         this.taskId = taskId;
@@ -44,7 +46,6 @@ public class Task {
         this.description = description;
         this.status = status;
         this.assignedEmployees = assignedEmployees;
-        this.assignedEmployeeIds = assignedEmployeeIds;
         this.estimatedHours = estimatedHours;
         this.actualHours = actualHours;
         this.deadline = deadline;
@@ -85,9 +86,15 @@ public class Task {
     public List<Employee> getAssignedEmployees() { return assignedEmployees; }
     public void setAssignedEmployees(List<Employee> assignedEmployees) { this.assignedEmployees = assignedEmployees; }
 
-    public List<Integer> getAssignedEmployeeIds() { return assignedEmployeeIds; }
-    public void setAssignedEmployeeIds(List<Integer> assignedEmployeeIds) { this.assignedEmployeeIds = assignedEmployeeIds; }
 
     public List<Task> getSubTasks() { return subTasks; }
     public void setSubTasks(List<Task> subTasks) { this.subTasks = subTasks; }
+
+    public List<Integer> getAssignedEmployeeIds() {
+        return assignedEmployeeIds;
+    }
+
+    public void setAssignedEmployeeIds(List<Integer> assignedEmployeeIds) {
+        this.assignedEmployeeIds = assignedEmployeeIds;
+    }
 }

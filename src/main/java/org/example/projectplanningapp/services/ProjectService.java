@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.services;
 
+import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
@@ -35,13 +36,17 @@ public class ProjectService {
         repository.update(project);
     }
 
+    public List<Employee> getProjectEmployees(int projectId){
+        return repository.findEmployeesByProject(projectId);
+    }
+
     public Project getProjectDetails(int id) {
 
         Project p = repository.findProjectById(id);
 
         p.setSubProjects(repository.findSubprojects(id));
         p.setTasks(repository.findTasksByProject(id));
-        p.setAssignedEmployees(repository.findEmployeesByProject(id));
+        p.setAssignedEmployees(getProjectEmployees(id));
 
 
         return p;

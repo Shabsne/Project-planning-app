@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.services;
 
+import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.TaskRepository;
 import org.example.projectplanningapp.utils.taskComparators.DeadlineComparator;
@@ -65,16 +66,44 @@ public class TaskService {
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
-    public List<Task> getAssignedTasksForEmployeeSortedByDeadline(int employeeId){
-        List<Task> tasks = taskRepository.getAssignedTasksForEmployee(employeeId);
-        tasks.sort(deadlineComparator);
-        return tasks.isEmpty() ? Collections.emptyList() : tasks;
+
+    public void updateTask(Task updatedTask, List<Integer> employeeIds) {
+        if (updatedTask.getTitle() == null) updatedTask.setTitle("New Task");
+        if (updatedTask.getStatus() == null) updatedTask.setStatus(Status.TODO);
+
+        taskRepository.updateTask(updatedTask);
+
+        taskRepository.removeAllAssignedEmployeesFromTask(updatedTask.getTaskId());
+        if (employeeIds != null) {
+            for (Integer empId : employeeIds) {
+                taskRepository.assignEmployeeToTask(updatedTask.getTaskId(), empId);
+            }
+        }
     }
+
+
 
     //Update Method
     public void updateTask (Task task){
         taskRepository.updateTask(task);
     }
+
+    public void updateTaskEmployees(int taskId, List<Integer> employeeIds) {
+
+        // 1. Slet alle tidligere assignments
+        taskRepository.removeAllAssignedEmployeesFromTask(taskId);
+
+        // 2. Hvis ingen valgt → færdig
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            return;
+        }
+
+        // 3. Insert nye
+        for (Integer empId : employeeIds) {
+            taskRepository.assignEmployeeToTask(taskId, empId);
+        }
+    }
+
 
     //Delete Method
     public void deleteTask (int taskId){
