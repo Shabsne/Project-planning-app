@@ -111,6 +111,14 @@
 
 <br>
 <a th:href="@{'/projects/' + ${task.projectId}}">Back to Project</a>
+<!-- Delete Task -->
+<form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
+      method="post"
+      onsubmit="return confirm('Er du sikker på, du vil slette denne task?');">
+    <button type="submit" style="background-color:red; color:white; border:none; padding:5px 10px; cursor:pointer;">
+        Delete Task
+    </button>
+</form>
 
 </body>
 </html>
