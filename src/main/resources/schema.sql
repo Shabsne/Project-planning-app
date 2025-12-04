@@ -1,74 +1,119 @@
-DROP TABLE IF EXISTS Role
-DROP TABLE IF EXISTS Employee
-DROP TABLE IF EXISTS Project
-DROP TABLE IF EXISTS Task
-DROP TABLE IF EXISTS ProjectEmployee
-DROP TABLE IF EXISTS TaskEmployee
+DROP DATABASE IF EXISTS projectplanning;
+CREATE DATABASE projectplanning;
+USE projectplanning;
+
 -- ------------------------------------------------------
--- INSERT ROLES
+-- ROLE
 -- ------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Role (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    roleName VARCHAR(50) NOT NULL
+CREATE TABLE Role (
+                      roleId INT PRIMARY KEY AUTO_INCREMENT,
+                      roleName VARCHAR(100) NOT NULL
 );
+
 -- ------------------------------------------------------
--- INSERT EMPLOYEES
+-- EMPLOYEE (tidl. Profile)
 -- ------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Employee (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    employeeRoleId INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(200) NOT NULL,
-    password VARCHAR(200) NOT NULL,
-    FOREIGN KEY (employeeRoleId) REFERENCES Role(id)
-    );
--- ------------------------------------------------------
--- INSERT PROJECTS
--- ------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Project (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    projectLeaderId INT NOT NULL,
-    parentProjectId INT NOT NULL,
-    name VARCHAR(200) NOT NULL,
-    description TEXT,
-    startDate DATE,
-    endDate DATE,
-    FOREIGN KEY (projectLeaderId) REFERENCES Employee(id),
-    FOREIGN KEY (parentProjectId) REFERENCES Project(id)
+CREATE TABLE Employee (
+                          employeeId INT PRIMARY KEY AUTO_INCREMENT,
+                          employeeRoleId INT,
+                          name VARCHAR(100) NOT NULL,
+                          email VARCHAR(150) NOT NULL UNIQUE,
+                          password VARCHAR(100) NOT NULL,
+
+                          CONSTRAINT fk_employee_role
+                              FOREIGN KEY (employeeRoleId) REFERENCES Role(roleId)
+                                  ON DELETE SET NULL
+                                  ON UPDATE CASCADE
 );
+
 -- ------------------------------------------------------
--- INSERT TASKS
+-- PROJECT
 -- ------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Task (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    projectId INT NOT NULL,
-    parentTaskId INT NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    status VARCHAR(50) NOT NULL,
-    expectedHours INT NOT NULL,
-    actualHours INT NOT NULL,
-    deadline DATETIME,
-    FOREIGN KEY (projectId) REFERENCES Project(id)
-    FOREIGN KEY (parentTaskId) REFERENCES Task(id)
+CREATE TABLE Project (
+                         projectId INT PRIMARY KEY AUTO_INCREMENT,
+
+                         projectLeaderId INT,
+                         parentProjectId INT NULL,
+
+                         name VARCHAR(150) NOT NULL,
+                         description VARCHAR(2000),
+                         startDate DATE,
+                         endDate DATETIME,
+
+                         CONSTRAINT fk_project_leader
+                             FOREIGN KEY (projectLeaderId) REFERENCES Employee(employeeId)
+                                 ON DELETE SET NULL
+                                 ON UPDATE CASCADE,
+
+                         CONSTRAINT fk_project_parent
+                             FOREIGN KEY (parentProjectId) REFERENCES Project(projectId)
+                                 ON DELETE SET NULL
+                                 ON UPDATE CASCADE
 );
+
 -- ------------------------------------------------------
--- ASSIGN PROJECTS TO EMPLOYEES
+-- TASK
+-- ------------------------------------------------------
+CREATE TABLE Task (
+                      taskId INT PRIMARY KEY AUTO_INCREMENT,
+
+                      projectId INT,
+                      parentTaskId INT NULL,
+
+                      title VARCHAR(50) NOT NULL,
+                      description VARCHAR(2000),
+                      status VARCHAR(50),
+                      estimatedHours INT,
+                      actualHours INT,
+                      deadline DATETIME,
+
+                      CONSTRAINT fk_task_project
+                          FOREIGN KEY (projectId) REFERENCES Project(projectId)
+                              ON DELETE CASCADE
+                              ON UPDATE CASCADE,
+
+                      CONSTRAINT fk_task_parent
+                          FOREIGN KEY (parentTaskId) REFERENCES Task(taskId)
+                              ON DELETE SET NULL
+                              ON UPDATE CASCADE
+);
+
+-- ------------------------------------------------------
+-- MANY-TO-MANY : PROJECT ↔ EMPLOYEE
 -- ------------------------------------------------------
 CREATE TABLE ProjectEmployee (
-    projectId INT NOT NULL,
-    employeeId INT NOT NULL,
-    PRIMARY KEY(projectId, employeeId),
-    FOREIGN KEY(projectId) REFERENCES Project(id),
-    FOREIGN KEY(employeeId) REFERENCES Employee(id)
+                                 projectId INT,
+                                 employeeId INT,
+
+                                 PRIMARY KEY (projectId, employeeId),
+
+                                 CONSTRAINT fk_pe_project
+                                     FOREIGN KEY (projectId) REFERENCES Project(projectId)
+                                         ON DELETE CASCADE
+                                         ON UPDATE CASCADE,
+
+                                 CONSTRAINT fk_pe_employee
+                                     FOREIGN KEY (employeeId) REFERENCES Employee(employeeId)
+                                         ON DELETE CASCADE
+                                         ON UPDATE CASCADE
 );
+
 -- ------------------------------------------------------
--- ASSIGN TASKS TO EMPLOYEES
+-- MANY-TO-MANY : TASK ↔ EMPLOYEE
 -- ------------------------------------------------------
 CREATE TABLE TaskEmployee (
-    taskId INT NOT NULL,
-    employeeId INT NOT NULL,
-    PRIMARY KEY (taskId, employeeId),
-    FOREIGN KEY (taskId) REFERENCES Task(id),
-    FOREIGN KEY (employeeId) REFERENCES Employee(id)
+                              taskId INT,
+                              employeeId INT,
+
+                              PRIMARY KEY (taskId, employeeId),
+
+                              CONSTRAINT fk_te_task
+                                  FOREIGN KEY (taskId) REFERENCES Task(taskId)
+                                      ON DELETE CASCADE
+                                      ON UPDATE CASCADE,
+
+                              CONSTRAINT fk_te_employee
+                                  FOREIGN KEY (employeeId) REFERENCES Employee(employeeId)
+                                      ON DELETE CASCADE
+                                      ON UPDATE CASCADE
 );

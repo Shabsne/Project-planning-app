@@ -2,8 +2,10 @@ package org.example.projectplanningapp.controllers;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
+import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.example.projectplanningapp.services.ProjectService;
+import org.example.projectplanningapp.services.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +20,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final EmployeeService employeeService;
+    private final TaskService taskService;
 
-    public ProjectController(ProjectService projectService, EmployeeService employeeService) {
+    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService) {
         this.projectService = projectService;
         this.employeeService = employeeService;
+        this.taskService = taskService;
     }
 
 
@@ -104,6 +108,8 @@ public class ProjectController {
     @GetMapping("/projects/{id}")
     public String projectDetails(@PathVariable int id, Model model) {
         model.addAttribute("project", projectService.getProjectDetails(id));
+        model.addAttribute("status", Status.values());
+        model.addAttribute("rootTasks", taskService.getRootTasks(id));
         return "project/details";
     }
 

@@ -61,6 +61,29 @@
 
 <hr>
 
+    <!-- Root Tasks -->
+    <h3>Root Tasks</h3>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Deadline</th>
+        </tr>
+        <tr th:each="task : ${rootTasks}">
+            <td>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${task.taskId})}"
+                   th:text="${task.title}"></a>
+            </td>
+            <td th:text="${task.status}"></td>
+            <td th:text="${#temporals.format(task.deadline, 'dd-MM-yyyy HH:mm')}"></td>
+        </tr>
+    </table>
+
+
+
+
+
+    <hr>
 <!-- Tasks -->
 <h2>Tasks</h2>
 <table>

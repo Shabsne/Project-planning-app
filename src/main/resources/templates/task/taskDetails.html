@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Details</title>
+</head>
+<body>
+
+<h1>Edit Task</h1>
+
+<form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/update'}"
+      th:object="${task}"
+      method="post">
+
+    <!-- Title -->
+    <label>Title:</label><br>
+    <input type="text" th:field="*{title}" /><br><br>
+
+    <!-- Description -->
+    <label>Description:</label><br>
+    <textarea th:field="*{description}" rows="3" cols="40"></textarea><br><br>
+
+
+
+    <!-- SubTasks -->
+    <div th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
+        <label>SubTasks:</label><br>
+        <table>
+            <tr>
+                <th>Subproject title</th>
+                <th>Estimated hours</th>
+            </tr>
+            <tr th:each="sub : ${subTasks}">
+                <td>
+                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
+                       th:text="${sub.title}"></a>
+                </td>
+                <td th:text="${sub.estimatedHours}"></td>
+            </tr>
+
+        </table>
+    </div>
+    <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}">
+        Create SubTask
+    </a>
+    <br><br>
+
+
+
+    <!-- Estimated Hours -->
+    <label>Estimated Hours:</label><br>
+    <input type="number" th:field="*{estimatedHours}" /><br><br>
+
+    <!-- Actual Hours -->
+    <label>Actual Hours:</label><br>
+    <input type="number" th:field="*{actualHours}" /><br><br>
+
+    <!-- Deadline -->
+    <label>Deadline:</label><br>
+    <input type="datetime-local"
+           th:value="${task.deadline != null} ? ${#temporals.format(task.deadline, 'yyyy-MM-dd')} + 'T' + ${#temporals.format(task.deadline, 'HH:mm')} : ''"
+           th:field="*{deadline}" /><br><br>
+
+
+    <!-- Status -->
+    <label>Status:</label><br>
+    <select th:field="*{status}">
+        <option th:each="s : ${status}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Save changes</button>
+</form>
+<br>
+<!-- Assigned Employees -->
+<h3>Assigned To Task</h3>
+<table>
+    <tr>
+        <th>Name</th>
+        <th> </th>
+    </tr>
+    <tr th:each="emp : ${assignedEmployees}">
+        <td th:text="${emp.name}"></td>
+        <td>
+            <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}" method="post">
+                <button type="submit">Remove</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<h3>Project Employees</h3>
+<table>
+    <tr>
+        <th>Name</th>
+        <th> </th>
+    </tr>
+    <tr th:each="emp : ${availableEmployees}">
+        <td th:text="${emp.name}"></td>
+        <td>
+            <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}" method="post">
+                <button type="submit">Assign</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<br>
+<a th:href="@{'/projects/' + ${task.projectId}}">Back to Project</a>
+<!-- Delete Task -->
+<form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
+      method="post"
+      onsubmit="return confirm('Er du sikker på, du vil slette denne task?');">
+    <button type="submit" style="background-color:red; color:white; border:none; padding:5px 10px; cursor:pointer;">
+        Delete Task
+    </button>
+</form>
+
+</body>
+</html>
