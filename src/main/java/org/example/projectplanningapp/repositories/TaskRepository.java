@@ -1,7 +1,9 @@
 package org.example.projectplanningapp.repositories;
 
+import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
+import org.example.projectplanningapp.repositories.rowMappers.EmployeeRowMapper;
 import org.example.projectplanningapp.repositories.rowMappers.TaskRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -80,11 +82,6 @@ public class TaskRepository {
         );
     }
 
-    public void assignEmployeeToTask(int taskId, int employeeId) {
-        String sql = "INSERT INTO TaskEmployee (taskId, employeeId) VALUES (?, ?)";
-        jdbc.update(sql, taskId, employeeId);
-    }
-
     public void removeAllAssignedEmployeesFromTask(int taskId) {
         String sql = "DELETE FROM TaskEmployee WHERE taskId = ?";
         jdbc.update(sql, taskId);
@@ -105,6 +102,30 @@ public class TaskRepository {
         String sql = "SELECT * FROM TaskEmployee WHERE employeeId = ?";
         List<Task> tasks = jdbc.query(sql, taskRowMapper, employeeId);
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
+    }
+
+    // Add employee to a task
+    public void assignEmployeeToTask(int taskId, int employeeId) {
+        String sql = "INSERT IGNORE INTO TaskEmployee (taskId, employeeId) VALUES (?, ?)";
+        jdbc.update(sql, taskId, employeeId);
+    }
+
+    // Remove employee from a task
+    public void removeEmployeeFromTask(int taskId, int employeeId) {
+        String sql = "DELETE FROM TaskEmployee WHERE taskId = ? AND employeeId = ?";
+        jdbc.update(sql, taskId, employeeId);
+    }
+
+
+    public List<Employee> getAssignedEmployeesForTask(int taskId) {
+        String sql = """
+        SELECT e.*
+        FROM Employee e
+        INNER JOIN TaskEmployee te ON e.employeeId = te.employeeId
+        WHERE te.taskId = ?
+    """;
+
+        return jdbc.query(sql, new EmployeeRowMapper(), taskId);
     }
 
 }

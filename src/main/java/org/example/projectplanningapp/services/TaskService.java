@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.services;
 
+import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.TaskRepository;
@@ -57,8 +58,6 @@ public class TaskService {
         return task;
     }
 
-
-
     //Getters sorted by deadline
     public List<Task> getTasksInProjectSortedByDeadline(int projectId){
         List<Task> tasks = taskRepository.getTasksInProject(projectId);
@@ -67,20 +66,13 @@ public class TaskService {
     }
 
 
-    public void updateTask(Task updatedTask, List<Integer> employeeIds) {
-        if (updatedTask.getTitle() == null) updatedTask.setTitle("New Task");
-        if (updatedTask.getStatus() == null) updatedTask.setStatus(Status.TODO);
-
-        taskRepository.updateTask(updatedTask);
-
-        taskRepository.removeAllAssignedEmployeesFromTask(updatedTask.getTaskId());
-        if (employeeIds != null) {
-            for (Integer empId : employeeIds) {
-                taskRepository.assignEmployeeToTask(updatedTask.getTaskId(), empId);
-            }
-        }
+    public void assignEmployeeToTask(int taskId, int empId) {
+        taskRepository.assignEmployeeToTask(taskId, empId);
     }
 
+    public void removeEmployeeFromTask(int taskId, int empId) {
+        taskRepository.removeEmployeeFromTask(taskId, empId);
+    }
 
 
     //Update Method
@@ -88,21 +80,6 @@ public class TaskService {
         taskRepository.updateTask(task);
     }
 
-    public void updateTaskEmployees(int taskId, List<Integer> employeeIds) {
-
-        // 1. Slet alle tidligere assignments
-        taskRepository.removeAllAssignedEmployeesFromTask(taskId);
-
-        // 2. Hvis ingen valgt → færdig
-        if (employeeIds == null || employeeIds.isEmpty()) {
-            return;
-        }
-
-        // 3. Insert nye
-        for (Integer empId : employeeIds) {
-            taskRepository.assignEmployeeToTask(taskId, empId);
-        }
-    }
 
 
     //Delete Method
@@ -111,4 +88,7 @@ public class TaskService {
     }
 
 
+    public List<Employee> getAssignedEmployeesForTask(int taskId) {
+        return taskRepository.getAssignedEmployeesForTask(taskId);
+    }
 }

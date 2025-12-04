@@ -52,6 +52,9 @@ public class ProjectService {
         return p;
     }
 
+    public List<Employee> getAvailableEmployeesForTask(int projectId, int taskId) {
+        return repository.getAvailableEmployeesForTask(projectId,taskId);
+    }
 }
 
 

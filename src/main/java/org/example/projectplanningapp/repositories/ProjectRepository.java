@@ -88,4 +88,19 @@ public class ProjectRepository {
         return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId);
     }
 
+    public List<Employee> getAvailableEmployeesForTask(int projectId, int taskId) {
+        String sql = """
+        SELECT e.*
+        FROM Employee e
+        INNER JOIN ProjectEmployee pe ON e.employeeId = pe.employeeId
+        WHERE pe.projectId = ?
+          AND e.employeeId NOT IN (
+              SELECT te.employeeId
+              FROM TaskEmployee te
+              WHERE te.taskId = ?
+          )
+    """;
+
+        return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId, taskId);
+    }
 }
