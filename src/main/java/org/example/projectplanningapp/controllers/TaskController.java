@@ -37,10 +37,6 @@ public class TaskController {
         model.addAttribute("projectEmployees", projectService.getProjectEmployees(projectId));
         model.addAttribute("status", Status.values());
         return "task/createTask";
-        Project project = projectService.findById(projectId);
-        task.setParentProject(project);
-        model.addAttribute("task",task);
-        return "createTaskForm";
     }
 
 
