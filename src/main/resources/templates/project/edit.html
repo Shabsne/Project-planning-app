@@ -2,18 +2,24 @@
 
 <form th:action="@{/projects/{id}/edit(id=${project.id})}" method="post">
 
-    <!-- Hidden input til id -->
     <input type="hidden" name="id" th:value="${project.id}"/>
 
-    <!-- Navn -->
     Navn:
-    <input type="text" name="name" th:value="${project.name}"/><br/>
+    <input type="text" name="name" th:value="${project.name}"/><br/><br/>
 
-    <!-- Beskrivelse -->
     Beskrivelse:
-    <textarea name="description" th:text="${project.description}"></textarea><br/>
+    <textarea name="description" th:text="${project.description}"></textarea><br/><br/>
 
-    <!-- Projektleder -->
+    Startdato:
+    <input type="date"
+           name="startDate"
+           th:value="${project.startDate}"/><br/><br/>
+
+    Deadline:
+    <input type="datetime-local"
+           name="endDate"
+           th:value="${project.endDate != null ? #temporals.format(project.endDate, 'yyyy-MM-dd''T''HH:mm') : ''}"/><br/><br/>
+
     Projektleder:
     <select name="projectLeader.employeeId">
         <option th:each="e : ${leaders}"
@@ -24,4 +30,10 @@
     </select><br/><br/>
 
     <button type="submit">Gem</button>
+
+    <!-- Tilbage-knap -->
+    <a th:href="@{/projects/{id}(id=${project.id})}">
+        <button type="button">Tilbage</button>
+    </a>
+
 </form>

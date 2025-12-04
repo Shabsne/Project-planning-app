@@ -7,20 +7,26 @@
 
 <h1>Opret Underprojekt</h1>
 
-<form th:action="@{/projects/create-sub}" th:object="${project}" method="post">
+<form th:action="@{/projects/{parentId}/sub/create(parentId=${project.parentProject.id})}"
+      th:object="${project}" method="post">
 
+    <!-- Hidden parent project id -->
     <input type="hidden" th:field="*{parentProject.id}">
 
-    Navn: <input type="text" th:field="*{name}"><br><br>
+    <label>Navn:</label>
+    <input type="text" th:field="*{name}" required><br><br>
 
-    Beskrivelse: <textarea th:field="*{description}"></textarea><br><br>
+    <label>Beskrivelse:</label>
+    <textarea th:field="*{description}"></textarea><br><br>
 
-    Startdato: <input type="date" th:field="*{startDate}"><br><br>
+    <label>Startdato:</label>
+    <input type="date" th:field="*{startDate}" required><br><br>
 
-    Slutdato: <input type="datetime-local" th:field="*{endDate}"><br><br>
+    <label>Slutdato:</label>
+    <input type="datetime-local" th:field="*{endDate}" required><br><br>
 
-    Projektleder:
-    <select th:field="*{projectLeader.employeeId}">
+    <label>Projektleder:</label>
+    <select th:field="*{projectLeaderId}">
         <option value="">-- vælg leder --</option>
         <option th:each="emp : ${leaders}"
                 th:value="${emp.employeeId}"

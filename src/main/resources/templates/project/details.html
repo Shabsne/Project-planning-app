@@ -6,16 +6,20 @@
 <body>
 
 <h1 th:text="${project.name}">Project Name</h1>
+
 <p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
 <p><strong>Start:</strong> <span th:text="${project.startDate}"></span></p>
 <p><strong>End:</strong> <span th:text="${project.endDate}"></span></p>
+<p><strong>Project Leader:</strong>
+    <span th:text="${project.projectLeader != null ? project.projectLeader.name : 'Not Assigned'}"></span>
+</p>
 
 <hr>
 
-<!-- Edit / Delete -->
-<a th:href="@{'/projects/' + ${project.id} + '/edit'}">Edit Project</a>
+<!-- Edit / Delete Actions -->
+<a th:href="@{/projects/{id}/edit(id=${project.id})}">Edit Project</a>
 
-<form th:action="@{'/projects/' + ${project.id} + '/delete'}" method="post" style="display:inline;">
+<form th:action="@{/projects/{id}/delete(id=${project.id})}" method="post" style="display:inline;">
     <button type="submit">Delete Project</button>
 </form>
 
@@ -24,7 +28,7 @@
 <!-- Parent Project -->
 <h2>Parent Project</h2>
 <div th:if="${project.parentProject != null}">
-    <a th:href="@{'/projects/' + ${project.parentProject.id}}"
+    <a th:href="@{/projects/{id}(id=${project.parentProject.id})}"
        th:text="${project.parentProject.name}"></a>
 </div>
 <div th:if="${project.parentProject == null}">
@@ -33,19 +37,27 @@
 
 <hr>
 
-<!-- Subprojects -->
-<h2>Subprojects</h2>
-<a th:href="@{'/projects/' + ${project.id} + '/sub/create'}">Create Subproject</a>
+<!-- Subprojects (only visible if this is a parent-project) -->
+<div th:if="${project.parentProject == null}">
+    <h2>Subprojects</h2>
 
-<table>
-    <tr><th>Name</th></tr>
-    <tr th:each="sp : ${project.subProjects}">
-        <td>
-            <a th:href="@{'/projects/' + ${sp.id}}"
-               th:text="${sp.name}"></a>
-        </td>
-    </tr>
-</table>
+    <a th:href="@{/projects/{id}/sub/create(id=${project.id})}">Create Subproject</a>
+
+    <table th:if="${project.subProjects != null and !#lists.isEmpty(project.subProjects)}">
+        <tr><th>Name</th><th>Project Leader</th></tr>
+        <tr th:each="sp : ${project.subProjects}">
+            <td>
+                <a th:href="@{/projects/{id}(id=${sp.id})}"
+                   th:text="${sp.name}"></a>
+            </td>
+            <td th:text="${sp.projectLeader != null ? sp.projectLeader.name : 'Not Assigned'}"></td>
+        </tr>
+    </table>
+
+    <p th:if="${project.subProjects == null || #lists.isEmpty(project.subProjects)}">
+        No subprojects yet.
+    </p>
+</div>
 
 <hr>
 
@@ -72,6 +84,20 @@
 
 
     <hr>
+<!-- Tasks -->
+<h2>Tasks</h2>
+<table>
+    <tr><th>Title</th><th>Status</th></tr>
+    <tr th:each="t : ${project.tasks}">
+        <td th:text="${t.title}"></td>
+        <td th:text="${t.status}"></td>
+    </tr>
+</table>
+
+<br>
+<a th:href="@{/projects/{id}/createTask(id=${project.id})}">+ Create New Task</a>
+
+<hr>
 
 <!-- Employees -->
 <h2>Assigned Employees</h2>
@@ -88,3 +114,4 @@
 
 </body>
 </html>
+
