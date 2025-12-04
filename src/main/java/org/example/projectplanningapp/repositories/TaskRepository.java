@@ -128,4 +128,15 @@ public class TaskRepository {
         return jdbc.query(sql, new EmployeeRowMapper(), taskId);
     }
 
+    public List<Task> getRootTasks(int projectId) {
+        String sql = """
+                SELECT *
+                FROM Task
+                WHERE projectId = ?
+                AND parentTaskId IS NULL
+                ORDER BY deadline ASC
+                """;
+
+        return jdbc.query(sql,taskRowMapper,projectId);
+    }
 }

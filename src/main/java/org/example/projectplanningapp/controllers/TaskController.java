@@ -67,9 +67,11 @@ public class TaskController {
 
         Task task = taskService.getTaskFromId(taskId);
         Project project = projectService.getProjectDetails(projectId);
+        List<Task> subTasks = taskService.getSubTasks(taskId);
 
         model.addAttribute("task", task);
         model.addAttribute("project", project);
+        model.addAttribute("subtasks",subTasks);
         model.addAttribute("status", Status.values());
 
         List<Employee> assigned = taskService.getAssignedEmployeesForTask(taskId);
@@ -148,6 +150,54 @@ public class TaskController {
         taskService.updateTask(task);
         return "redirect:/projects/" + projectId;
     }
+
+    @GetMapping("/{taskId}/createSubTask")
+    public String showCreateSubTaskForm(@PathVariable int projectId,
+                                        @PathVariable int taskId,
+                                        Model model) {
+
+        Task parentTask = taskService.getTaskFromId(taskId);
+        Project project = projectService.findById(projectId);
+
+        Task subtask = new Task();  // Ny subtask
+        subtask.setParentTask(parentTask);
+        subtask.setProjectId(projectId);
+
+        model.addAttribute("subtask", subtask);
+        model.addAttribute("parentTask", parentTask);
+        model.addAttribute("project", project);
+        model.addAttribute("status", Status.values());
+        model.addAttribute("projectEmployees", project.getAssignedEmployees());
+
+        return "task/createSubTask"; // Thymeleaf template
+    }
+
+    @PostMapping("/{taskId}/createSubTask")
+    public String createSubTask(@PathVariable int projectId,
+                                @PathVariable int taskId,
+                                @ModelAttribute Task subtask,
+                                @RequestParam(required = false) List<Integer> assignedEmployeeIds) {
+
+        // Håndter parentTask
+        Task parentTask = taskService.getTaskFromId(taskId);
+        subtask.setParentTask(parentTask);
+        subtask.setProjectId(projectId);
+
+        // Assign employees hvis nogen er valgt
+        if (assignedEmployeeIds != null) {
+            subtask.setAssignedEmployees(
+                    assignedEmployeeIds.stream()
+                            .map(employeeService::getEmployeeFromId)
+                            .toList()
+            );
+        }
+        // Gem subtask
+        taskService.createTask(subtask);
+
+        return "redirect:/projects/" + projectId;
+    }
+
+
 
 
 

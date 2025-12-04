@@ -91,4 +91,12 @@ public class TaskService {
     public List<Employee> getAssignedEmployeesForTask(int taskId) {
         return taskRepository.getAssignedEmployeesForTask(taskId);
     }
+
+    public List<Task> getSubTasks(int taskId) {
+        return taskRepository.getSubTasks(taskId);
+    }
+
+    public List<Task> getRootTasks(int projectId) {
+        return taskRepository.getRootTasks(projectId);
+    }
 }

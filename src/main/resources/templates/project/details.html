@@ -49,45 +49,29 @@
 
 <hr>
 
-<!-- Tasks -->
-<h2>Tasks</h2>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Deadline</th>
-    </tr>
-    <!-- Kun root tasks -->
-    <tr th:each="t : ${project.tasks}" th:if="${t.parentTask == null}">
-        <td>
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${t.taskId})}"
-               th:text="${t.title}"></a>
-        </td>
-        <td>
-            <form th:action="@{/projects/{projectId}/tasks/{taskId}/updateFromProjectView(projectId=${project.id}, taskId=${t.taskId})}"
-                  method="post">
-                <select name="status" onchange="this.form.submit()">
-                    <option th:each="s : ${status}"
-                            th:value="${s}"
-                            th:text="${s}"
-                            th:selected="${s == t.status}">
-                    </option>
-                </select>
-            </form>
-        </td>
-        <td th:text="${#temporals.format(t.deadline, 'dd-MM-yyyy HH:mm')}"></td>
-    </tr>
-    <tr>
-        <td colspan="3">
-            <a th:href="@{/projects/{projectId}/tasks/create(projectId=${project.id})}">+ Create New Task</a>
-        </td>
-    </tr>
-</table>
+    <!-- Root Tasks -->
+    <h3>Root Tasks</h3>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Deadline</th>
+        </tr>
+        <tr th:each="task : ${rootTasks}">
+            <td>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${task.taskId})}"
+                   th:text="${task.title}"></a>
+            </td>
+            <td th:text="${task.status}"></td>
+            <td th:text="${#temporals.format(task.deadline, 'dd-MM-yyyy HH:mm')}"></td>
+        </tr>
+    </table>
 
 
 
 
-<hr>
+
+    <hr>
 
 <!-- Employees -->
 <h2>Assigned Employees</h2>

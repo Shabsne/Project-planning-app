@@ -20,6 +20,33 @@
     <label>Description:</label><br>
     <textarea th:field="*{description}" rows="3" cols="40"></textarea><br><br>
 
+
+
+    <!-- SubTasks -->
+    <div th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
+        <label>SubTasks:</label><br>
+        <table>
+            <tr>
+                <th>Subproject title</th>
+                <th>Estimated hours</th>
+            </tr>
+            <tr th:each="sub : ${subTasks}">
+                <td>
+                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
+                       th:text="${sub.title}"></a>
+                </td>
+                <td th:text="${sub.estimatedHours}"></td>
+            </tr>
+
+        </table>
+    </div>
+    <br>
+    <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}">
+        Create SubTask
+    </a>
+
+
+
     <!-- Estimated Hours -->
     <label>Estimated Hours:</label><br>
     <input type="number" th:field="*{estimatedHours}" /><br><br>
