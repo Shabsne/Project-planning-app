@@ -40,7 +40,7 @@ public class EmployeeControllerTest {
 
         String result = employeeController.loginUser("test@mail.com", "1234", model, session);
 
-        assertEquals("redirect:/home/1", result);
+        assertEquals("redirect:/employee/home/1", result);
 
         verify(session).setAttribute("employee", employee);
     }
