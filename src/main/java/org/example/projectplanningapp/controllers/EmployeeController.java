@@ -103,9 +103,24 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee/{id}/edit")
-    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee) {
+    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee,
+                                @RequestParam(required = false) Integer roleId, HttpSession session) {
+
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        //Employee må kun ændre sin egen profil
+        if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
+            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+        }
+
+        //Admin ændrer rolle
+        if (loggedIn.isAdmin() && roleId != null) {
+            employeeService.updateEmployeeRole(id, roleId);
+        }
+
         employee.setEmployeeId(id);
         employeeService.updateOwnProfile(employee);
+
         return "redirect:/employee/" + id + "/edit";
     }
 

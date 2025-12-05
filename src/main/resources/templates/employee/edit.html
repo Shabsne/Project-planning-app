@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Rediger Profil</title>
 </head>
 <body>
+
+<h1>Rediger Profil</h1>
+
+<form th:action="@{/employee/{id}/edit(id=${employee.employeeId})}" method="post">
+
+    <input type="hidden" name="employeeId" th:value="${employee.employeeId}"/>
+
+    Navn:
+    <input type="text" name="name" th:value="${employee.name}"/>
+    <br/><br/>
+
+    Email:
+    <input type="email" name="email" th:value="${employee.email}"/>
+    <br/><br/>
+
+    Adgangskode:
+    <input type="password" name="password" th:value="${employee.password}"/>
+    <br/><br/>
+
+    <div th:if="${canEditRole}">
+        Rolle:
+        <select name="roleId">
+            <option th:each="r : ${roles}"
+                    th:value="${r.id}"
+                    th:text="${r.displayName}"
+                    th:selected="${employee.role?.id == r.id}">
+            </option>
+        </select>
+        <br/><br/>
+    </div>
+
+    <button type="submit">Gem</button>
+
+    <a th:href="@{/employee/home/{id}(id=${employee.employeeId})}">
+        <button type="button">Tilbage</button>
+    </a>
+
+</form>
 
 </body>
 </html>
