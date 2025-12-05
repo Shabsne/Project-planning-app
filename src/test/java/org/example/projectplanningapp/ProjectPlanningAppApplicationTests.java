@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ProjectPlanningAppApplicationTests {
 
-    @Test
     @Disabled
+    @Test
     void contextLoads() {
     }
 
