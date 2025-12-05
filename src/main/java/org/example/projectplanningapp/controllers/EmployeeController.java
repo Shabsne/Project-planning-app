@@ -84,8 +84,21 @@ public class EmployeeController {
 
     // Rediger profil
     @GetMapping("/employee/{id}/edit")
-    public String showEditProfileForm(@PathVariable int id, Model model) {
-        model.addAttribute("employee", employeeService.getEmployeeFromId(id));
+    public String showEditProfileForm(@PathVariable int id, Model model, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) return "redirect:/";
+
+        //Employee kan kun redigere sig selv
+        if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
+            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+        }
+
+        Employee target = employeeService.getEmployeeFromId(id);
+
+        model.addAttribute("employee", target);
+        model.addAttribute("canEditRole", loggedIn.isAdmin());
+
         return "employee/edit";
     }
 
