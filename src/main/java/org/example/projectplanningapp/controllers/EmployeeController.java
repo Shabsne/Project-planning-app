@@ -28,10 +28,10 @@ public class EmployeeController {
     }
 
     // Registrering af medarbejder
-    @GetMapping("/employees/register")
+    @GetMapping("/employee/register")
     public String showRegisterEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee());
-        return "employees/register";
+        return "employee/register";
     }
 
     @PostMapping("/")
@@ -45,24 +45,24 @@ public class EmployeeController {
         }
 
         session.setAttribute("employee", employee);
-        return "redirect:/employees/home/" + employee.getEmployeeId();
+        return "redirect:/employee/home/" + employee.getEmployeeId();
     }
 
-    @GetMapping("/employees/home/{employeeId}")
+    @GetMapping("/employee/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
-        if (loggedIn == null) return "redirect:/employees/login";
+        if (loggedIn == null) return "redirect:/";
         if (loggedIn.getEmployeeId() != employeeId)
-            return "redirect:/employees/home/" + loggedIn.getEmployeeId();
+            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
 
         return "homepage";
     }
 
-    @GetMapping("/employees/logout")
+    @GetMapping("/employee/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:";
+        return "redirect:/";
     }
 
     @PostMapping("/employees/register")
@@ -70,37 +70,37 @@ public class EmployeeController {
                                    @RequestParam String confirmPassword, Model model) {
         if (employeeService.emailExists(employee.getEmail())) {
             model.addAttribute("error", "Emailen findes allerede");
-            return "employees/register";
+            return "employee/register";
         }
 
         if (!employee.getPassword().equals(confirmPassword)) {
             model.addAttribute("error", "Adgangskoder matcher ikke!");
-            return "employees/register";
+            return "employee/register";
         }
 
         employeeService.registerEmployee(employee);
-        return "redirect:/employees/login";
+        return "redirect:/";
     }
 
     // Rediger profil
-    @GetMapping("/employees/{id}/edit")
+    @GetMapping("/employee/{id}/edit")
     public String showEditProfileForm(@PathVariable int id, Model model) {
         model.addAttribute("employee", employeeService.getEmployeeFromId(id));
         return "employee/edit";
     }
 
-    @PostMapping("/employees/{id}/edit")
+    @PostMapping("/employee/{id}/edit")
     public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee) {
         employee.setEmployeeId(id);
         employeeService.updateOwnProfile(employee);
-        return "redirect:/employees/" + id + "/edit";
+        return "redirect:/employee/" + id + "/edit";
     }
 
     // Liste af medarbejdere
-    @GetMapping("/employees/list")
+    @GetMapping("/employee/list")
     public String listEmployees(Model model) {
         model.addAttribute("employees", employeeService.getAllEmployees());
-        return "employees/list";
+        return "employee/list";
     }
 
 }
