@@ -40,7 +40,6 @@ public class ProjectController {
                 .toList();
 
         model.addAttribute("projects", parentProjects);
-
         return "project/list";
     }
 

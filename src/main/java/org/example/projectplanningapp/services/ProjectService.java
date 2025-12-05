@@ -10,42 +10,42 @@ import java.util.List;
 @Service
 public class ProjectService {
 
-    private ProjectRepository repository;
+    private final ProjectRepository projectRepository;
 
-    public ProjectService(ProjectRepository repository) {
-        this.repository = repository;
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
     }
 
     public void createProject(Project project) {
-        repository.createProject(project);
+        projectRepository.createProject(project);
     }
 
     public List<Project> getAllProjects() {
-        return repository.getAllProjects();
+        return projectRepository.getAllProjects();
     }
 
     public void deleteById(int id) {
-        repository.deleteProjectById(id);
+        projectRepository.deleteProjectById(id);
     }
 
     public Project findById(int id) {
-        return repository.findProjectById(id);
+        return projectRepository.findProjectById(id);
     }
 
     public void updateProject(Project project) {
-        repository.update(project);
+        projectRepository.update(project);
     }
 
     public List<Employee> getProjectEmployees(int projectId){
-        return repository.findEmployeesByProject(projectId);
+        return projectRepository.findEmployeesByProject(projectId);
     }
 
     public Project getProjectDetails(int id) {
 
-        Project p = repository.findProjectById(id);
+        Project p = projectRepository.findProjectById(id);
 
-        p.setSubProjects(repository.findSubprojects(id));
-        p.setTasks(repository.findTasksByProject(id));
+        p.setSubProjects(projectRepository.findSubprojects(id));
+        p.setTasks(projectRepository.findTasksByProject(id));
         p.setAssignedEmployees(getProjectEmployees(id));
 
 
@@ -53,7 +53,7 @@ public class ProjectService {
     }
 
     public List<Employee> getAvailableEmployeesForTask(int projectId, int taskId) {
-        return repository.getAvailableEmployeesForTask(projectId,taskId);
+        return projectRepository.getAvailableEmployeesForTask(projectId,taskId);
     }
 
 }
