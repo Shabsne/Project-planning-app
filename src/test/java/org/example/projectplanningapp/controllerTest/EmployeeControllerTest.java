@@ -30,7 +30,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    void lofinUser_redirectsToHome_whenLoginSeccessful() {
+    void loginUser_redirectsToHome_whenLoginSuccessful() {
         Employee employee = new Employee();
         employee.setEmployeeId(1);
         employee.setEmail("test@mail.com");
