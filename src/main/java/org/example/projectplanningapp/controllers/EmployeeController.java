@@ -21,7 +21,7 @@ public class EmployeeController {
     }
 
     // Login side
-    @GetMapping("/employees/login")
+    @GetMapping("/")
     public String showLogInPage() {
         System.out.println("Hej");
         return "logIn";
@@ -34,7 +34,7 @@ public class EmployeeController {
         return "employees/register";
     }
 
-    @PostMapping("/employees/login")
+    @PostMapping("/")
     public String loginUser(@RequestParam String email, @RequestParam String password,
                             Model model, HttpSession session) {
         Employee employee = employeeService.login(email, password);
@@ -45,7 +45,7 @@ public class EmployeeController {
         }
 
         session.setAttribute("employee", employee);
-        return "redirect:/home/" + employee.getEmployeeId();
+        return "redirect:/employees/home/" + employee.getEmployeeId();
     }
 
     @GetMapping("/employees/home/{employeeId}")
@@ -62,7 +62,7 @@ public class EmployeeController {
     @GetMapping("/employees/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/employees/login";
+        return "redirect:";
     }
 
     @PostMapping("/employees/register")
