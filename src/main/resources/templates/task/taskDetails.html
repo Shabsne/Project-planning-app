@@ -2,124 +2,162 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Task Details</title>
+    <title>Task Details - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<h1>Edit Task</h1>
-
-<form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/update'}"
-      th:object="${task}"
-      method="post">
-
-    <!-- Title -->
-    <label>Title:</label><br>
-    <input type="text" th:field="*{title}" /><br><br>
-
-    <!-- Description -->
-    <label>Description:</label><br>
-    <textarea th:field="*{description}" rows="3" cols="40"></textarea><br><br>
-
-
-
-    <!-- SubTasks -->
-    <div th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
-        <label>SubTasks:</label><br>
-        <table>
-            <tr>
-                <th>Subproject title</th>
-                <th>Estimated hours</th>
-            </tr>
-            <tr th:each="sub : ${subTasks}">
-                <td>
-                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
-                       th:text="${sub.title}"></a>
-                </td>
-                <td th:text="${sub.estimatedHours}"></td>
-            </tr>
-
-        </table>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
     </div>
-    <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}">
-        Create SubTask
-    </a>
-    <br><br>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
+<div class="main-content">
+    <div class="page-header">
+        <h1>Rediger Task</h1>
+        <a th:href="@{'/projects/' + ${task.projectId}}" class="menu-button">← Tilbage til projekt</a>
+    </div>
 
+    <div class="task-details-layout">
+        <!-- Main Form -->
+        <div class="form-container" style="max-width: 100%;">
+            <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/update'}"
+                  th:object="${task}"
+                  method="post"
+                  class="project-form">
 
-    <!-- Estimated Hours -->
-    <label>Estimated Hours:</label><br>
-    <input type="number" th:field="*{estimatedHours}" /><br><br>
+                <div class="form-group">
+                    <label for="title">Titel</label>
+                    <input type="text" id="title" th:field="*{title}" required>
+                </div>
 
-    <!-- Actual Hours -->
-    <label>Actual Hours:</label><br>
-    <input type="number" th:field="*{actualHours}" /><br><br>
+                <div class="form-group">
+                    <label for="description">Beskrivelse</label>
+                    <textarea id="description" th:field="*{description}" rows="4"></textarea>
+                </div>
 
-    <!-- Deadline -->
-    <label>Deadline:</label><br>
-    <input type="datetime-local"
-           th:value="${task.deadline != null} ? ${#temporals.format(task.deadline, 'yyyy-MM-dd')} + 'T' + ${#temporals.format(task.deadline, 'HH:mm')} : ''"
-           th:field="*{deadline}" /><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estimatedHours">Estimerede Timer</label>
+                        <input type="number" id="estimatedHours" th:field="*{estimatedHours}" min="0" step="0.5">
+                    </div>
 
+                    <div class="form-group">
+                        <label for="actualHours">Faktiske Timer</label>
+                        <input type="number" id="actualHours" th:field="*{actualHours}" min="0" step="0.5">
+                    </div>
+                </div>
 
-    <!-- Status -->
-    <label>Status:</label><br>
-    <select th:field="*{status}">
-        <option th:each="s : ${status}"
-                th:value="${s}"
-                th:text="${s}">
-        </option>
-    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="deadline">Deadline</label>
+                        <input type="datetime-local"
+                               id="deadline"
+                               th:value="${task.deadline != null} ? ${#temporals.format(task.deadline, 'yyyy-MM-dd')} + 'T' + ${#temporals.format(task.deadline, 'HH:mm')} : ''"
+                               th:field="*{deadline}">
+                    </div>
 
-    <br><br>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" th:field="*{status}">
+                            <option th:each="s : ${status}"
+                                    th:value="${s}"
+                                    th:text="${s}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
 
-    <button type="submit">Save changes</button>
-</form>
-<br>
-<!-- Assigned Employees -->
-<h3>Assigned To Task</h3>
-<table>
-    <tr>
-        <th>Name</th>
-        <th> </th>
-    </tr>
-    <tr th:each="emp : ${assignedEmployees}">
-        <td th:text="${emp.name}"></td>
-        <td>
-            <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}" method="post">
-                <button type="submit">Remove</button>
+                <div class="form-actions">
+                    <button type="submit" class="button-primary">Gem ændringer</button>
+                    <a th:href="@{'/projects/' + ${task.projectId}}" class="button-secondary">Annuller</a>
+                </div>
             </form>
-        </td>
-    </tr>
-</table>
+        </div>
 
-<h3>Project Employees</h3>
-<table>
-    <tr>
-        <th>Name</th>
-        <th> </th>
-    </tr>
-    <tr th:each="emp : ${availableEmployees}">
-        <td th:text="${emp.name}"></td>
-        <td>
-            <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}" method="post">
-                <button type="submit">Assign</button>
+        <!-- SubTasks Section -->
+        <div class="details-card" th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
+            <div class="card-header-flex">
+                <h2>Subtasks</h2>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+                   class="button-accent menu-button small-button">+ Opret subtask</a>
+            </div>
+
+            <div class="task-table">
+                <div class="table-header" style="grid-template-columns: 2fr 1fr;">
+                    <span>Titel</span>
+                    <span>Estimerede Timer</span>
+                </div>
+                <div th:each="sub : ${subTasks}" class="table-row" style="grid-template-columns: 2fr 1fr;">
+                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
+                       th:text="${sub.title}"
+                       class="task-title">Subtask</a>
+                    <span th:text="${sub.estimatedHours}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-card" th:if="${subTasks == null or #lists.isEmpty(subTasks)}">
+            <h2>Subtasks</h2>
+            <p class="empty-state">Ingen subtasks endnu.</p>
+            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+               class="button-accent menu-button small-button">+ Opret subtask</a>
+        </div>
+
+        <!-- Assigned Employees -->
+        <div class="details-card">
+            <h2>Tildelte Medarbejdere</h2>
+            <div th:if="${assignedEmployees != null and #lists.isNotEmpty(assignedEmployees)}" class="assigned-list">
+                <div th:each="emp : ${assignedEmployees}" class="assigned-item">
+                    <span th:text="${emp.name}">Name</span>
+                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit" class="remove-btn">Fjern</button>
+                    </form>
+                </div>
+            </div>
+            <p th:if="${assignedEmployees == null or #lists.isEmpty(assignedEmployees)}" class="empty-state">
+                Ingen tildelte medarbejdere.
+            </p>
+        </div>
+
+        <!-- Available Employees -->
+        <div class="details-card">
+            <h2>Tilgængelige Medarbejdere</h2>
+            <div th:if="${availableEmployees != null and #lists.isNotEmpty(availableEmployees)}" class="assigned-list">
+                <div th:each="emp : ${availableEmployees}" class="assigned-item">
+                    <span th:text="${emp.name}">Name</span>
+                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit" class="assign-btn">Tildel</button>
+                    </form>
+                </div>
+            </div>
+            <p th:if="${availableEmployees == null or #lists.isEmpty(availableEmployees)}" class="empty-state">
+                Alle medarbejdere er allerede tildelt.
+            </p>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="details-card danger-card">
+            <h2>Farezone</h2>
+            <p>Sletning af tasken kan ikke fortrydes.</p>
+            <form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
+                  method="post"
+                  onsubmit="return confirm('Er du sikker på, du vil slette denne task?');">
+                <button type="submit" class="button-danger">Slet task</button>
             </form>
-        </td>
-    </tr>
-</table>
-
-<br>
-<a th:href="@{'/projects/' + ${task.projectId}}">Back to Project</a>
-<!-- Delete Task -->
-<form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
-      method="post"
-      onsubmit="return confirm('Er du sikker på, du vil slette denne task?');">
-    <button type="submit" style="background-color:red; color:white; border:none; padding:5px 10px; cursor:pointer;">
-        Delete Task
-    </button>
-</form>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

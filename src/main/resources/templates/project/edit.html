@@ -1,47 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org"></html>
+<html xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Rediger projekt</title>
+    <title>Rediger projekt - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>Rediger Projekt</h1>
 
-<form th:action="@{/projects/{id}/edit(id=${project.id})}" method="post">
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-    <input type="hidden" name="id" th:value="${project.id}"/>
+<div class="main-content">
+    <div class="page-header">
+        <h1>Rediger Projekt</h1>
+        <a th:href="@{/projects/{id}(id=${project.id})}" class="menu-button">← Tilbage til projekt</a>
+    </div>
 
-    Navn:
-    <input type="text" name="name" th:value="${project.name}"/><br/><br/>
+    <div class="form-container">
+        <form th:action="@{/projects/{id}/edit(id=${project.id})}" method="post" class="project-form">
 
-    Beskrivelse:
-    <textarea name="description" th:text="${project.description}"></textarea><br/><br/>
+            <input type="hidden" name="id" th:value="${project.id}"/>
 
-    Startdato:
-    <input type="date"
-           name="startDate"
-           th:value="${project.startDate}"/><br/><br/>
+            <div class="form-group">
+                <label for="name">Navn</label>
+                <input type="text" id="name" name="name" th:value="${project.name}" required>
+            </div>
 
-    Deadline:
-    <input type="datetime-local"
-           name="endDate"
-           th:value="${project.endDate != null ? #temporals.format(project.endDate, 'yyyy-MM-dd''T''HH:mm') : ''}"/><br/><br/>
+            <div class="form-group">
+                <label for="description">Beskrivelse</label>
+                <textarea id="description" name="description" th:text="${project.description}" rows="5"></textarea>
+            </div>
 
-    Projektleder:
-    <select name="projectLeader.employeeId">
-        <option th:each="e : ${leaders}"
-                th:value="${e.employeeId}"
-                th:text="${e.name}"
-                th:selected="${project.projectLeader?.employeeId == e.employeeId}">
-        </option>
-    </select><br/><br/>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Startdato</label>
+                    <input type="date" id="startDate" name="startDate" th:value="${project.startDate}" required>
+                </div>
 
-    <button type="submit">Gem</button>
+                <div class="form-group">
+                    <label for="endDate">Slutdato</label>
+                    <input type="datetime-local"
+                           id="endDate"
+                           name="endDate"
+                           th:value="${project.endDate != null ? #temporals.format(project.endDate, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                           required>
+                </div>
+            </div>
 
-    <!-- Tilbage-knap -->
-    <a th:href="@{/projects/{id}(id=${project.id})}">
-        <button type="button">Tilbage</button>
-    </a>
+            <div class="form-group">
+                <label for="projectLeaderId">Projektleder</label>
+                <select id="projectLeaderId" name="projectLeader.employeeId">
+                    <option value="">-- Vælg projektleder --</option>
+                    <option th:each="e : ${leaders}"
+                            th:value="${e.employeeId}"
+                            th:text="${e.name}"
+                            th:selected="${project.projectLeader?.employeeId == e.employeeId}">
+                    </option>
+                </select>
+            </div>
 
-</form>
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Gem ændringer</button>
+                <a th:href="@{/projects/{id}(id=${project.id})}" class="button-secondary">Annuller</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

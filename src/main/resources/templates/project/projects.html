@@ -2,46 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Projects</title>
+    <title>Projects - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<h1>All Active Projects</h1>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-<a href="/projects/create">
-    <button>Create Project</button>
-</a>
+<div class="main-content">
+    <div class="page-header">
+        <h1>Alle Aktive Projekter</h1>
+        <a href="/projects/create" class="button-accent menu-button">+ Opret Projekt</a>
+    </div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Leader</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Navn</th>
+                <th>Projektleder</th>
+                <th>Start</th>
+                <th>Slut</th>
+                <th>Handlinger</th>
+            </tr>
+            </thead>
 
-    <tbody>
-    <tr th:each="p : ${projects}">
-        <td th:text="${p.id}"></td>
-        <td>
-            <a th:href="@{/projects/{id}(id=${p.id})}" th:text="${p.name}"></a>
-        </td>
-        <td th:text="${p.projectLeader != null ? p.projectLeader.name : 'N/A'}"></td>
-        <td th:text="${p.startDate}"></td>
-        <td th:text="${p.endDate}"></td>
-        <td>
-            <a th:href="@{/projects/edit/{id}(id=${p.id})}">Edit</a> |
-            <a th:href="@{/projects/delete/{id}(id=${p.id})}">Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+            <tbody>
+            <tr th:each="p : ${projects}">
+                <td th:text="${p.id}">1</td>
+                <td>
+                    <a th:href="@{/projects/{id}(id=${p.id})}"
+                       th:text="${p.name}"
+                       class="table-link">Project Name</a>
+                </td>
+                <td th:text="${p.projectLeader != null ? p.projectLeader.name : 'Ikke tildelt'}">N/A</td>
+                <td th:text="${p.startDate != null ? #temporals.format(p.startDate, 'dd/MM/yyyy') : '-'}">01/01/2024</td>
+                <td th:text="${p.endDate != null ? #temporals.format(p.endDate, 'dd/MM/yyyy HH:mm') : '-'}">01/12/2024</td>
+                <td class="action-cell">
+                    <a th:href="@{/projects/edit/{id}(id=${p.id})}" class="action-btn edit-btn">Rediger</a>
+                    <a th:href="@{/projects/delete/{id}(id=${p.id})}" class="action-btn delete-btn">Slet</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </body>
 </html>
-

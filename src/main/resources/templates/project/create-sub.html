@@ -2,42 +2,74 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Subproject</title>
+    <title>Opret Underprojekt - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<h1>Opret Underprojekt</h1>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-<form th:action="@{/projects/{parentId}/sub/create(parentId=${project.parentProject.id})}"
-      th:object="${project}" method="post">
+<div class="main-content">
+    <div class="page-header">
+        <h1>Opret Underprojekt</h1>
+        <a th:href="@{/projects/{id}(id=${project.parentProject.id})}" class="menu-button">← Tilbage til projekt</a>
+    </div>
 
-    <!-- Hidden parent project id -->
-    <input type="hidden" th:field="*{parentProject.id}">
+    <div class="form-container">
+        <form th:action="@{/projects/{parentId}/sub/create(parentId=${project.parentProject.id})}"
+              th:object="${project}" method="post" class="project-form">
 
-    <label>Navn:</label>
-    <input type="text" th:field="*{name}" required><br><br>
+            <input type="hidden" th:field="*{parentProject.id}">
 
-    <label>Beskrivelse:</label>
-    <textarea th:field="*{description}"></textarea><br><br>
+            <div class="form-group">
+                <label for="name">Navn</label>
+                <input type="text" id="name" th:field="*{name}" required>
+            </div>
 
-    <label>Startdato:</label>
-    <input type="date" th:field="*{startDate}" required><br><br>
+            <div class="form-group">
+                <label for="description">Beskrivelse</label>
+                <textarea id="description" th:field="*{description}" rows="5"></textarea>
+            </div>
 
-    <label>Slutdato:</label>
-    <input type="datetime-local" th:field="*{endDate}" required><br><br>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Startdato</label>
+                    <input type="date" id="startDate" th:field="*{startDate}" required>
+                </div>
 
-    <label>Projektleder:</label>
-    <select th:field="*{projectLeaderId}">
-        <option value="">-- vælg leder --</option>
-        <option th:each="emp : ${leaders}"
-                th:value="${emp.employeeId}"
-                th:text="${emp.name}">
-        </option>
-    </select><br><br>
+                <div class="form-group">
+                    <label for="endDate">Slutdato</label>
+                    <input type="datetime-local" id="endDate" th:field="*{endDate}" required>
+                </div>
+            </div>
 
-    <button type="submit">Gem underprojekt</button>
-</form>
+            <div class="form-group">
+                <label for="projectLeaderId">Projektleder</label>
+                <select id="projectLeaderId" th:field="*{projectLeaderId}">
+                    <option value="">-- Vælg projektleder --</option>
+                    <option th:each="emp : ${leaders}"
+                            th:value="${emp.employeeId}"
+                            th:text="${emp.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Gem underprojekt</button>
+                <a th:href="@{/projects/{id}(id=${project.parentProject.id})}" class="button-secondary">Annuller</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

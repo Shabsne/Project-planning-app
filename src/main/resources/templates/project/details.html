@@ -7,117 +7,151 @@
 </head>
 <body>
 
-<h1 th:text="${project.name}">Project Name</h1>
-
-<p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
-<p><strong>Start:</strong> <span th:text="${project.startDate}"></span></p>
-<p><strong>End:</strong> <span th:text="${project.endDate}"></span></p>
-<p><strong>Samlede Estimerede Timer:</strong>
-    <span th:text="${totalEstimatedHours}"></span> timer
-</p>
-<p><strong>Project Leader:</strong>
-    <span th:text="${project.projectLeader != null ? project.projectLeader.name : 'Not Assigned'}"></span>
-</p>
-
-
-<hr>
-
-<!-- Edit / Delete Actions -->
-<a th:href="@{/projects/{id}/edit(id=${project.id})}">Edit Project</a>
-
-<form th:action="@{/projects/{id}/delete(id=${project.id})}" method="post" style="display:inline;">
-    <button type="submit">Delete Project</button>
-</form>
-
-<hr>
-
-<!-- Parent Project -->
-<h2>Parent Project</h2>
-<div th:if="${project.parentProject != null}">
-    <a th:href="@{/projects/{id}(id=${project.parentProject.id})}"
-       th:text="${project.parentProject.name}"></a>
-</div>
-<div th:if="${project.parentProject == null}">
-    <p>No parent (this is a root project)</p>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
-<hr>
+<div class="main-content">
+    <div class="page-header">
+        <h1 th:text="${project.name}">Project Name</h1>
+        <div class="header-actions">
+            <a th:href="@{/projects/{id}/edit(id=${project.id})}" class="menu-button">Rediger projekt</a>
+        </div>
+    </div>
 
-<!-- Subprojects (only visible if this is a parent-project) -->
-<div th:if="${project.parentProject == null}">
-    <h2>Subprojects</h2>
+    <div class="project-details-container">
+        <!-- Project Info Card -->
+        <div class="details-card">
+            <h2>Projekt Information</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Beskrivelse</span>
+                    <span class="detail-value" th:text="${project.description}">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Projektleder</span>
+                    <span class="detail-value" th:text="${project.projectLeader != null ? project.projectLeader.name : 'Ikke tildelt'}">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Start</span>
+                    <span class="detail-value" th:text="${project.startDate != null ? #temporals.format(project.startDate, 'dd/MM/yyyy HH:mm') : '-'}">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Slut</span>
+                    <span class="detail-value" th:text="${project.endDate != null ? #temporals.format(project.endDate, 'dd/MM/yyyy HH:mm') : '-'}">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Estimerede timer</span>
+                    <span class="detail-value"><strong th:text="${totalEstimatedHours}">0</strong> timer</span>
+                </div>
+            </div>
+        </div>
 
-    <a th:href="@{/projects/{id}/sub/create(id=${project.id})}">Create Subproject</a>
+        <!-- Parent Project -->
+        <div class="details-card" th:if="${project.parentProject != null}">
+            <h2>Overordnet Projekt</h2>
+            <a th:href="@{/projects/{id}(id=${project.parentProject.id})}"
+               class="parent-link"
+               th:text="${project.parentProject.name}">Parent Project</a>
+        </div>
 
-    <table th:if="${project.subProjects != null and !#lists.isEmpty(project.subProjects)}">
-        <tr><th>Name</th><th>Project Leader</th></tr>
-        <tr th:each="sp : ${project.subProjects}">
-            <td>
-                <a th:href="@{/projects/{id}(id=${sp.id})}"
-                   th:text="${sp.name}"></a>
-            </td>
-            <td th:text="${sp.projectLeader != null ? sp.projectLeader.name : 'Not Assigned'}"></td>
-        </tr>
-    </table>
+        <!-- Subprojects -->
+        <div class="details-card" th:if="${project.parentProject == null}">
+            <div class="card-header-flex">
+                <h2>Underprojekter</h2>
+                <a th:href="@{/projects/{id}/sub/create(id=${project.id})}" class="button-accent menu-button small-button">+ Opret underprojekt</a>
+            </div>
 
-    <p th:if="${project.subProjects == null || #lists.isEmpty(project.subProjects)}">
-        No subprojects yet.
-    </p>
+            <div th:if="${project.subProjects != null and !#lists.isEmpty(project.subProjects)}">
+                <div class="subproject-list">
+                    <div th:each="sp : ${project.subProjects}" class="subproject-item">
+                        <a th:href="@{/projects/{id}(id=${sp.id})}" th:text="${sp.name}" class="subproject-name">Subproject</a>
+                        <span class="subproject-leader" th:text="${sp.projectLeader != null ? sp.projectLeader.name : 'Ikke tildelt'}">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <p th:if="${project.subProjects == null || #lists.isEmpty(project.subProjects)}" class="empty-state">
+                Ingen underprojekter endnu.
+            </p>
+        </div>
+
+        <!-- Root Tasks -->
+        <div class="details-card">
+            <h2>Root Tasks</h2>
+            <div th:if="${rootTasks != null and !#lists.isEmpty(rootTasks)}" class="task-table">
+                <div class="table-header">
+                    <span>Titel</span>
+                    <span>Status</span>
+                    <span>Deadline</span>
+                </div>
+                <div th:each="task : ${rootTasks}" class="table-row">
+                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${task.taskId})}"
+                       th:text="${task.title}" class="task-title">Task</a>
+                    <span class="task-status" th:text="${task.status}">Status</span>
+                    <span th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}">-</span>
+                </div>
+            </div>
+            <p th:if="${rootTasks == null || #lists.isEmpty(rootTasks)}" class="empty-state">
+                Ingen root tasks endnu.
+            </p>
+        </div>
+
+        <!-- All Tasks -->
+        <div class="details-card">
+            <div class="card-header-flex">
+                <h2>Alle Tasks</h2>
+                <a th:href="@{/projects/{id}/createTask(id=${project.id})}" class="button-accent menu-button small-button">+ Opret task</a>
+            </div>
+
+            <div th:if="${project.tasks != null and !#lists.isEmpty(project.tasks)}" class="task-table">
+                <div class="table-header">
+                    <span>Titel</span>
+                    <span>Status</span>
+                </div>
+                <div th:each="t : ${project.tasks}" class="table-row">
+                    <span th:text="${t.title}">Task</span>
+                    <span class="task-status" th:text="${t.status}">Status</span>
+                </div>
+            </div>
+            <p th:if="${project.tasks == null || #lists.isEmpty(project.tasks)}" class="empty-state">
+                Ingen tasks endnu.
+            </p>
+        </div>
+
+        <!-- Assigned Employees -->
+        <div class="details-card">
+            <h2>Tildelte Medarbejdere</h2>
+            <div th:if="${project.assignedEmployees != null and !#lists.isEmpty(project.assignedEmployees)}" class="employee-list">
+                <div th:each="e : ${project.assignedEmployees}" class="employee-item">
+                    <span class="employee-name" th:text="${e.name}">Name</span>
+                    <span class="employee-email" th:text="${e.email}">email</span>
+                </div>
+            </div>
+            <p th:if="${project.assignedEmployees == null || #lists.isEmpty(project.assignedEmployees)}" class="empty-state">
+                Ingen tildelte medarbejdere endnu.
+            </p>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="details-card danger-card">
+            <h2>Farezone</h2>
+            <p>Sletning af projektet kan ikke fortrydes.</p>
+            <form th:action="@{/projects/{id}/delete(id=${project.id})}" method="post" style="display:inline;">
+                <button type="submit" class="button-danger">Slet projekt</button>
+            </form>
+        </div>
+
+        <a href="/projects" class="back-link">← Tilbage til projekter</a>
+    </div>
 </div>
-
-<hr>
-
-    <!-- Root Tasks -->
-    <h3>Root Tasks</h3>
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Deadline</th>
-        </tr>
-        <tr th:each="task : ${rootTasks}">
-            <td>
-                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${task.taskId})}"
-                   th:text="${task.title}"></a>
-            </td>
-            <td th:text="${task.status}"></td>
-            <td th:text="${#temporals.format(task.deadline, 'dd-MM-yyyy HH:mm')}"></td>
-        </tr>
-    </table>
-
-
-
-
-
-    <hr>
-<!-- Tasks -->
-<h2>Tasks</h2>
-<table>
-    <tr><th>Title</th><th>Status</th></tr>
-    <tr th:each="t : ${project.tasks}">
-        <td th:text="${t.title}"></td>
-        <td th:text="${t.status}"></td>
-    </tr>
-</table>
-
-<br>
-<a th:href="@{/projects/{id}/createTask(id=${project.id})}">+ Create New Task</a>
-
-<hr>
-
-<!-- Employees -->
-<h2>Assigned Employees</h2>
-<table>
-    <tr><th>Name</th><th>Email</th></tr>
-    <tr th:each="e : ${project.assignedEmployees}">
-        <td th:text="${e.name}"></td>
-        <td th:text="${e.email}"></td>
-    </tr>
-</table>
-
-<br>
-<a href="/projects">⬅ Back to list</a>
 
 </body>
 </html>
-

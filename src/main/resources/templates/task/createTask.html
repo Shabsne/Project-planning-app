@@ -2,55 +2,90 @@
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Opret Task - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
-
 </head>
 <body>
 
-<h1>Opret Task</h1>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-<form th:action="@{/projects/{projectId}/tasks/create(projectId=${task.projectId})}"
-      th:object="${task}" method="post">
+<div class="main-content">
+    <div class="page-header">
+        <h1>Opret Ny Task</h1>
+        <a th:href="@{/projects/{projectId}(projectId=${task.projectId})}" class="menu-button">← Tilbage til projekt</a>
+    </div>
 
-    <label for="title">Title</label>
-    <input type="text" id="title" th:field="*{title}" placeholder="Task name">
-    <br><br>
-    <label for="description">Beskrivelse</label>
-    <textarea id="description" th:field="*{description}" placeholder="Description"></textarea>
-    <br><br>
-    <label for="status">Status</label>
-    <select id="status" th:field="*{status}">
-        <option value="">-- vælg status --</option>
-        <option th:each="s : ${status}"
-                th:value="${s}"
-                th:text="${s}">
-        </option>
-    </select>
+    <div class="form-container">
+        <form th:action="@{/projects/{projectId}/tasks/create(projectId=${task.projectId})}"
+              th:object="${task}"
+              method="post"
+              class="project-form">
 
-    <br><br>
-    <label for="estimatedHours">Estimated hours</label>
-    <input type="number" id="estimatedHours" th:field="*{estimatedHours}" min="0" step="1">
-    <br><br>
-    <label for="actualHours">Actual hours</label>
-    <input type="number" id="actualHours" th:field="*{actualHours}" min="0" step="1">
-    <br><br>
-    <label for="projectEmployees">Assign employees</label>
-    <select id="projectEmployees" th:field="*{assignedEmployeeIds}" multiple size="5">
-        <option th:each="emp : ${projectEmployees}"
-                th:value="${emp.employeeId}"
-                th:text="${emp.name}">
-        </option>
-    </select>
+            <div class="form-group">
+                <label for="title">Titel</label>
+                <input type="text" id="title" th:field="*{title}" required>
+            </div>
 
-    <br><br>
-    <label for="deadline">deadline</label>
-    <input type="datetime-local" id="deadline" th:field="*{deadline}">
-    <br><br>
-    <button type="submit">Create Task</button>
-</form>
+            <div class="form-group">
+                <label for="description">Beskrivelse</label>
+                <textarea id="description" th:field="*{description}" rows="5"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" th:field="*{status}" required>
+                    <option value="">-- Vælg status --</option>
+                    <option th:each="s : ${status}"
+                            th:value="${s}"
+                            th:text="${s}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="estimatedHours">Estimerede Timer</label>
+                    <input type="number" id="estimatedHours" th:field="*{estimatedHours}" min="0" step="0.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="actualHours">Faktiske Timer</label>
+                    <input type="number" id="actualHours" th:field="*{actualHours}" min="0" step="0.5">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="deadline">Deadline</label>
+                <input type="datetime-local" id="deadline" th:field="*{deadline}">
+            </div>
+
+            <div class="form-group">
+                <label for="projectEmployees">Tildel Medarbejdere</label>
+                <select id="projectEmployees" th:field="*{assignedEmployeeIds}" multiple size="5" class="multi-select">
+                    <option th:each="emp : ${projectEmployees}"
+                            th:value="${emp.employeeId}"
+                            th:text="${emp.name}">
+                    </option>
+                </select>
+                <small style="color: var(--alpha-gray); font-size: 12px;">Hold Ctrl (Cmd på Mac) for at vælge flere</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Opret Task</button>
+                <a th:href="@{/projects/{projectId}(projectId=${task.projectId})}" class="button-secondary">Annuller</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>
-
-

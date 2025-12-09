@@ -1,33 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Opret Projekt - Alpha Solutions</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<h1>Opret Projekt</h1>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-<form th:action="@{/projects/create}" th:object="${project}" method="post">
+<div class="main-content">
+    <div class="page-header">
+        <h1>Opret Nyt Projekt</h1>
+        <a href="/projects" class="menu-button">← Tilbage til projekter</a>
+    </div>
 
-    <label for="name">Navn</label>
-    <input type="text" id="name" th:field="*{name}" placeholder="Indtast projektnavn">
+    <div class="form-container">
+        <form th:action="@{/projects/create}" th:object="${project}" method="post" class="project-form">
 
-    <label for="description">Beskrivelse</label>
-    <textarea id="description" th:field="*{description}" placeholder="Indtast beskrivelse"></textarea>
+            <div class="form-group">
+                <label for="name">Projektnavn</label>
+                <input type="text" id="name" th:field="*{name}" required>
+            </div>
 
-    <label for="startDate">Startdato</label>
-    <input type="date" id="startDate" th:field="*{startDate}">
+            <div class="form-group">
+                <label for="description">Beskrivelse</label>
+                <textarea id="description" th:field="*{description}" rows="5"></textarea>
+            </div>
 
-    <label for="endDate">Slutdato</label>
-    <input type="datetime-local" id="endDate" th:field="*{endDate}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Startdato</label>
+                    <input type="date" id="startDate" th:field="*{startDate}" required>
+                </div>
 
-    <label for="projectLeaderId">Projektleder</label>
-    <select id="projectLeaderId" th:field="*{projectLeaderId}">
-        <option value="">-- vælg leder --</option>
-        <option th:each="emp : ${leaders}"
-                th:value="${emp.employeeId}"
-                th:text="${emp.name}">
-        </option>
-    </select>
+                <div class="form-group">
+                    <label for="endDate">Slutdato</label>
+                    <input type="datetime-local" id="endDate" th:field="*{endDate}" required>
+                </div>
+            </div>
 
-    <button type="submit">Gem projekt</button>
-</form>
+            <div class="form-group">
+                <label for="projectLeaderId">Projektleder</label>
+                <select id="projectLeaderId" th:field="*{projectLeaderId}">
+                    <option value="">-- Vælg projektleder --</option>
+                    <option th:each="emp : ${leaders}"
+                            th:value="${emp.employeeId}"
+                            th:text="${emp.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Gem projekt</button>
+                <a href="/projects" class="button-secondary">Annuller</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

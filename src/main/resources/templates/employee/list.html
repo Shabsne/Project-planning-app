@@ -2,34 +2,55 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Alle Medarbejdere</title>
+    <title>Medarbejdere - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<h1>Alle Medarbejdere</h1>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-<ul>
-    <li th:each="emp : ${employees}" class="employee">
-        <div class="employee-header">
-            <div>
+<div class="main-content">
+    <div class="page-header">
+        <h1>Alle Medarbejdere</h1>
+        <a href="/employee/register" class="button-accent menu-button">+ Opret Medarbejder</a>
+    </div>
 
-                <!-- Navn klikbart → fører til edit -->
-                <a th:href="@{/employee/{id}/edit(id=${emp.employeeId})}">
+    <div class="employees-grid">
+        <div th:each="emp : ${employees}" class="employee-card">
+            <div class="employee-card-header">
+                <a th:href="@{/employee/{id}/edit(id=${emp.employeeId})}" class="employee-name-link">
                     <strong th:text="${emp.name}">Medarbejder Navn</strong>
                 </a>
-
-                <p>Email: <span th:text="${emp.email}"></span></p>
-                <p>Rolle: <span th:text="${emp.role.displayName}"></span></p>
+                <div class="employee-role" th:text="${emp.role.displayName}">Rolle</div>
             </div>
 
-            <div class="actions">
-                <a th:href="@{/employee/{id}/edit(id=${emp.employeeId})}">Rediger</a>
-                <a th:href="@{/employee/{id}/delete(id=${emp.employeeId})}">Slet</a>
+            <div class="employee-card-body">
+                <div class="employee-info-item">
+                    <span class="info-icon">✉</span>
+                    <span th:text="${emp.email}">email@example.com</span>
+                </div>
+            </div>
+
+            <div class="employee-card-footer">
+                <a th:href="@{/employee/{id}/edit(id=${emp.employeeId})}" class="action-link">
+                    Rediger
+                </a>
+                <a th:href="@{/employee/{id}/delete(id=${emp.employeeId})}" class="action-link delete-link">
+                    Slet
+                </a>
             </div>
         </div>
-    </li>
-</ul>
+    </div>
+</div>
 
 </body>
 </html>
