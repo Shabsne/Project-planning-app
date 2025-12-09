@@ -292,14 +292,6 @@ button:active,
     color: var(--alpha-orange);
     font-weight: 600;
     font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.deadline::before {
-    content: "📅";
-    font-size: 14px;
 }
 
 /* Når der ingen opgaver er */
@@ -328,7 +320,185 @@ a:hover {
     margin-top: 10px;
 }
 
-/* ========== LOGIN CENTERING ========== */
+/* ========== LOGIN SIDE ========== */
+.login-body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.login-card {
+    background: white;
+    padding: 50px 45px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 61, 92, 0.15);
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 10;
+    border-top: 5px solid var(--alpha-orange);
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 35px;
+}
+
+.login-title {
+    text-align: center;
+    color: var(--alpha-blue-dark);
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: var(--alpha-gray);
+    font-size: 15px;
+    margin-bottom: 35px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--alpha-blue-dark);
+    font-size: 14px;
+}
+
+.form-group input {
+    padding: 14px;
+    border-radius: 8px;
+    border: 2px solid var(--alpha-gray-light);
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--alpha-blue);
+    box-shadow: 0 0 0 4px rgba(0, 93, 130, 0.1);
+}
+
+.login-button {
+    margin-top: 10px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--alpha-blue) 0%, var(--alpha-blue-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 93, 130, 0.3);
+}
+
+.login-button:hover {
+    background: linear-gradient(135deg, var(--alpha-blue-dark) 0%, var(--alpha-blue) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 93, 130, 0.4);
+}
+
+.error-message {
+    background-color: #fff5f5;
+    color: var(--alpha-orange);
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 4px solid var(--alpha-orange);
+    margin: 10px 0 0 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid var(--alpha-gray-light);
+}
+
+.login-footer p {
+    color: var(--alpha-gray);
+    font-size: 13px;
+    margin: 0;
+}
+
+.login-footer strong {
+    color: var(--alpha-blue);
+}
+
+.login-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.background-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+}
+
+.circle-1 {
+    width: 500px;
+    height: 500px;
+    background: var(--alpha-blue);
+    top: -250px;
+    right: -150px;
+}
+
+.circle-2 {
+    width: 350px;
+    height: 350px;
+    background: var(--alpha-orange);
+    bottom: -150px;
+    left: -100px;
+}
+
+.circle-3 {
+    width: 250px;
+    height: 250px;
+    background: var(--alpha-blue-light);
+    top: 50%;
+    left: 10%;
+}
+
+/* ========== OLD LOGIN CENTERING (FALLBACK) ========== */
 .center-screen {
     display: flex;
     justify-content: center;
@@ -338,6 +508,148 @@ a:hover {
 
 .center-screen form {
     border-top: 4px solid var(--alpha-orange);
+}
+
+/* ========== PROJEKTER LISTE ========== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.page-header h1 {
+    margin: 0;
+    color: var(--alpha-blue-dark);
+    font-size: 32px;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.project-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--alpha-blue);
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 93, 130, 0.15);
+    border-left-color: var(--alpha-orange);
+}
+
+.project-card-header {
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #f8f9fb 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--alpha-gray-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-title {
+    text-decoration: none;
+    display: block;
+}
+
+.project-title strong {
+    font-size: 18px;
+    color: var(--alpha-blue-dark);
+    transition: color 0.2s;
+}
+
+.project-title:hover strong {
+    color: var(--alpha-orange);
+}
+
+.project-status {
+    background: linear-gradient(135deg, var(--alpha-blue) 0%, var(--alpha-blue-light) 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.project-card-body {
+    padding: 24px;
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--alpha-gray);
+    min-width: 120px;
+}
+
+.project-card-footer {
+    padding: 18px 24px;
+    background-color: #f8f9fb;
+    display: flex;
+    gap: 16px;
+    border-top: 1px solid var(--alpha-gray-light);
+}
+
+.action-link {
+    color: var(--alpha-blue);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.action-link:hover {
+    color: var(--alpha-orange);
+    transform: translateX(2px);
+}
+
+.delete-link {
+    margin-left: auto;
+    color: var(--alpha-orange);
+}
+
+.delete-link:hover {
+    color: #e65a2a;
+}
+
+/* ========== RESPONSIVE DESIGN FOR PROJECTS ========== */
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .page-header .menu-button {
+        width: 100%;
+    }
 }
 
 /* ========== FOOTER (VALGFRI) ========== */
