@@ -2,39 +2,68 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Alle Projekter</title>
+    <title>Projekter - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<h1>Alle Projekter</h1>
+<div class="header-container">
+    <div class="logo-container">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
 
-<!-- Opret nyt projekt -->
-<a href="/projects/create" class="create-btn">Opret Nyt Projekt</a>
+<div class="main-content">
+    <div class="page-header">
+        <h1>Alle Projekter</h1>
+        <a href="/projects/create" class="button-accent menu-button">+ Opret Nyt Projekt</a>
+    </div>
 
-<ul>
-    <li th:each="proj : ${projects}" class="project">
-        <div class="project-header">
-            <div>
-
-                <!-- Gør projektet klikbart -->
-                <a th:href="@{/projects/{id}(id=${proj.id})}">
+    <div class="projects-grid">
+        <div th:each="proj : ${projects}" class="project-card">
+            <div class="project-card-header">
+                <a th:href="@{/projects/{id}(id=${proj.id})}" class="project-title">
                     <strong th:text="${proj.name}">Projekt Navn</strong>
                 </a>
-
-                <p>Projektleder:
-                    <span th:text="${proj.projectLeader != null ? proj.projectLeader.name : 'Ikke valgt'}"></span>
-                </p>
-                <p>Start: <span th:text="${proj.startDate}"></span> |
-                    Slut: <span th:text="${proj.endDate}"></span>
-                </p>
+                <div class="project-status">Aktiv</div>
             </div>
 
-            <div class="actions">
-                <a th:href="@{/projects/{id}/edit(id=${proj.id})}">Rediger</a>
-                <a th:href="@{/projects/{id}/delete(id=${proj.id})}">Slet</a>
-                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}">Opret Sub-projekt</a>
+            <div class="project-card-body">
+                <div class="project-info">
+                    <div class="info-row">
+                        <span class="info-label">Projektleder:</span>
+                        <span th:text="${proj.projectLeader != null ? proj.projectLeader.name : 'Ikke valgt'}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Start:</span>
+                        <span th:text="${#temporals.format(proj.startDate, 'dd/MM/yyyy')}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Slut:</span>
+                        <span th:text="${#temporals.format(proj.endDate, 'dd/MM/yyyy')}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card-footer">
+                <a th:href="@{/projects/{id}/edit(id=${proj.id})}" class="action-link">
+                    Rediger
+                </a>
+                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}" class="action-link">
+                    Sub-projekt
+                </a>
+                <a th:href="@{/projects/{id}/delete(id=${proj.id})}" class="action-link delete-link">
+                    Slet
+                </a>
             </div>
         </div>
-    </li>
-</ul>
+    </div>
+</div>
+
+</body>
+</html>

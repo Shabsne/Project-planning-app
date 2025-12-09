@@ -36,7 +36,7 @@
 
         <div th:each="task : ${tasks}" class="task-item">
             <strong th:text="${task.title}"></strong>
-            Deadline: <span class="deadline" th:text="${task.deadline}"></span>
+            Deadline: <span class="deadline" th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy')}"></span>
         </div>
     </div>
 </div>
