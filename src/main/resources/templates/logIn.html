@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
+
 <h2>Login</h2>
+
 <form th:action="@{/}" method="post">
-  <label>Email:</label>
-  <input type="email" name="email" required>
-  <br>
-  <label>Password:</label>
-  <input type="password" name="password" required>
-  <br>
-  <button type="submit">Login</button>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Login</button>
 </form>
 
-<p th:if="${error}" style="color:red;">Forkert email eller password</p>
-
-
-<hr>
+<p th:if="${error}" class="error-text">Forkert email eller password</p>
 
 </body>
 </html>

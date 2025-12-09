@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"></html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rediger projekt</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 <h1>Rediger Projekt</h1>
 
 <form th:action="@{/projects/{id}/edit(id=${project.id})}" method="post">
