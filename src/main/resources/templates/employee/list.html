@@ -1,10 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Alle Medarbejdere</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .employee {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .employee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+
+<h1>Alle Medarbejdere</h1>
+
+<ul>
+    <li th:each="emp : ${employees}" class="employee">
+        <div class="employee-header">
+            <div>
+
+                <!-- Navn klikbart → fører til edit -->
+                <a th:href="@{/employee/{id}/edit(id=${emp.employeeId})}">
+                    <strong th:text="${emp.name}">Medarbejder Navn</strong>
+                </a>
+
+                <p>Email: <span th:text="${emp.email}"></span></p>
+                <p>Rolle: <span th:text="${emp.role.displayName}"></span></p>
+            </div>
+
+            <div class="actions">
+                <a th:href="@{/employee/{id}/edit(id=${emp.employeeId})}">Rediger</a>
+                <a th:href="@{/employee/{id}/delete(id=${emp.employeeId})}">Slet</a>
+            </div>
+        </div>
+    </li>
+</ul>
 
 </body>
 </html>

@@ -79,4 +79,8 @@ public class Employee {
     public void setAssignedTasks(List<Task> assignedTasks) {
         this.assignedTasks = assignedTasks;
     }
+
+    public boolean isAdmin() {
+        return this.role == Role.ADMIN;
+    }
 }
