@@ -106,11 +106,18 @@ public class ProjectController {
     // Details
     @GetMapping("/projects/{id}")
     public String projectDetails(@PathVariable int id, Model model) {
-        model.addAttribute("project", projectService.getProjectDetails(id));
+        Project project = projectService.getProjectDetails(id);
+
+        int totalEstimatedHours = projectService.calculateEstimatedHours(project);
+
+        model.addAttribute("project", project);
         model.addAttribute("status", Status.values());
         model.addAttribute("rootTasks", taskService.getRootTasks(id));
+        model.addAttribute("totalEstimatedHours", totalEstimatedHours);
+
         return "project/details";
     }
+
 
 
     // Edit

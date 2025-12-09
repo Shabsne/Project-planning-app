@@ -10,9 +10,13 @@
 <p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
 <p><strong>Start:</strong> <span th:text="${project.startDate}"></span></p>
 <p><strong>End:</strong> <span th:text="${project.endDate}"></span></p>
+<p><strong>Samlede Estimerede Timer:</strong>
+    <span th:text="${totalEstimatedHours}"></span> timer
+</p>
 <p><strong>Project Leader:</strong>
     <span th:text="${project.projectLeader != null ? project.projectLeader.name : 'Not Assigned'}"></span>
 </p>
+
 
 <hr>
 

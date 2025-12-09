@@ -56,6 +56,14 @@ public class ProjectService {
         return projectRepository.getAvailableEmployeesForTask(projectId,taskId);
     }
 
+    public int calculateEstimatedHours(Project project) {
+        return project.getTasks()
+                .stream()
+                .mapToInt(task -> task.getEstimatedHours() != null ? task.getEstimatedHours() : 0)
+                .sum();
+    }
+
+
 }
 
 
