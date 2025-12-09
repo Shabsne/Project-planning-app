@@ -2,26 +2,55 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Login - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
+<body class="login-body">
 
-<h2>Login</h2>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="logo-icon">α</div>
+            <div class="logo-text">
+                <span class="logo-text-main">Alpha Solutions</span>
+                <span class="logo-text-sub">Project Management</span>
+            </div>
+        </div>
 
-<form th:action="@{/}" method="post">
+        <h2 class="login-title">Velkommen tilbage</h2>
+        <p class="login-subtitle">Log ind for at fortsætte</p>
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
+        <form th:action="@{/}" method="post" class="login-form">
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-    <button type="submit">Login</button>
-</form>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-<p th:if="${error}" class="error-text">Forkert email eller password</p>
+            <button type="submit" class="login-button">Log ind</button>
+
+            <p th:if="${error}" class="error-message">
+                ⚠️ Forkert email eller password
+            </p>
+        </form>
+
+        <div class="login-footer">
+            <p>Powered by <strong>Alpha Solutions</strong></p>
+        </div>
+    </div>
+
+    <div class="login-background">
+        <div class="background-circle circle-1"></div>
+        <div class="background-circle circle-2"></div>
+        <div class="background-circle circle-3"></div>
+    </div>
+</div>
 
 </body>
 </html>
