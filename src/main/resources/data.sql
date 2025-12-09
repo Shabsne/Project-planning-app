@@ -1,22 +1,22 @@
 INSERT INTO Role (roleName) VALUES
-                                ('Project Leader'),
-                                ('Developer'),
-                                ('Designer'),
-                                ('Tester'),
-                                ('Scrum Master');
+('Project Leader'),
+('Developer'),
+('Designer'),
+('Tester'),
+('Scrum Master');
 
 INSERT INTO Employee (employeeRoleId, name, email, password) VALUES
-                                                                 (1, 'Alice Hansen', 'alice@example.com', 'password123'),
-                                                                 (2, 'Benjamin Larsen', 'benjamin@example.com', 'devpass'),
-                                                                 (2, 'Clara Madsen', 'clara@example.com', 'devpass'),
-                                                                 (3, 'Daniel Sørensen', 'daniel@example.com', 'designpass'),
-                                                                 (4, 'Emma Kristensen', 'emma@example.com', 'test123'),
-                                                                 (5, 'Frederik Nielsen', 'frederik@example.com', 'scrum123');
+(1, 'Alice Hansen', 'alice@example.com', 'password123'),
+(2, 'Benjamin Larsen', 'benjamin@example.com', 'devpass'),
+(2, 'Clara Madsen', 'clara@example.com', 'devpass'),
+(3, 'Daniel Sørensen', 'daniel@example.com', 'designpass'),
+(4, 'Emma Kristensen', 'emma@example.com', 'test123'),
+(5, 'Frederik Nielsen', 'frederik@example.com', 'scrum123');
 
 INSERT INTO Project (projectLeaderId, parentProjectId, name, description, startDate, endDate) VALUES
-                                                                                                  (1, NULL, 'Website Redesign', 'Redesign of the corporate website.', '2025-01-10', '2025-06-30'),
-                                                                                                  (1, 1, 'Website Redesign – Phase 2', 'Second phase focusing on UX improvements.', '2025-03-01', '2025-09-30'),
-                                                                                                  (5, NULL, 'Mobile App Development', 'Development of the new company mobile app.', '2025-02-01', '2025-12-01');
+(1, NULL, 'Website Redesign', 'Redesign of the corporate website.', '2025-01-10', '2025-06-30'),
+(1, 1, 'Website Redesign – Phase 2', 'Second phase focusing on UX improvements.', '2025-03-01', '2025-09-30'),
+(5, NULL, 'Mobile App Development', 'Development of the new company mobile app.', '2025-02-01', '2025-12-01');
 
 
 INSERT INTO Task (projectId, parentTaskId, title, description, status, estimatedHours, actualHours, deadline) VALUES
