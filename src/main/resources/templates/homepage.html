@@ -8,30 +8,32 @@
 
 <body>
 
-<h1>Main Menu</h1>
-
-<a href="/logout">Log ud</a>
-
-<div class="menu-container">
-    <a class="menu-button" href="/projects">Projects</a>
-    <a class="menu-button" href="/tasks/my">My Tasks</a>
-    <a class="menu-button" href="/status">Status</a>
-    <a class="menu-button" href="/profile">Profile</a>
+<div class="header-container">
+    <h1>Main Menu</h1>
+    <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
-<div class="task-list">
-    <h2>Upcoming Tasks</h2>
-
-    <div th:if="${tasks == null or tasks.isEmpty()}">
-        <p>No tasks assigned.</p>
+<div class="main-content">
+    <div class="menu-container">
+        <a class="menu-button" href="/projects">Projects</a>
+        <a class="menu-button" href="/tasks/my">My Tasks</a>
+        <a class="menu-button" href="/status">Status</a>
+        <a class="menu-button" href="/profile">Profile</a>
     </div>
 
-    <div th:each="task : ${tasks}" class="task-item">
-        <strong th:text="${task.title}"></strong><br>
-        Deadline: <span class="deadline" th:text="${task.deadline}"></span>
+    <div class="task-list">
+        <h2>Upcoming Tasks</h2>
+
+        <div th:if="${tasks == null or tasks.isEmpty()}">
+            <p>No tasks assigned.</p>
+        </div>
+
+        <div th:each="task : ${tasks}" class="task-item">
+            <strong th:text="${task.title}"></strong>
+            Deadline: <span class="deadline" th:text="${task.deadline}"></span>
+        </div>
     </div>
 </div>
 
 </body>
 </html>
-
