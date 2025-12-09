@@ -41,11 +41,11 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Start:</span>
-                        <span th:text="${#temporals.format(proj.startDate, 'dd/MM/yyyy')}"></span>
+                        <span th:text="${#temporals.format(proj.startDate, 'dd/MM/yyyy HH:mm')}"></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Slut:</span>
-                        <span th:text="${#temporals.format(proj.endDate, 'dd/MM/yyyy')}"></span>
+                        <span th:text="${#temporals.format(proj.endDate, 'dd/MM/yyyy HH:mm')}"></span>
                     </div>
                 </div>
             </div>
