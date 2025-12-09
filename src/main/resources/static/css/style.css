@@ -3,17 +3,134 @@
     box-sizing: border-box;
 }
 
+:root {
+    /* Alpha Solutions brand farver */
+    --alpha-blue-dark: #003d5c;
+    --alpha-blue: #005a82;
+    --alpha-blue-light: #0077a8;
+    --alpha-orange: #ff6b35;
+    --alpha-orange-light: #ff8c61;
+    --alpha-gray: #4a5568;
+    --alpha-gray-light: #e2e8f0;
+    --alpha-white: #ffffff;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f7fa;
-    margin: 40px;
-    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    margin: 0;
+    padding: 0;
+    color: var(--alpha-gray);
+    min-height: 100vh;
+}
+
+/* ========== HEADER OMRÅDE ========== */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background: linear-gradient(135deg, var(--alpha-blue-dark) 0%, var(--alpha-blue) 100%);
+    box-shadow: 0 4px 12px rgba(0, 61, 92, 0.2);
+    margin-bottom: 50px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, var(--alpha-orange) 0%, var(--alpha-orange-light) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: rotate(45deg);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.logo-text-main {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.logo-text-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--alpha-orange-light);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.header-container h1 {
+    margin: 0;
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.logout-link {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.logout-link:hover {
+    background-color: rgba(255, 107, 53, 0.2);
+    border-color: var(--alpha-orange);
+    text-decoration: none;
 }
 
 /* Standard overskrifter */
 h1, h2, h3 {
-    color: #1976d2; /* Alpha Solutions blå */
-    margin-bottom: 20px;
+    color: var(--alpha-blue);
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--alpha-blue-dark);
+}
+
+/* ========== MAIN CONTENT CONTAINER ========== */
+.main-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 30px;
 }
 
 /* ========== FORM GENERELT ========== */
@@ -35,72 +152,178 @@ label {
 input, select, textarea {
     padding: 8px;
     border-radius: 6px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--alpha-gray-light);
     font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--alpha-blue);
+    box-shadow: 0 0 0 3px rgba(0, 93, 130, 0.1);
 }
 
 /* ========== KNAPPER ========== */
 button, .menu-button {
-    padding: 12px 20px;
-    background-color: #1976d2;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, var(--alpha-blue) 0%, var(--alpha-blue-light) 100%);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: bold;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
-    text-decoration: none; /* gør links som knapper pæne */
+    text-decoration: none;
     text-align: center;
+    transition: all 0.3s ease;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(0, 93, 130, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before,
+.menu-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+button:hover::before,
+.menu-button:hover::before {
+    left: 100%;
 }
 
 button:hover,
 .menu-button:hover {
-    background-color: #125ea5;
+    background: linear-gradient(135deg, var(--alpha-blue-dark) 0%, var(--alpha-blue) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 93, 130, 0.35);
+}
+
+button:active,
+.menu-button:active {
+    transform: translateY(0);
+}
+
+/* Sekundær knap stil med orange accent */
+.button-accent {
+    background: linear-gradient(135deg, var(--alpha-orange) 0%, var(--alpha-orange-light) 100%);
+}
+
+.button-accent:hover {
+    background: linear-gradient(135deg, #e65a2a 0%, var(--alpha-orange) 100%);
 }
 
 /* ========== MENUS OG CONTAINERS ========== */
 .menu-container {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 /* ========== LISTE / CARD STIL TIL OPGAVER ========== */
 .task-list {
-    width: 60%;
-    margin: 0 auto;
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-top: 4px solid var(--alpha-blue);
+    position: relative;
+}
+
+.task-list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at top right, var(--alpha-orange-light) 0%, transparent 70%);
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.task-list h2 {
+    position: relative;
+}
+
+.task-list h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--alpha-orange), var(--alpha-orange-light));
+    margin-top: 10px;
+    border-radius: 2px;
 }
 
 .task-item {
-    padding: 12px 0;
-    border-bottom: 1px solid #ddd;
+    padding: 18px;
+    border-bottom: 1px solid var(--alpha-gray-light);
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+    margin-left: -3px;
+}
+
+.task-item:hover {
+    background-color: #f8f9fb;
+    border-left-color: var(--alpha-orange);
+    padding-left: 21px;
 }
 
 .task-item:last-child {
     border-bottom: none;
 }
 
+.task-item strong {
+    font-size: 16px;
+    color: var(--alpha-blue-dark);
+    display: block;
+    margin-bottom: 8px;
+}
+
 .deadline {
-    color: #d32f2f;
-    font-weight: bold;
+    color: var(--alpha-orange);
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.deadline::before {
+    content: "📅";
+    font-size: 14px;
+}
+
+/* Når der ingen opgaver er */
+.task-list p {
+    color: #78909c;
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+    padding: 20px 0;
 }
 
 /* ========== GENERELLE LINKS ========== */
 a {
-    color: #1976d2;
+    color: var(--alpha-blue);
 }
 
 a:hover {
+    color: var(--alpha-orange);
     text-decoration: underline;
 }
 
 /* ========== FEJLTEKSTER ========== */
 .error-text {
-    color: #d32f2f;
+    color: var(--alpha-orange);
     font-weight: bold;
     margin-top: 10px;
 }
@@ -108,7 +331,41 @@ a:hover {
 /* ========== LOGIN CENTERING ========== */
 .center-screen {
     display: flex;
-    justify-content: center;   /* centrer vandret */
-    align-items: center;        /* centrer lodret */
-    height: 100vh;              /* fylder hele skærmen */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.center-screen form {
+    border-top: 4px solid var(--alpha-orange);
+}
+
+/* ========== FOOTER (VALGFRI) ========== */
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: #78909c;
+    font-size: 13px;
+    margin-top: 60px;
+}
+
+.footer::before {
+    content: "Powered by Alpha Solutions";
+    font-weight: 600;
+    color: var(--alpha-blue);
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 768px) {
+    .menu-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header-container {
+        padding: 20px 30px;
+    }
+
+    .main-content {
+        padding: 0 15px;
+    }
 }
