@@ -44,7 +44,7 @@ public class EmployeeRepository {
     }
 
     public void updateOwnProfile(Employee employee) {
-        jdbc.update("UPDATE employee SET employeeName = ?, email = ?, password = ? WHERE employeeId = ?",
+        jdbc.update("UPDATE Employee SET employeeName = ?, email = ?, password = ? WHERE employeeId = ?",
                 employee.getName(), employee.getEmail(), employee.getPassword(), employee.getEmployeeId());
     }
 
