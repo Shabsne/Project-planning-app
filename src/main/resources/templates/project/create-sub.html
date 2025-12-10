@@ -20,7 +20,7 @@
 
 <div class="main-content">
     <div class="page-header">
-        <h1>Opret Underprojekt</h1>
+        <h1>Opret Delprojekt</h1>
         <a th:href="@{/projects/{id}(id=${project.parentProject.id})}" class="menu-button">← Tilbage til projekt</a>
     </div>
 
@@ -64,7 +64,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="button-primary">Gem underprojekt</button>
+                <button type="submit" class="button-primary">Gem delprojekt</button>
                 <a th:href="@{/projects/{id}(id=${project.parentProject.id})}" class="button-secondary">Annuller</a>
             </div>
         </form>

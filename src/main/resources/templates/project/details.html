@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${project.name}">Project Details</title>
+    <title th:text="${project.name}">Projekt Detaljer</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -20,7 +20,7 @@
 
 <div class="main-content">
     <div class="page-header">
-        <h1 th:text="${project.name}">Project Name</h1>
+        <h1 th:text="${project.name}">Projekt Navn</h1>
         <div class="header-actions">
             <a th:href="@{/projects/{id}/edit(id=${project.id})}" class="menu-button">Rediger projekt</a>
         </div>
@@ -56,36 +56,36 @@
 
         <!-- Parent Project -->
         <div class="details-card" th:if="${project.parentProject != null}">
-            <h2>Overordnet Projekt</h2>
+            <h2>Hovedprojekt</h2>
             <a th:href="@{/projects/{id}(id=${project.parentProject.id})}"
                class="parent-link"
-               th:text="${project.parentProject.name}">Parent Project</a>
+               th:text="${project.parentProject.name}">Hovedprojekt</a>
         </div>
 
         <!-- Subprojects -->
         <div class="details-card" th:if="${project.parentProject == null}">
             <div class="card-header-flex">
-                <h2>Underprojekter</h2>
-                <a th:href="@{/projects/{id}/sub/create(id=${project.id})}" class="button-accent menu-button small-button">+ Opret underprojekt</a>
+                <h2>Delprojekter</h2>
+                <a th:href="@{/projects/{id}/sub/create(id=${project.id})}" class="button-accent menu-button small-button">+ Opret delprojekt</a>
             </div>
 
             <div th:if="${project.subProjects != null and !#lists.isEmpty(project.subProjects)}">
                 <div class="subproject-list">
                     <div th:each="sp : ${project.subProjects}" class="subproject-item">
-                        <a th:href="@{/projects/{id}(id=${sp.id})}" th:text="${sp.name}" class="subproject-name">Subproject</a>
+                        <a th:href="@{/projects/{id}(id=${sp.id})}" th:text="${sp.name}" class="subproject-name">Delprojekt</a>
                         <span class="subproject-leader" th:text="${sp.projectLeader != null ? sp.projectLeader.name : 'Ikke tildelt'}">-</span>
                     </div>
                 </div>
             </div>
 
             <p th:if="${project.subProjects == null || #lists.isEmpty(project.subProjects)}" class="empty-state">
-                Ingen underprojekter endnu.
+                Ingen delprojekter endnu.
             </p>
         </div>
 
         <!-- Root Tasks -->
         <div class="details-card">
-            <h2>Root Tasks</h2>
+            <h2>Opgaver</h2>
             <div th:if="${rootTasks != null and !#lists.isEmpty(rootTasks)}" class="task-table">
                 <div class="table-header">
                     <span>Titel</span>
@@ -100,7 +100,7 @@
                 </div>
             </div>
             <p th:if="${rootTasks == null || #lists.isEmpty(rootTasks)}" class="empty-state">
-                Ingen root tasks endnu.
+                Ingen opgaver endnu.
             </p>
         </div>
 
@@ -131,7 +131,7 @@
             <h2>Tildelte Medarbejdere</h2>
             <div th:if="${project.assignedEmployees != null and !#lists.isEmpty(project.assignedEmployees)}" class="employee-list">
                 <div th:each="e : ${project.assignedEmployees}" class="employee-item">
-                    <span class="employee-name" th:text="${e.name}">Name</span>
+                    <span class="employee-name" th:text="${e.name}">Navn</span>
                     <span class="employee-email" th:text="${e.email}">email</span>
                 </div>
             </div>
