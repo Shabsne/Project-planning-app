@@ -8,13 +8,13 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
@@ -148,7 +148,6 @@
 
         <!-- Danger Zone -->
         <div class="details-card danger-card">
-            <h2>Farezone</h2>
             <p>Sletning af tasken kan ikke fortrydes.</p>
             <form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
                   method="post"
