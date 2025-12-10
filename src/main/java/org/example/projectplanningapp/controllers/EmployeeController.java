@@ -67,6 +67,9 @@ public class EmployeeController {
         List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
         model.addAttribute("tasks", nextTasks);
 
+        model.addAttribute("employee", loggedIn);
+
+
         return "homepage"; // Thymeleaf
     }
 
@@ -142,5 +145,30 @@ public class EmployeeController {
         model.addAttribute("employees", employeeService.getAllEmployees());
         return "employee/list";
     }
+
+    @GetMapping("/employee/{id}/myTasks")
+    public String myTasks(@PathVariable int id, HttpSession session, Model model) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
+        //SPØRG NICOLAI OM NØDVENDIGT
+
+        if (loggedIn.getEmployeeId() != id) {
+            return "redirect:/employee/" + loggedIn.getEmployeeId() + "/myTasks";
+        }
+
+        List<Task> tasks = taskService.getAssignedTasksForEmployee(id);
+        model.addAttribute("tasks", tasks);
+
+        model.addAttribute("employee", loggedIn);
+
+        return "task/myTasks"; // mapper til templates/task/myTasks.html
+    }
+
+
+
 
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Alpha Solutions - Project Management</title>
+    <title>My Tasks - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
@@ -31,20 +31,25 @@
     </div>
 
     <div class="task-list">
-        <h2>Upcoming Tasks</h2>
+        <h2>My assigned tasks</h2>
 
+        <!-- Hvis ingen tasks -->
         <div th:if="${tasks == null or tasks.isEmpty()}">
-            <p>No tasks assigned.</p>
+            <p>You currently have no assigned tasks.</p>
         </div>
 
+        <!-- Hvis der er tasks -->
         <div th:each="task : ${tasks}" class="task-item">
             <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${task.taskId})}">
                 <strong th:text="${task.title}"></strong>
             </a><br>
-            Deadline: <span class="deadline" th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}"></span>
+            Deadline:
+            <span class="deadline"
+                  th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}"></span>
         </div>
-    </div>
 
+    </div>
+</div>
 
 </body>
 </html>

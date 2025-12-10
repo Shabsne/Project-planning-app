@@ -5,6 +5,7 @@ import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.rowMappers.EmployeeRowMapper;
 import org.example.projectplanningapp.repositories.rowMappers.TaskRowMapper;
+import org.example.projectplanningapp.utils.taskComparators.DeadlineComparator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,6 +20,7 @@ public class TaskRepository {
 
     private final JdbcTemplate jdbc;
     private final TaskRowMapper taskRowMapper = new TaskRowMapper();
+    private final DeadlineComparator deadlineComparator = new DeadlineComparator();
 
     public TaskRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -90,6 +92,7 @@ public class TaskRepository {
     public List<Task> getSubTasks(int parentTaskId) {
         String sql = "SELECT * FROM Task WHERE parentTaskId = ?";
         List<Task> tasks = jdbc.query(sql, taskRowMapper, parentTaskId);
+        tasks.sort(deadlineComparator);
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
@@ -104,11 +107,11 @@ public class TaskRepository {
         FROM Task t
         INNER JOIN TaskEmployee te ON t.taskId = te.taskId
         WHERE te.employeeId = ?
-        ORDER BY t.deadline ASC
         LIMIT 3
     """;
 
         List<Task> tasks = jdbc.query(sql, taskRowMapper, employeeId);
+        tasks.sort(deadlineComparator);
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
@@ -144,10 +147,11 @@ public class TaskRepository {
                 FROM Task
                 WHERE projectId = ?
                 AND parentTaskId IS NULL
-                ORDER BY deadline ASC
                 """;
 
-        return jdbc.query(sql,taskRowMapper,projectId);
+        List<Task> tasks = jdbc.query(sql, taskRowMapper, projectId);
+        tasks.sort(deadlineComparator);
+        return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
     public List<Task> getAssignedTasksForEmployee(int employeeId) {
@@ -156,10 +160,12 @@ public class TaskRepository {
         FROM Task t
         JOIN TaskEmployee te ON t.taskId = te.taskId
         WHERE te.employeeId = ?
-        ORDER BY t.deadline ASC
         """;
 
         List<Task> tasks = jdbc.query(sql, taskRowMapper, employeeId);
-        return tasks.isEmpty() ? Collections.emptyList() : tasks;    }
+        tasks.sort(deadlineComparator);
+
+        return tasks.isEmpty() ? Collections.emptyList() : tasks;
+    }
 
 }
