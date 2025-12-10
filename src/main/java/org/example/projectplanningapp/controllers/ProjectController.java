@@ -142,7 +142,7 @@ public class ProjectController {
         project.setId(id);
         projectService.updateProject(project);
 
-        return "redirect:/projects" + id;
+        return "redirect:/projects/" + id;
     }
 
     // Delete
