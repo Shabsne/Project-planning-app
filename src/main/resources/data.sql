@@ -1,17 +1,15 @@
 INSERT INTO Role (roleName) VALUES
-('Project Leader'),
-('Developer'),
-('Designer'),
-('Tester'),
-('Scrum Master');
+('Admin'),
+('Udvikler');
+
 
 INSERT INTO Employee (employeeRoleId, name, email, password) VALUES
 (1, 'Alice Hansen', 'alice@example.com', 'password123'),
 (2, 'Benjamin Larsen', 'benjamin@example.com', 'devpass'),
 (2, 'Clara Madsen', 'clara@example.com', 'devpass'),
-(3, 'Daniel Sørensen', 'daniel@example.com', 'designpass'),
-(4, 'Emma Kristensen', 'emma@example.com', 'test123'),
-(5, 'Frederik Nielsen', 'frederik@example.com', 'scrum123');
+(1, 'Daniel Sørensen', 'daniel@example.com', 'designpass'),
+(2, 'Emma Kristensen', 'emma@example.com', 'test123'),
+(2, 'Frederik Nielsen', 'frederik@example.com', 'scrum123');
 
 INSERT INTO Project (projectLeaderId, parentProjectId, name, description, startDate, endDate) VALUES
 (1, NULL, 'Website Redesign', 'Redesign of the corporate website.', '2025-01-10', '2025-06-30'),

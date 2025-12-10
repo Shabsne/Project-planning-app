@@ -2,6 +2,7 @@ package org.example.projectplanningapp.controllers;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Role;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.projectplanningapp.services.EmployeeService;
@@ -49,37 +50,45 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/home/{employeeId}")
-    public String homePage(@PathVariable int employeeId, HttpSession session) {
+    public String homePage(@PathVariable int employeeId, HttpSession session, Model model) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) return "redirect:/";
         if (loggedIn.getEmployeeId() != employeeId)
             return "redirect:/employee/home/" + loggedIn.getEmployeeId();
 
+        model.addAttribute("employee", loggedIn);
+
         return "homepage";
     }
 
-    @GetMapping("/employee/logout")
+    @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
     }
 
-    @PostMapping("/employees/register")
+
+    @PostMapping("/employee/register")
     public String registerEmployee(@ModelAttribute Employee employee,
                                    @RequestParam String confirmPassword, Model model) {
         if (employeeService.emailExists(employee.getEmail())) {
             model.addAttribute("error", "Emailen findes allerede");
+            model.addAttribute("employee", employee);
+            model.addAttribute("confirmPassword", confirmPassword);
             return "employee/register";
         }
 
         if (!employee.getPassword().equals(confirmPassword)) {
             model.addAttribute("error", "Adgangskoder matcher ikke!");
+            model.addAttribute("employee", employee);
+            model.addAttribute("confirmPassword", confirmPassword);
             return "employee/register";
         }
 
+        employee.setRole(Role.DEVELOPER);
         employeeService.registerEmployee(employee);
-        return "redirect:/";
+        return "redirect:/employee/list";
     }
 
     // Rediger profil
@@ -121,14 +130,50 @@ public class EmployeeController {
         employee.setEmployeeId(id);
         employeeService.updateOwnProfile(employee);
 
-        return "redirect:/employee/" + id + "/edit";
+        return "redirect:/employee/" + id;
     }
 
     // Liste af medarbejdere
     @GetMapping("/employee/list")
-    public String listEmployees(Model model) {
+    public String listEmployees(Model model, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) return "redirect:/";
         model.addAttribute("employees", employeeService.getAllEmployees());
         return "employee/list";
     }
+
+    @GetMapping("/employee/{id}")
+    public String viewEmployeeMenu(@PathVariable int id, Model model, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) return "redirect:/";
+
+        Employee employee = employeeService.getEmployeeFromId(id);
+        if (employee == null) return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+
+        model.addAttribute("employee", employee);
+        return "employee/employeeInformation";
+    }
+
+    @PostMapping("employee/{id}/delete")
+    public String deleteEmployee(@PathVariable int id) {
+        employeeService.deleteEmployee(id);
+        return "redirect:/employee/list";
+    }
+
+    @PostMapping("employee/{id}/role")
+    public String changeRole(@PathVariable int id, @RequestParam String role) {
+        Role newRole;
+        if ("admin".equalsIgnoreCase(role)) {
+            newRole = Role.ADMIN;
+        } else {
+            newRole = Role.DEVELOPER;
+        }
+        employeeService.changeRole(id, newRole);
+        return "redirect:/employee/list";
+    }
+
+
 
 }

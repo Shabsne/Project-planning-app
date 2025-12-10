@@ -1,6 +1,7 @@
 package org.example.projectplanningapp.services;
 
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Role;
 import org.example.projectplanningapp.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -49,5 +50,13 @@ public class EmployeeService {
 
     public Employee getEmployeeFromId(int id) {
         return employeeRepository.getEmployeeFromId(id);
+    }
+
+    public void changeRole(int employeeId, Role role) {
+        employeeRepository.updateRole(employeeId, role);
+    }
+
+    public void deleteEmployee(int employeeId) {
+        employeeRepository.deleteEmployee(employeeId);
     }
 }

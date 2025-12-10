@@ -18,13 +18,7 @@ public class EmployeeRowMapper implements RowMapper<Employee> {
         employee.setName(rs.getString("name"));
         employee.setEmail(rs.getString("email"));
         employee.setPassword(rs.getString("password"));
-
-        int roleId = rs.getInt("employeeRoleId");
-        if (!rs.wasNull()) {
-            employee.setRole(Role.fromId(roleId));
-        } else {
-            employee.setRole(null);
-        }
+        employee.setRole(Role.fromId(rs.getInt("employeeRoleId")));
 
         employee.setAssignedProjects(new ArrayList<>());
         employee.setAssignedTasks(new ArrayList<>());

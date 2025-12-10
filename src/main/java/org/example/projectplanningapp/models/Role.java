@@ -1,10 +1,8 @@
 package org.example.projectplanningapp.models;
 
 public enum Role {
-    PROJECT_LEADER("Project Leader", 1),
-    ADMIN("Admin", 2),
-    MANAGER("Manager", 3),
-    EMPLOYEE("Employee", 4);
+    ADMIN("Admin", 1),
+    DEVELOPER("Udvikler", 2);
 
     private final String displayName;
     private final int id;
@@ -31,3 +29,4 @@ public enum Role {
         return null;
     }
 }
+
