@@ -108,7 +108,7 @@
         <div class="details-card">
             <div class="card-header-flex">
                 <h2>Alle Tasks</h2>
-                <a th:href="@{/projects/{id}/createTask(id=${project.id})}" class="button-accent menu-button small-button">+ Opret task</a>
+                <a th:href="@{/projects/{projectId}/tasks/create(projectId=${project.Id})}" class="button-accent menu-button small-button">+ Opret task</a>
             </div>
 
             <div th:if="${project.tasks != null and !#lists.isEmpty(project.tasks)}" class="task-table">
