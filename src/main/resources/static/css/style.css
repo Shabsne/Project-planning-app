@@ -733,7 +733,7 @@ a:hover {
 }
 
 .project-card-footer {
-    padding: 18px 24px;
+    padding: 12px 24px;
     background-color: #f8f9fb;
     display: flex;
     gap: 16px;
@@ -1267,7 +1267,7 @@ a:hover {
 }
 
 .action-btn {
-    padding: 6px 14px;
+    padding: 6px 14px; !important;
     border-radius: 6px;
     text-decoration: none;
     font-size: 13px;
@@ -1296,6 +1296,7 @@ a:hover {
     color: white;
     transform: translateY(-1px);
 }
+
 
 @media (max-width: 768px) {
     .table-container {
