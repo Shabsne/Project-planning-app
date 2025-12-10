@@ -62,7 +62,6 @@
                                th:value="${task.deadline != null} ? ${#temporals.format(task.deadline, 'yyyy-MM-dd')} + 'T' + ${#temporals.format(task.deadline, 'HH:mm')} : ''"
                                th:field="*{deadline}">
                     </div>
-
                     <!-- Status dropdown med live update -->
                     <div class="form-group">
                         <select id="status-[[${task.taskId}]]" name="status"
@@ -83,11 +82,22 @@
             </form>
         </div>
 
+        <div class="details-card" th:if="${parentTask != null}">
+            <h2>Hovedopgave</h2>
+            <div>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${parentTask.projectId}, taskId=${parentTask.taskId})}"
+                   th:text="${parentTask.title}"></a>
+            </div>
+        </div>
+
+
+
+
         <!-- SubTasks Section -->
-        <div class="details-card" th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
+        <div class="details-card" th:if="${subTasks != null and !#lists.isEmpty(subTasks)}">
             <div class="card-header-flex">
                 <h2>Delopgaver</h2>
-                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${task.projectId}, taskId=${task.taskId})}"
                    class="button-accent menu-button small-button">+ Opret delopgave</a>
             </div>
 
@@ -106,21 +116,21 @@
         </div>
 
         <div class="details-card" th:if="${subTasks == null or #lists.isEmpty(subTasks)}">
-            <h2>Subtasks</h2>
+            <h2>Delopgaver</h2>
             <p class="empty-state">Ingen delopgaver endnu.</p>
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${task.projectId}, taskId=${task.taskId})}"
                class="button-accent menu-button small-button">+ Opret delopgave</a>
         </div>
 
+
         <!-- Assigned Employees -->
-        <div class="details-card">
+        <div class="details-card" id="assigned">
             <h2>Tildelte Medarbejdere</h2>
             <div th:if="${assignedEmployees != null and !#lists.isEmpty(assignedEmployees)}" class="assigned-list">
                 <div th:each="emp : ${assignedEmployees}" class="assigned-item">
                     <span th:text="${emp.name}">Navn</span>
-                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}"
-                          method="post"
-                          style="display:inline;">
+                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId} + '#assigned'}"
+                          method="post" style="display:inline;">
                         <button type="submit" class="remove-btn">Fjern</button>
                     </form>
                 </div>
@@ -130,15 +140,15 @@
             </p>
         </div>
 
+
         <!-- Available Employees -->
-        <div class="details-card">
+        <div class="details-card" id="available">
             <h2>Tilgængelige Medarbejdere</h2>
             <div th:if="${availableEmployees != null and !#lists.isEmpty(availableEmployees)}" class="assigned-list">
                 <div th:each="emp : ${availableEmployees}" class="assigned-item">
                     <span th:text="${emp.name}">Navn</span>
-                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}"
-                          method="post"
-                          style="display:inline;">
+                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId} + '#available'}"
+                          method="post" style="display:inline;">
                         <button type="submit" class="assign-btn">Tildel</button>
                     </form>
                 </div>
@@ -147,6 +157,7 @@
                 Alle medarbejdere er allerede tildelt.
             </p>
         </div>
+
 
         <!-- Danger Zone -->
         <div class="details-card danger-card">

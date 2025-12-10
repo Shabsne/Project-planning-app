@@ -97,21 +97,31 @@ public class ProjectController {
         return "redirect:/projects";
     }
 
-
-    // Details
     @GetMapping("/projects/{id}")
     public String projectDetails(@PathVariable int id, Model model) {
         Project project = projectService.getProjectDetails(id);
 
         int totalEstimatedHours = projectService.calculateEstimatedHours(project);
 
+        // Tildelte medarbejdere
+        List<Employee> assignedEmployees = project.getAssignedEmployees();
+
+        // Tilgængelige medarbejdere = alle minus de allerede tildelte (baseret på employeeId)
+        List<Employee> availableEmployees = employeeService.getAllEmployees().stream()
+                .filter(e -> assignedEmployees.stream().noneMatch(a -> a.getEmployeeId() == e.getEmployeeId()))
+                .toList();
+
         model.addAttribute("project", project);
         model.addAttribute("status", Status.values());
         model.addAttribute("rootTasks", taskService.getRootTasks(id));
         model.addAttribute("totalEstimatedHours", totalEstimatedHours);
+        model.addAttribute("assignedEmployees", assignedEmployees);
+        model.addAttribute("availableEmployees", availableEmployees);
 
         return "project/details";
     }
+
+
 
     @PostMapping("/projects/{projectId}/assign-employee")
     public String assignEmployeeToProject(@PathVariable int projectId,

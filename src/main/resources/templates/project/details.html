@@ -87,7 +87,10 @@
         <div class="details-card">
             <div class="card-header-flex">
                 <h2>Opgaver</h2>
-                <a th:href="@{/projects/{id}/createTask(id=${project.id})}" class="button-accent menu-button small-button">+ Opret opgave</a>
+                <a th:href="@{/projects/{projectId}/tasks/create(projectId=${project.id})}"
+                   class="button-accent menu-button small-button">
+                    + Opret opgave
+                </a>
             </div>
 
             <div th:if="${rootTasks != null and !#lists.isEmpty(rootTasks)}" class="task-table">
@@ -169,6 +172,7 @@
                             <span class="employee-role" th:if="${e.role != null}" th:text="${e.role.displayName}">Rolle</span>
                         </div>
                     </div>
+                    <br>
                     <form th:action="@{/projects/{projectId}/remove-employee/{employeeId}(projectId=${project.id}, employeeId=${e.employeeId})}"
                           method="post"
                           style="display:inline;">

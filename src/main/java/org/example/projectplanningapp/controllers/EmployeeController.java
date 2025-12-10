@@ -3,6 +3,7 @@ package org.example.projectplanningapp.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.services.TaskService;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -55,7 +57,6 @@ public class EmployeeController {
         session.setAttribute("employee", employee);
         return "redirect:/employee/home/" + employee.getEmployeeId();
     }
-
     @GetMapping("/employee/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
@@ -73,6 +74,8 @@ public class EmployeeController {
 
         return "homepage";
     }
+
+
 
 
 
