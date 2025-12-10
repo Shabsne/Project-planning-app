@@ -83,9 +83,13 @@
             </p>
         </div>
 
-        <!-- Root Tasks -->
+        <!-- Tasks -->
         <div class="details-card">
-            <h2>Opgaver</h2>
+            <div class="card-header-flex">
+                <h2>Opgaver</h2>
+                <a th:href="@{/projects/{id}/createTask(id=${project.id})}" class="button-accent menu-button small-button">+ Opret task</a>
+            </div>
+
             <div th:if="${rootTasks != null and !#lists.isEmpty(rootTasks)}" class="task-table">
                 <div class="table-header">
                     <span>Titel</span>
@@ -94,7 +98,7 @@
                 </div>
                 <div th:each="task : ${rootTasks}" class="table-row">
                     <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${task.taskId})}"
-                       th:text="${task.title}" class="task-title">Task</a>
+                       th:text="${task.title}" class="task-title">Opgave</a>
                     <span class="task-status" th:text="${task.status}">Status</span>
                     <span th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}">-</span>
                 </div>
@@ -104,27 +108,6 @@
             </p>
         </div>
 
-        <!-- All Tasks -->
-        <div class="details-card">
-            <div class="card-header-flex">
-                <h2>Alle Tasks</h2>
-                <a th:href="@{/projects/{projectId}/tasks/create(projectId=${project.id})}" class="button-accent menu-button small-button">+ Opret task</a>
-            </div>
-
-            <div th:if="${project.tasks != null and !#lists.isEmpty(project.tasks)}" class="task-table">
-                <div class="table-header">
-                    <span>Titel</span>
-                    <span>Status</span>
-                </div>
-                <div th:each="t : ${project.tasks}" class="table-row">
-                    <span th:text="${t.title}">Task</span>
-                    <span class="task-status" th:text="${t.status}">Status</span>
-                </div>
-            </div>
-            <p th:if="${project.tasks == null || #lists.isEmpty(project.tasks)}" class="empty-state">
-                Ingen tasks endnu.
-            </p>
-        </div>
 
         <!-- Employee Management Section -->
         <div class="details-card">
@@ -206,7 +189,6 @@
 
         <!-- Danger Zone -->
         <div class="details-card danger-card">
-            <h2>Farezone</h2>
             <p>Sletning af projektet kan ikke fortrydes.</p>
             <form th:action="@{/projects/{id}/delete(id=${project.id})}"
                   method="post"
