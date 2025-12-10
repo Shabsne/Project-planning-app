@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Task;
@@ -56,22 +57,25 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/home/{employeeId}")
-    public String homePage(@PathVariable int employeeId, HttpSession session, Model model) {
+    public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) return "redirect:/";
         if (loggedIn.getEmployeeId() != employeeId)
             return "redirect:/employee/home/" + loggedIn.getEmployeeId();
 
-        // Hent 3 næste tasks
         List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
         model.addAttribute("tasks", nextTasks);
-
         model.addAttribute("employee", loggedIn);
 
+        // Tilføj referer-header til modelen
+        model.addAttribute("referer", request.getHeader("referer"));
 
-        return "homepage"; // Thymeleaf
+        return "homepage";
     }
+
+
+
 
 
     @GetMapping("/employee/logout")

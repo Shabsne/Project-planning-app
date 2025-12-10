@@ -5,7 +5,6 @@
     <title>My Tasks - Alpha Solutions</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
 
 <div class="header-container">
@@ -22,10 +21,7 @@
 <div class="main-content">
     <div class="menu-container">
         <a class="menu-button" href="/projects">Projects</a>
-        <a class="menu-button"
-           th:href="@{/employee/{id}/myTasks(id=${employee.employeeId})}">
-            My Tasks
-        </a>
+        <a class="menu-button" th:href="@{/employee/{id}/myTasks(id=${employee.employeeId})}">My Tasks</a>
         <a class="menu-button" href="/status">Status</a>
         <a class="menu-button" href="/profile">Profile</a>
     </div>
@@ -33,23 +29,45 @@
     <div class="task-list">
         <h2>My assigned tasks</h2>
 
-        <!-- Hvis ingen tasks -->
         <div th:if="${tasks == null or tasks.isEmpty()}">
             <p>You currently have no assigned tasks.</p>
         </div>
 
-        <!-- Hvis der er tasks -->
-        <div th:each="task : ${tasks}" class="task-item">
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${task.taskId})}">
-                <strong th:text="${task.title}"></strong>
-            </a><br>
-            Deadline:
-            <span class="deadline"
-                  th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}"></span>
-        </div>
+        <div th:each="task : ${tasks}" class="task-item" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${task.taskId})}">
+                    <strong th:text="${task.title}"></strong>
+                </a><br>
+                Deadline: <span class="deadline" th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
 
+            <!-- Status dropdown med live update -->
+            <select id="status-[[${task.taskId}]]" name="status"
+                    th:value="${task.status}"
+                    th:attr="onchange=|updateStatus(this, ${task.projectId}, ${task.taskId})|">
+                <option value="TODO" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).TODO}">TODO</option>
+                <option value="ONGOING" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).ONGOING}">ONGOING</option>
+                <option value="DONE" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).DONE}">DONE</option>
+            </select>
+
+        </div>
     </div>
 </div>
+
+<script>
+    function updateStatus(selectEl, projectId, taskId) {
+        fetch(`/projects/${projectId}/tasks/${taskId}/update-status-ajax`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `status=${selectEl.value}`
+        }).then(response => response.text())
+            .then(data => {
+                if(data !== 'OK') {
+                    alert('Kunne ikke opdatere status');
+                }
+            }).catch(err => alert('Fejl ved opdatering'));
+    }
+</script>
 
 </body>
 </html>

@@ -131,6 +131,7 @@ public class TaskController {
         return "redirect:/projects/" +projectId+"/tasks/" +taskId;
     }
 
+
     @PostMapping("/{taskId}/update-status")
     public String updateTaskStatus(@PathVariable int projectId,
                                    @PathVariable int taskId,
@@ -203,6 +204,31 @@ public class TaskController {
         taskService.deleteTask(taskId);
         return "redirect:/projects/" + projectId;
     }
+
+    @PostMapping("/{taskId}/update-status-ajax")
+    @ResponseBody
+    public String updateTaskStatusAjax(@PathVariable int projectId,
+                                       @PathVariable int taskId,
+                                       @RequestParam("status") Status status) {
+
+        Task task = taskService.getTaskFromId(taskId);
+        if(task != null) {
+            task.setStatus(status);
+            taskService.updateTask(task);
+            return "OK"; // Return OK til formen
+        }
+        return "ERROR";
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 

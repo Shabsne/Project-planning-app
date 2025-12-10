@@ -37,14 +37,45 @@
             <p>No tasks assigned.</p>
         </div>
 
-        <div th:each="task : ${tasks}" class="task-item">
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${task.taskId})}">
-                <strong th:text="${task.title}"></strong>
-            </a><br>
-            Deadline: <span class="deadline" th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}"></span>
+        <div th:each="task : ${tasks}" class="task-item" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${task.taskId})}">
+                    <strong th:text="${task.title}"></strong>
+                </a><br>
+                Deadline: <span class="deadline" th:text="${#temporals.format(task.deadline, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+
+            <!-- Status dropdown med live update -->
+            <select id="status-[[${task.taskId}]]" name="status"
+                    th:value="${task.status}"
+                    th:attr="onchange=|updateStatus(this, ${task.projectId}, ${task.taskId})|">
+                <option value="TODO" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).TODO}">TODO</option>
+                <option value="ONGOING" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).ONGOING}">ONGOING</option>
+                <option value="DONE" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).DONE}">DONE</option>
+            </select>
+
         </div>
+
+
+
     </div>
 
 
+</div>
+
 </body>
 </html>
+<script>
+    function updateStatus(selectEl, projectId, taskId) {
+        fetch(`/projects/${projectId}/tasks/${taskId}/update-status-ajax`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `status=${selectEl.value}`
+        }).then(response => response.text())
+            .then(data => {
+                if(data !== 'OK') {
+                    alert('Kunne ikke opdatere status');
+                }
+            }).catch(err => alert('Fejl ved opdatering'));
+    }
+</script>

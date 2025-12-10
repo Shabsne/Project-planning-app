@@ -63,102 +63,45 @@
                                th:field="*{deadline}">
                     </div>
 
+                    <!-- Status dropdown med live update -->
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" th:field="*{status}">
-                            <option th:each="s : ${status}"
-                                    th:value="${s}"
-                                    th:text="${s}">
-                            </option>
+                        <select id="status-[[${task.taskId}]]" name="status"
+                                th:value="${task.status}"
+                                th:attr="onchange=|updateStatus(this, ${task.projectId}, ${task.taskId})|">
+                            <option value="TODO" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).TODO}">TODO</option>
+                            <option value="ONGOING" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).ONGOING}">ONGOING</option>
+                            <option value="DONE" th:selected="${task.status == T(org.example.projectplanningapp.models.Status).DONE}">DONE</option>
                         </select>
+
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="button-primary">Gem ændringer</button>
+                    <button type="submit" class="button-primary">Gem øvrige ændringer</button>
                     <a th:href="@{'/projects/' + ${task.projectId}}" class="button-secondary">Annuller</a>
                 </div>
             </form>
         </div>
 
-        <!-- SubTasks Section -->
-        <div class="details-card" th:if="${subtasks != null and !#lists.isEmpty(subtasks)}">
-            <div class="card-header-flex">
-                <h2>Subtasks</h2>
-                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${task.projectId}, taskId=${task.taskId})}"
-                   class="button-accent menu-button small-button">+ Opret subtask</a>
-            </div>
+        <!-- Subtasks, Assigned/Available Employees, Danger Zone kan beholdes uændret -->
 
-            <div class="task-table">
-                <div class="table-header" style="grid-template-columns: 2fr 1fr;">
-                    <span>Titel</span>
-                    <span>Estimerede Timer</span>
-                </div>
-                <div th:each="sub : ${subtasks}" class="table-row" style="grid-template-columns: 2fr 1fr;">
-                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
-                       th:text="${sub.title}"
-                       class="task-title">Subtask</a>
-                    <span th:text="${sub.estimatedHours}">0</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="details-card" th:if="${subtasks == null or #lists.isEmpty(subtasks)}">
-            <h2>Subtasks</h2>
-            <p class="empty-state">Ingen subtasks endnu.</p>
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${task.projectId}, taskId=${task.taskId})}"
-               class="button-accent menu-button small-button">+ Opret subtask</a>
-        </div>
-
-
-        <!-- Assigned Employees -->
-        <div class="details-card">
-            <h2>Tildelte Medarbejdere</h2>
-            <div th:if="${assignedEmployees != null and !#lists.isEmpty(assignedEmployees)}" class="assigned-list">
-                <div th:each="emp : ${assignedEmployees}" class="assigned-item">
-                    <span th:text="${emp.name}">Name</span>
-                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}"
-                          method="post"
-                          style="display:inline;">
-                        <button type="submit" class="remove-btn">Fjern</button>
-                    </form>
-                </div>
-            </div>
-            <p th:if="${assignedEmployees == null or #lists.isEmpty(assignedEmployees)}" class="empty-state">
-                Ingen tildelte medarbejdere.
-            </p>
-        </div>
-
-        <!-- Available Employees -->
-        <div class="details-card">
-            <h2>Tilgængelige Medarbejdere</h2>
-            <div th:if="${availableEmployees != null and !#lists.isEmpty(availableEmployees)}" class="assigned-list">
-                <div th:each="emp : ${availableEmployees}" class="assigned-item">
-                    <span th:text="${emp.name}">Name</span>
-                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}"
-                          method="post"
-                          style="display:inline;">
-                        <button type="submit" class="assign-btn">Tildel</button>
-                    </form>
-                </div>
-            </div>
-            <p th:if="${availableEmployees == null or #lists.isEmpty(availableEmployees)}" class="empty-state">
-                Alle medarbejdere er allerede tildelt.
-            </p>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="details-card danger-card">
-            <h2>Farezone</h2>
-            <p>Sletning af tasken kan ikke fortrydes.</p>
-            <form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
-                  method="post"
-                  onsubmit="return confirm('Er du sikker på, du vil slette denne task?');">
-                <button type="submit" class="button-danger">Slet task</button>
-            </form>
-        </div>
     </div>
 </div>
+
+<script>
+    function updateStatus(selectEl, projectId, taskId) {
+        fetch(`/projects/${projectId}/tasks/${taskId}/update-status-ajax`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `status=${selectEl.value}`
+        }).then(response => response.text())
+            .then(data => {
+                if(data !== 'OK') {
+                    alert('Kunne ikke opdatere status');
+                }
+            }).catch(err => alert('Fejl ved opdatering'));
+    }
+</script>
 
 </body>
 </html>
