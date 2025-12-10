@@ -1,7 +1,10 @@
 package org.example.projectplanningapp.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Task;
+import org.example.projectplanningapp.services.TaskService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.projectplanningapp.services.EmployeeService;
@@ -11,12 +14,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final TaskService taskService;
 
-    public EmployeeController(EmployeeService employeeService) {
+
+    public EmployeeController(EmployeeService employeeService, TaskService taskService) {
+        this.taskService = taskService;
         this.employeeService = employeeService;
     }
 
@@ -49,15 +57,26 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/home/{employeeId}")
-    public String homePage(@PathVariable int employeeId, HttpSession session) {
+    public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) return "redirect:/";
         if (loggedIn.getEmployeeId() != employeeId)
             return "redirect:/employee/home/" + loggedIn.getEmployeeId();
 
+        List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
+        model.addAttribute("tasks", nextTasks);
+        model.addAttribute("employee", loggedIn);
+
+        // Tilføj referer-header til modelen
+        model.addAttribute("referer", request.getHeader("referer"));
+
         return "homepage";
     }
+
+
+
+
 
     @GetMapping("/employee/logout")
     public String logout(HttpSession session) {
@@ -130,5 +149,30 @@ public class EmployeeController {
         model.addAttribute("employees", employeeService.getAllEmployees());
         return "employee/list";
     }
+
+    @GetMapping("/employee/{id}/myTasks")
+    public String myTasks(@PathVariable int id, HttpSession session, Model model) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
+        //SPØRG NICOLAI OM NØDVENDIGT
+
+        if (loggedIn.getEmployeeId() != id) {
+            return "redirect:/employee/" + loggedIn.getEmployeeId() + "/myTasks";
+        }
+
+        List<Task> tasks = taskService.getAssignedTasksForEmployee(id);
+        model.addAttribute("tasks", tasks);
+
+        model.addAttribute("employee", loggedIn);
+
+        return "task/myTasks"; // mapper til templates/task/myTasks.html
+    }
+
+
+
 
 }
