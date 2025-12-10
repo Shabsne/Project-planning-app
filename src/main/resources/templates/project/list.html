@@ -51,15 +51,15 @@
             </div>
 
             <div class="project-card-footer">
-                <a th:href="@{/projects/{id}/edit(id=${proj.id})}" class="action-link">
-                    Rediger
-                </a>
-                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}" class="action-link">
-                    Sub-projekt
-                </a>
-                <a th:href="@{/projects/{id}/delete(id=${proj.id})}" class="action-link delete-link">
-                    Slet
-                </a>
+                <a th:href="@{/projects/{id}/edit(id=${proj.id})}" class="action-link">Rediger</a>
+                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}" class="action-link">Sub-projekt</a>
+
+                <form th:action="@{/projects/{id}/delete(id=${proj.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="action-btn delete-btn"
+                            style="background:none; border:none; cursor:pointer;">
+                        Slet
+                    </button>
+                </form>
             </div>
         </div>
     </div>
