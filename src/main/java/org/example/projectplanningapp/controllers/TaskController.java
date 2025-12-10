@@ -202,10 +202,4 @@ public class TaskController {
         taskService.deleteTask(taskId);
         return "redirect:/projects/" + projectId;
     }
-
-
-
-
-
-
 }

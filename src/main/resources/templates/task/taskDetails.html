@@ -113,7 +113,7 @@
         <!-- Assigned Employees -->
         <div class="details-card">
             <h2>Tildelte Medarbejdere</h2>
-            <div th:if="${assignedEmployees != null and #lists.isNotEmpty(assignedEmployees)}" class="assigned-list">
+            <div th:if="${assignedEmployees != null and !#lists.isEmpty(assignedEmployees)}" class="assigned-list">
                 <div th:each="emp : ${assignedEmployees}" class="assigned-item">
                     <span th:text="${emp.name}">Navn</span>
                     <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}"
@@ -131,7 +131,7 @@
         <!-- Available Employees -->
         <div class="details-card">
             <h2>Tilgængelige Medarbejdere</h2>
-            <div th:if="${availableEmployees != null and #lists.isNotEmpty(availableEmployees)}" class="assigned-list">
+            <div th:if="${availableEmployees != null and !#lists.isEmpty(availableEmployees)}" class="assigned-list">
                 <div th:each="emp : ${availableEmployees}" class="assigned-item">
                     <span th:text="${emp.name}">Navn</span>
                     <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}"
