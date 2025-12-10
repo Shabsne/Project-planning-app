@@ -98,11 +98,21 @@ public class TaskRepository {
         jdbc.update(sql, taskId);
     }
 
-    public List<Task> getAssignedTasksForEmployee(int employeeId) {
-        String sql = "SELECT * FROM TaskEmployee WHERE employeeId = ?";
+    public List<Task> getNextTasksForEmployee(int employeeId) {
+        String sql = """
+        SELECT t.*
+        FROM Task t
+        INNER JOIN TaskEmployee te ON t.taskId = te.taskId
+        WHERE te.employeeId = ?
+        ORDER BY t.deadline ASC
+        LIMIT 3
+    """;
+
         List<Task> tasks = jdbc.query(sql, taskRowMapper, employeeId);
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
+
+
 
     // Add employee to a task
     public void assignEmployeeToTask(int taskId, int employeeId) {
@@ -139,4 +149,17 @@ public class TaskRepository {
 
         return jdbc.query(sql,taskRowMapper,projectId);
     }
+
+    public List<Task> getAssignedTasksForEmployee(int employeeId) {
+        String sql = """
+        SELECT t.*
+        FROM Task t
+        JOIN TaskEmployee te ON t.taskId = te.taskId
+        WHERE te.employeeId = ?
+        ORDER BY t.deadline ASC
+        """;
+
+        List<Task> tasks = jdbc.query(sql, taskRowMapper, employeeId);
+        return tasks.isEmpty() ? Collections.emptyList() : tasks;    }
+
 }

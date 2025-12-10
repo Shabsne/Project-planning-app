@@ -2,6 +2,8 @@ package org.example.projectplanningapp.controllers;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Task;
+import org.example.projectplanningapp.services.TaskService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.projectplanningapp.services.EmployeeService;
@@ -11,12 +13,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final TaskService taskService;
 
-    public EmployeeController(EmployeeService employeeService) {
+
+    public EmployeeController(EmployeeService employeeService, TaskService taskService) {
+        this.taskService = taskService;
         this.employeeService = employeeService;
     }
 
@@ -49,15 +56,20 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/home/{employeeId}")
-    public String homePage(@PathVariable int employeeId, HttpSession session) {
+    public String homePage(@PathVariable int employeeId, HttpSession session, Model model) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) return "redirect:/";
         if (loggedIn.getEmployeeId() != employeeId)
             return "redirect:/employee/home/" + loggedIn.getEmployeeId();
 
-        return "homepage";
+        // Hent 3 næste tasks
+        List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
+        model.addAttribute("tasks", nextTasks);
+
+        return "homepage"; // Thymeleaf
     }
+
 
     @GetMapping("/employee/logout")
     public String logout(HttpSession session) {

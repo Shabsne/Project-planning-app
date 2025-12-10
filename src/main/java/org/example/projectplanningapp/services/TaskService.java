@@ -65,6 +65,11 @@ public class TaskService {
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
+    public List<Task> getNextTasksForEmployee(int employeeId) {
+        return taskRepository.getNextTasksForEmployee(employeeId);
+    }
+
+
 
     public void assignEmployeeToTask(int taskId, int empId) {
         taskRepository.assignEmployeeToTask(taskId, empId);
