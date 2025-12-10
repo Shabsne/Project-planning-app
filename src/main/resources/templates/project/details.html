@@ -8,13 +8,13 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
@@ -87,7 +87,7 @@
         <div class="details-card">
             <div class="card-header-flex">
                 <h2>Opgaver</h2>
-                <a th:href="@{/projects/{id}/createTask(id=${project.id})}" class="button-accent menu-button small-button">+ Opret task</a>
+                <a th:href="@{/projects/{id}/createTask(id=${project.id})}" class="button-accent menu-button small-button">+ Opret opgave</a>
             </div>
 
             <div th:if="${rootTasks != null and !#lists.isEmpty(rootTasks)}" class="task-table">
@@ -138,7 +138,7 @@
                     </div>
 
                     <button type="submit" class="button-primary" style="margin: 0; white-space: nowrap;">
-                        ➕ Tildel til projekt
+                        Tildel til projekt
                     </button>
                 </form>
             </div>
@@ -146,7 +146,7 @@
             <div th:if="${availableEmployees == null || #lists.isEmpty(availableEmployees)}"
                  style="padding: 15px; background: #fff5f5; border-radius: 8px; border-left: 4px solid var(--alpha-orange); margin-bottom: 25px;">
                 <p style="margin: 0; color: var(--alpha-gray); font-style: italic;">
-                    ℹ️ Alle medarbejdere er allerede tildelt til dette projekt.
+                    Alle medarbejdere er allerede tildelt til dette projekt.
                 </p>
             </div>
 
@@ -194,7 +194,7 @@
                   method="post"
                   style="display:inline;"
                   onsubmit="return confirm('Er du sikker på, at du vil slette dette projekt? Denne handling kan ikke fortrydes.');">
-                <button type="submit" class="button-danger">🗑️ Slet projekt</button>
+                <button type="submit" class="button-danger">Slet projekt</button>
             </form>
         </div>
 

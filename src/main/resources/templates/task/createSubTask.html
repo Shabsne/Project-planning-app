@@ -8,19 +8,19 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
 <div class="main-content">
     <div class="page-header">
-        <h1>Opret Subtask</h1>
+        <h1>Opret Delopgave</h1>
         <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${parentTask.taskId})}"
            class="menu-button">← Tilbage til task</a>
     </div>
