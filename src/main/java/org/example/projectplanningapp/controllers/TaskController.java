@@ -156,46 +156,45 @@ public class TaskController {
                                         @PathVariable int taskId,
                                         Model model) {
 
-        Task parentTask = taskService.getTaskFromId(taskId);
-        Project project = projectService.findById(projectId);
+        Task parent = taskService.getTaskFromId(taskId);
 
-        Task subtask = new Task();  // Ny subtask
-        subtask.setParentTask(parentTask);
-        subtask.setProjectId(projectId);
+        Task newSubTask = new Task();
+        newSubTask.setProjectId(projectId);
+        newSubTask.setParentTaskId(taskId);
 
-        model.addAttribute("subtask", subtask);
-        model.addAttribute("parentTask", parentTask);
-        model.addAttribute("project", project);
+        List<Employee> projectEmployees = projectService.getProjectEmployees(projectId);
+
+        model.addAttribute("project", projectService.getProjectDetails(projectId));
+        model.addAttribute("parentTask", parent);
+        model.addAttribute("task", newSubTask); // ← matcher HTML th:object="${task}"
+        model.addAttribute("availableEmployees", projectEmployees);
         model.addAttribute("status", Status.values());
-        model.addAttribute("projectEmployees", project.getAssignedEmployees());
 
-        return "task/createSubTask"; // Thymeleaf template
+        return "task/createSubTask";
     }
 
-    @PostMapping("/{taskId}/createSubTask")
+    @PostMapping("/{parentTaskId}/createSubTask")
     public String createSubTask(@PathVariable int projectId,
-                                @PathVariable int taskId,
-                                @ModelAttribute Task subtask,
-                                @RequestParam(required = false) List<Integer> assignedEmployeeIds) {
+                                @PathVariable int parentTaskId,
+                                @ModelAttribute("task") Task task) {
 
-        // Håndter parentTask
-        Task parentTask = taskService.getTaskFromId(taskId);
-        subtask.setParentTask(parentTask);
-        subtask.setProjectId(projectId);
+        // Sæt parent-felter
+        task.setProjectId(projectId);
+        task.setParentTaskId(parentTaskId);
 
-        // Assign employees hvis nogen er valgt
-        if (assignedEmployeeIds != null) {
-            subtask.setAssignedEmployees(
-                    assignedEmployeeIds.stream()
-                            .map(employeeService::getEmployeeFromId)
-                            .toList()
-            );
+        // 1. Opret subtask (skaber taskId)
+        taskService.createTask(task);
+
+        // 2. Assign employees
+        if (task.getAssignedEmployeeIds() != null) {
+            for (Integer empId : task.getAssignedEmployeeIds()) {
+                taskService.assignEmployeeToTask(task.getTaskId(), empId);
+            }
         }
-        // Gem subtask
-        taskService.createTask(subtask);
 
-        return "redirect:/projects/" + projectId;
+        return "redirect:/projects/" + projectId + "/tasks/" + parentTaskId;
     }
+
 
     @PostMapping("/{taskId}/delete")
     public String deleteTask(@PathVariable int projectId, @PathVariable int taskId) {

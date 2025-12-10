@@ -63,7 +63,10 @@ public class Task {
     public void setParentTaskId(Integer parentTaskId) { this.parentTaskId = parentTaskId; }
 
     public Task getParentTask() { return parentTask; }
-    public void setParentTask(Task parentTask) { this.parentTask = parentTask; }
+    public void setParentTask(Task parent) {
+        this.parentTask = parent;
+        this.parentTaskId = parent != null ? parent.getTaskId() : null;
+    }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
