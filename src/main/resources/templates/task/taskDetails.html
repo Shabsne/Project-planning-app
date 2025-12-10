@@ -82,10 +82,10 @@
         </div>
 
         <!-- SubTasks Section -->
-        <div class="details-card" th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
+        <div class="details-card" th:if="${subtasks != null and !#lists.isEmpty(subtasks)}">
             <div class="card-header-flex">
                 <h2>Subtasks</h2>
-                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${task.projectId}, taskId=${task.taskId})}"
                    class="button-accent menu-button small-button">+ Opret subtask</a>
             </div>
 
@@ -94,7 +94,7 @@
                     <span>Titel</span>
                     <span>Estimerede Timer</span>
                 </div>
-                <div th:each="sub : ${subTasks}" class="table-row" style="grid-template-columns: 2fr 1fr;">
+                <div th:each="sub : ${subtasks}" class="table-row" style="grid-template-columns: 2fr 1fr;">
                     <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
                        th:text="${sub.title}"
                        class="task-title">Subtask</a>
@@ -103,12 +103,13 @@
             </div>
         </div>
 
-        <div class="details-card" th:if="${subTasks == null or #lists.isEmpty(subTasks)}">
+        <div class="details-card" th:if="${subtasks == null or #lists.isEmpty(subtasks)}">
             <h2>Subtasks</h2>
             <p class="empty-state">Ingen subtasks endnu.</p>
-            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${task.projectId}, taskId=${task.taskId})}"
                class="button-accent menu-button small-button">+ Opret subtask</a>
         </div>
+
 
         <!-- Assigned Employees -->
         <div class="details-card">

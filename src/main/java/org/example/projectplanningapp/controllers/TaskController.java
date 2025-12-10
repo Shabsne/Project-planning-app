@@ -66,22 +66,24 @@ public class TaskController {
                                   Model model) {
 
         Task task = taskService.getTaskFromId(taskId);
-        Project project = projectService.getProjectDetails(projectId);
-        List<Task> subTasks = taskService.getSubTasks(taskId);
-
-        model.addAttribute("task", task);
-        model.addAttribute("project", project);
-        model.addAttribute("subtasks",subTasks);
-        model.addAttribute("status", Status.values());
+        Project project = projectService.findById(projectId);
 
         List<Employee> assigned = taskService.getAssignedEmployeesForTask(taskId);
         List<Employee> available = projectService.getAvailableEmployeesForTask(projectId, taskId);
 
+        // Hent subtasks hvis dette er en parent-task
+        List<Task> subtasks = taskService.getSubTasks(taskId);
+
+        model.addAttribute("task", task);
+        model.addAttribute("project", project);
         model.addAttribute("assignedEmployees", assigned);
         model.addAttribute("availableEmployees", available);
+        model.addAttribute("status", Status.values());
+        model.addAttribute("subtasks", subtasks); // <-- MANGLEDE
 
         return "task/taskDetails";
     }
+
 
 
 
