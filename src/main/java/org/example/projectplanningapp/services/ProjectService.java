@@ -63,6 +63,18 @@ public class ProjectService {
                 .sum();
     }
 
+    public void assignEmployeeToProject(int projectId, int employeeId) {
+        projectRepository.assignEmployeeToProject(projectId, employeeId);
+    }
+
+    public void removeEmployeeFromProject(int projectId, int employeeId) {
+        projectRepository.removeEmployeeFromProject(projectId, employeeId);
+    }
+
+    public List<Employee> getAvailableEmployeesForProject(int projectId) {
+        return projectRepository.getAvailableEmployeesForProject(projectId);
+    }
+
 
 }
 

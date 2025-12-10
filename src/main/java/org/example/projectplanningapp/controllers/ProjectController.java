@@ -8,10 +8,7 @@ import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,8 +39,6 @@ public class ProjectController {
         model.addAttribute("projects", parentProjects);
         return "project/list";
     }
-
-
 
 
     // Create project
@@ -118,6 +113,20 @@ public class ProjectController {
         return "project/details";
     }
 
+    @PostMapping("/projects/{projectId}/assign-employee")
+    public String assignEmployeeToProject(@PathVariable int projectId,
+                                          @RequestParam int employeeId,
+                                          Model model) {
+        projectService.assignEmployeeToProject(projectId, employeeId);
+        return "redirect:/projects/" + projectId;
+    }
+
+    @PostMapping("/projects/{projectId}/remove-employee/{employeeId}")
+    public String removeEmployeeFromProject(@PathVariable int projectId,
+                                            @PathVariable int employeeId) {
+        projectService.removeEmployeeFromProject(projectId, employeeId);
+        return "redirect:/projects/" + projectId;
+    }
 
 
     // Edit
