@@ -8,19 +8,19 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
 <div class="main-content">
     <div class="page-header">
-        <h1>Opret Ny Task</h1>
+        <h1>Opret Ny Opgave</h1>
         <a th:href="@{/projects/{projectId}(projectId=${task.projectId})}" class="menu-button">← Tilbage til projekt</a>
     </div>
 
@@ -80,7 +80,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="button-primary">Opret Task</button>
+                <button type="submit" class="button-primary">Opret Opgave</button>
                 <a th:href="@{/projects/{projectId}(projectId=${task.projectId})}" class="button-secondary">Annuller</a>
             </div>
         </form>

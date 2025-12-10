@@ -104,5 +104,27 @@ public class ProjectRepository {
         return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId, taskId);
     }
 
+    public void assignEmployeeToProject(int projectId, int employeeId) {
+        String sql = "INSERT IGNORE INTO ProjectEmployee (projectId, employeeId) VALUES (?, ?)";
+        jdbcTemplate.update(sql, projectId, employeeId);
+    }
 
+    public void removeEmployeeFromProject(int projectId, int employeeId) {
+        String sql = "DELETE FROM ProjectEmployee WHERE projectId = ? AND employeeId = ?";
+        jdbcTemplate.update(sql, projectId, employeeId);
+    }
+
+    public List<Employee> getAvailableEmployeesForProject(int projectId) {
+        String sql = """
+        SELECT e.*
+        FROM Employee e
+        WHERE e.employeeId NOT IN (
+            SELECT pe.employeeId
+            FROM ProjectEmployee pe
+            WHERE pe.projectId = ?
+        )
+    """;
+
+        return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId);
+    }
 }

@@ -8,13 +8,13 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
@@ -83,8 +83,80 @@
             </form>
         </div>
 
-        <!-- Subtasks, Assigned/Available Employees, Danger Zone kan beholdes uændret -->
+        <!-- SubTasks Section -->
+        <div class="details-card" th:if="${subTasks != null and #lists.isNotEmpty(subTasks)}">
+            <div class="card-header-flex">
+                <h2>Delopgaver</h2>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+                   class="button-accent menu-button small-button">+ Opret delopgave</a>
+            </div>
 
+            <div class="task-table">
+                <div class="table-header" style="grid-template-columns: 2fr 1fr;">
+                    <span>Titel</span>
+                    <span>Estimerede Timer</span>
+                </div>
+                <div th:each="sub : ${subTasks}" class="table-row" style="grid-template-columns: 2fr 1fr;">
+                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.projectId}, taskId=${sub.taskId})}"
+                       th:text="${sub.title}"
+                       class="task-title">Delopgave</a>
+                    <span th:text="${sub.estimatedHours}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-card" th:if="${subTasks == null or #lists.isEmpty(subTasks)}">
+            <h2>Subtasks</h2>
+            <p class="empty-state">Ingen delopgaver endnu.</p>
+            <a th:href="@{/projects/{projectId}/tasks/{taskId}/createSubTask(projectId=${projectId}, taskId=${taskId})}"
+               class="button-accent menu-button small-button">+ Opret delopgave</a>
+        </div>
+
+        <!-- Assigned Employees -->
+        <div class="details-card">
+            <h2>Tildelte Medarbejdere</h2>
+            <div th:if="${assignedEmployees != null and !#lists.isEmpty(assignedEmployees)}" class="assigned-list">
+                <div th:each="emp : ${assignedEmployees}" class="assigned-item">
+                    <span th:text="${emp.name}">Navn</span>
+                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/remove-employee/' + ${emp.employeeId}}"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit" class="remove-btn">Fjern</button>
+                    </form>
+                </div>
+            </div>
+            <p th:if="${assignedEmployees == null or #lists.isEmpty(assignedEmployees)}" class="empty-state">
+                Ingen tildelte medarbejdere.
+            </p>
+        </div>
+
+        <!-- Available Employees -->
+        <div class="details-card">
+            <h2>Tilgængelige Medarbejdere</h2>
+            <div th:if="${availableEmployees != null and !#lists.isEmpty(availableEmployees)}" class="assigned-list">
+                <div th:each="emp : ${availableEmployees}" class="assigned-item">
+                    <span th:text="${emp.name}">Navn</span>
+                    <form th:action="@{'/projects/' + ${task.projectId} + '/tasks/' + ${task.taskId} + '/assign-employee/' + ${emp.employeeId}}"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit" class="assign-btn">Tildel</button>
+                    </form>
+                </div>
+            </div>
+            <p th:if="${availableEmployees == null or #lists.isEmpty(availableEmployees)}" class="empty-state">
+                Alle medarbejdere er allerede tildelt.
+            </p>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="details-card danger-card">
+            <p>Sletning af tasken kan ikke fortrydes.</p>
+            <form th:action="@{/projects/{projectId}/tasks/{taskId}/delete(projectId=${task.projectId}, taskId=${task.taskId})}"
+                  method="post"
+                  onsubmit="return confirm('Er du sikker på, du vil slette denne task?');">
+                <button type="submit" class="button-danger">Slet task</button>
+            </form>
+        </div>
     </div>
 </div>
 

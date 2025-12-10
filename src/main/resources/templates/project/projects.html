@@ -8,13 +8,13 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
@@ -43,14 +43,20 @@
                 <td>
                     <a th:href="@{/projects/{id}(id=${p.id})}"
                        th:text="${p.name}"
-                       class="table-link">Project Name</a>
+                       class="table-link">Projekt Navn</a>
                 </td>
                 <td th:text="${p.projectLeader != null ? p.projectLeader.name : 'Ikke tildelt'}">N/A</td>
                 <td th:text="${p.startDate != null ? #temporals.format(p.startDate, 'dd/MM/yyyy') : '-'}">01/01/2024</td>
                 <td th:text="${p.endDate != null ? #temporals.format(p.endDate, 'dd/MM/yyyy HH:mm') : '-'}">01/12/2024</td>
                 <td class="action-cell">
                     <a th:href="@{/projects/edit/{id}(id=${p.id})}" class="action-btn edit-btn">Rediger</a>
-                    <a th:href="@{/projects/delete/{id}(id=${p.id})}" class="action-btn delete-btn">Slet</a>
+
+                    <form th:action="@{/projects/{id}/delete(id=${p.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="action-link delete-link"
+                                style="background:none; border:none; cursor:pointer;">
+                            Slet
+                        </button>
+                    </form>
                 </td>
             </tr>
             </tbody>

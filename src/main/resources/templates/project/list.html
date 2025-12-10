@@ -8,13 +8,13 @@
 <body>
 
 <div class="header-container">
-    <div class="logo-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
         <div class="logo-text">
             <span class="logo-text-main">Alpha Solutions</span>
             <span class="logo-text-sub">Project Management</span>
         </div>
-    </div>
+    </a>
     <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
@@ -51,15 +51,13 @@
             </div>
 
             <div class="project-card-footer">
-                <a th:href="@{/projects/{id}/edit(id=${proj.id})}" class="action-link">
-                    Rediger
-                </a>
-                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}" class="action-link">
-                    Sub-projekt
-                </a>
-                <a th:href="@{/projects/{id}/delete(id=${proj.id})}" class="action-link delete-link">
-                    Slet
-                </a>
+                <a th:href="@{/projects/{id}/sub/create(id=${proj.id})}" class="action-link">Opret delprojekt</a>
+
+                <form th:action="@{/projects/{id}/delete(id=${proj.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="action-btn delete-btn">
+                        Slet projekt
+                    </button>
+                </form>
             </div>
         </div>
     </div>
