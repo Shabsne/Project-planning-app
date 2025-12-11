@@ -27,7 +27,7 @@
             Mine opgaver
         </a>
         <a class="menu-button" href="/status">Status</a>
-        <a class="menu-button" href="/profile">Profil</a>
+        <a class="menu-button" th:href="@{/employee/{id}(id=${employee.employeeId})}">Profil</a>
     </div>
 
     <div class="task-list">

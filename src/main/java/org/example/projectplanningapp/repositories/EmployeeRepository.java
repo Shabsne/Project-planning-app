@@ -1,6 +1,7 @@
 package org.example.projectplanningapp.repositories;
 
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Role;
 import org.example.projectplanningapp.repositories.rowMappers.EmployeeRowMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,10 +27,10 @@ public class EmployeeRepository {
 
         jdbc.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO Employee (employeeRoleId, employeeName, email, password)" +
+                    "INSERT INTO Employee (employeeRoleId, name, email, password)" +
                             "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS
             );
-            ps.setObject(1, employee.getRole());
+            ps.setInt(1, employee.getRole().getId());
             ps.setString(2, employee.getName());
             ps.setString(3, employee.getEmail());
             ps.setString(4, employee.getPassword());
@@ -44,7 +45,7 @@ public class EmployeeRepository {
     }
 
     public void updateOwnProfile(Employee employee) {
-        jdbc.update("UPDATE Employee SET employeeName = ?, email = ?, password = ? WHERE employeeId = ?",
+        jdbc.update("UPDATE Employee SET name = ?, email = ?, password = ? WHERE employeeId = ?",
                 employee.getName(), employee.getEmail(), employee.getPassword(), employee.getEmployeeId());
     }
 
@@ -79,5 +80,10 @@ public class EmployeeRepository {
 
     public void deleteEmployee(int id) {
         jdbc.update("DELETE FROM Employee WHERE employeeId = ?", id);
+    }
+
+    public void updateRole(int employeeId, Role role) {
+        String sql = "UPDATE Employee SET employeeRoleId = ? WHERE employeeId = ?";
+        jdbc.update(sql, role.getId(), employeeId);
     }
 }
