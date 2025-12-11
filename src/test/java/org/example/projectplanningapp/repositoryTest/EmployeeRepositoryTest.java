@@ -1,11 +1,10 @@
-package org.example.projectplanningapp.repositoriyTest;
+package org.example.projectplanningapp.repositoryTest;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.repositories.EmployeeRepository;
 import org.example.projectplanningapp.repositories.rowMappers.EmployeeRowMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;

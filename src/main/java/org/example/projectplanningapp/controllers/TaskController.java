@@ -70,16 +70,21 @@ public class TaskController {
 
         List<Employee> assigned = taskService.getAssignedEmployeesForTask(taskId);
         List<Employee> available = projectService.getAvailableEmployeesForTask(projectId, taskId);
+        List<Task> subTasks = taskService.getSubTasks(taskId);
 
-        // Hent subtasks hvis dette er en parent-task
-        List<Task> subtasks = taskService.getSubTasks(taskId);
+        Task parentTask = null;
+        if (task.getParentTaskId() != null) {
+            parentTask = taskService.getTaskFromId(task.getParentTaskId());
+            task.setParentTask(parentTask); // valgfrit, hvis du også vil have parentTask i task
+        }
 
         model.addAttribute("task", task);
+        model.addAttribute("parentTask", parentTask);
         model.addAttribute("project", project);
         model.addAttribute("assignedEmployees", assigned);
         model.addAttribute("availableEmployees", available);
         model.addAttribute("status", Status.values());
-        model.addAttribute("subtasks", subtasks); // <-- MANGLEDE
+        model.addAttribute("subTasks", subTasks);
 
         return "task/taskDetails";
     }
