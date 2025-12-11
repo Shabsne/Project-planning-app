@@ -55,7 +55,7 @@ class ProjectControllerTest {
         sampleEmployee.setName("Test User");
         sampleEmployee.setEmail("test@example.com");
         sampleEmployee.setPassword("password");
-        sampleEmployee.setRole(Role.EMPLOYEE);
+        sampleEmployee.setRole(Role.DEVELOPER);
     }
 
     @Test
