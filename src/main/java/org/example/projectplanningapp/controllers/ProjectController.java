@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.controllers;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.models.Status;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @Controller
 public class ProjectController {
@@ -26,13 +28,20 @@ public class ProjectController {
     }
 
 
-    // list projects - Kun parents projekter
+    // list projects - Kun mine projekter
     @GetMapping("/projects")
-    public String listProjects(Model model) {
-        List<Project> allProjects = projectService.getAllProjects();
+    public String listProjects(Model model, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
+        // Hent kun projekter hvor brugeren er projektleder eller tildelt medarbejder
+        List<Project> userProjects = projectService.getProjectsForEmployee(loggedIn.getEmployeeId());
 
         // Filtrer så kun parent projekter vises
-        List<Project> parentProjects = allProjects.stream()
+        List<Project> parentProjects = userProjects.stream()
                 .filter(p -> p.getParentProject() == null)
                 .toList();
 
@@ -41,45 +50,75 @@ public class ProjectController {
     }
 
 
-    // Create project
+    // Create project form
     @GetMapping("/projects/create")
-    public String showCreateForm(Model model) {
+    public String showCreateProjectForm(Model model, HttpSession session) {
+        if (session.getAttribute("employee") == null) {
+            return "redirect:/";
+        }
+
         model.addAttribute("project", new Project());
         model.addAttribute("leaders", employeeService.getAllEmployees());
+
         return "project/create";
     }
 
+
     @PostMapping("/projects/create")
-    public String createProject(@ModelAttribute Project project) {
+    public String createProject(@ModelAttribute Project project, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
+        // Sæt projektleder hvis valgt
         if (project.getProjectLeaderId() != null) {
             Employee leader = employeeService.getEmployeeFromId(project.getProjectLeaderId());
             project.setProjectLeader(leader);
         }
+
+        // Opret projektet først
         projectService.createProject(project);
-        return "redirect:/projects";
+
+        // Tildel automatisk den bruger der oprettede projektet
+        List<Project> allProjects = projectService.getAllProjects();
+        Project createdProject = allProjects.get(allProjects.size() - 1);
+
+        // Tildel opretteren til projektet
+        projectService.assignEmployeeToProject(createdProject.getId(), loggedIn.getEmployeeId());
+
+        return "redirect:/projects/" + createdProject.getId();
     }
 
 
-    // Create Sub-project
-    @GetMapping("/projects/{parentId}/sub/create")
-    public String showCreateSubForm(@PathVariable int parentId, Model model) {
-        // Opret nyt sub-projekt
-        Project subProject = new Project();
 
-        // Sæt parent project reference
+    @GetMapping("/projects/{parentId}/sub/create")
+    public String showCreateSubProjectForm(@PathVariable int parentId, Model model, HttpSession session) {
+        if (session.getAttribute("employee") == null) {
+            return "redirect:/";
+        }
+
+        Project subProject = new Project();
         Project parentProject = new Project();
         parentProject.setId(parentId);
         subProject.setParentProject(parentProject);
 
-        // Tilføj til model
         model.addAttribute("project", subProject);
         model.addAttribute("leaders", employeeService.getAllEmployees());
 
         return "project/create-sub";
     }
 
+
     @PostMapping("/projects/{parentId}/sub/create")
-    public String createSubProject(@PathVariable int parentId, @ModelAttribute Project project) {
+    public String createSubProject(@PathVariable int parentId, @ModelAttribute Project project, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
         // Hent projektleder hvis valgt
         if (project.getProjectLeaderId() != null) {
             Employee leader = employeeService.getEmployeeFromId(project.getProjectLeaderId());
@@ -94,43 +133,52 @@ public class ProjectController {
         // Gem sub-projekt
         projectService.createProject(project);
 
-        return "redirect:/projects";
+        // Find det nyoprettede projekt og tildel opretteren
+        List<Project> allProjects = projectService.getAllProjects();
+        Project createdProject = allProjects.get(allProjects.size() - 1);
+        projectService.assignEmployeeToProject(createdProject.getId(), loggedIn.getEmployeeId());
+
+        return "redirect:/projects/" + createdProject.getId();
     }
 
+
+    // Project Details - FIXED VERSION
     @GetMapping("/projects/{id}")
-    public String projectDetails(@PathVariable int id, Model model) {
+    public String projectDetails(@PathVariable int id, Model model, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
         Project project = projectService.getProjectDetails(id);
 
+        // Hent friske data hver gang for at undgå cache-problemer
+        List<Employee> assignedEmployees = projectService.getProjectEmployees(id);
+        List<Employee> availableEmployees = projectService.getAvailableEmployeesForProject(id);
         int totalEstimatedHours = projectService.calculateEstimatedHours(project);
 
-        // Tildelte medarbejdere
-        List<Employee> assignedEmployees = project.getAssignedEmployees();
-
-        // Tilgængelige medarbejdere = alle minus de allerede tildelte (baseret på employeeId)
-        List<Employee> availableEmployees = employeeService.getAllEmployees().stream()
-                .filter(e -> assignedEmployees.stream().noneMatch(a -> a.getEmployeeId() == e.getEmployeeId()))
-                .toList();
+        // Opdater project med friske data
+        project.setAssignedEmployees(assignedEmployees);
 
         model.addAttribute("project", project);
         model.addAttribute("status", Status.values());
         model.addAttribute("rootTasks", taskService.getRootTasks(id));
         model.addAttribute("totalEstimatedHours", totalEstimatedHours);
-        model.addAttribute("assignedEmployees", assignedEmployees);
         model.addAttribute("availableEmployees", availableEmployees);
 
         return "project/details";
     }
 
 
-
+    // Assign employee to project
     @PostMapping("/projects/{projectId}/assign-employee")
     public String assignEmployeeToProject(@PathVariable int projectId,
-                                          @RequestParam int employeeId,
-                                          Model model) {
+                                          @RequestParam int employeeId) {
         projectService.assignEmployeeToProject(projectId, employeeId);
         return "redirect:/projects/" + projectId;
     }
 
+    // Remove employee from project
     @PostMapping("/projects/{projectId}/remove-employee/{employeeId}")
     public String removeEmployeeFromProject(@PathVariable int projectId,
                                             @PathVariable int employeeId) {
@@ -139,7 +187,7 @@ public class ProjectController {
     }
 
 
-    // Edit
+    // Edit project form
     @GetMapping("/projects/{id}/edit")
     public String editProjectForm(@PathVariable int id, Model model) {
         model.addAttribute("project", projectService.findById(id));
@@ -147,6 +195,7 @@ public class ProjectController {
         return "project/edit";
     }
 
+    // Update project
     @PostMapping("/projects/{id}/edit")
     public String updateProject(@PathVariable int id, @ModelAttribute Project project) {
         project.setId(id);
@@ -155,7 +204,7 @@ public class ProjectController {
         return "redirect:/projects/" + id;
     }
 
-    // Delete
+    // Delete project
     @PostMapping("/projects/{id}/delete")
     public String deleteProject(@PathVariable int id) {
         projectService.deleteById(id);

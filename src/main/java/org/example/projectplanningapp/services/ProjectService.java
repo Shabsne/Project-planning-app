@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class ProjectService {
 
@@ -41,19 +42,17 @@ public class ProjectService {
     }
 
     public Project getProjectDetails(int id) {
-
         Project p = projectRepository.findProjectById(id);
 
         p.setSubProjects(projectRepository.findSubprojects(id));
         p.setTasks(projectRepository.findTasksByProject(id));
         p.setAssignedEmployees(getProjectEmployees(id));
 
-
         return p;
     }
 
     public List<Employee> getAvailableEmployeesForTask(int projectId, int taskId) {
-        return projectRepository.getAvailableEmployeesForTask(projectId,taskId);
+        return projectRepository.getAvailableEmployeesForTask(projectId, taskId);
     }
 
     public int calculateEstimatedHours(Project project) {
@@ -63,6 +62,7 @@ public class ProjectService {
                 .sum();
     }
 
+    // NYE METODER TIL EMPLOYEE ASSIGNMENT
     public void assignEmployeeToProject(int projectId, int employeeId) {
         projectRepository.assignEmployeeToProject(projectId, employeeId);
     }
@@ -75,7 +75,7 @@ public class ProjectService {
         return projectRepository.getAvailableEmployeesForProject(projectId);
     }
 
-
+    public List<Project> getProjectsForEmployee(int employeeId) {
+        return projectRepository.getProjectsForEmployee(employeeId);
+    }
 }
-
-

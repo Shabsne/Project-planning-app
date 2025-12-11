@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
+
 @Repository
 public class ProjectRepository {
 
@@ -19,7 +20,6 @@ public class ProjectRepository {
 
     public ProjectRepository(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-
     }
 
     public void createProject(Project project) {
@@ -36,25 +36,21 @@ public class ProjectRepository {
         );
     }
 
-    // Se projekter
     public List<Project> getAllProjects() {
         String sql = "SELECT * FROM Project";
         return jdbcTemplate.query(sql, new ProjectRowMapper());
     }
 
-    // Slet projekt
     public void deleteProjectById(int id) {
         String sql = "DELETE FROM Project WHERE projectId = ?";
         jdbcTemplate.update(sql, id);
     }
 
-    // Rediger projekt
     public Project findProjectById(int id) {
         String sql = "SELECT * FROM Project WHERE projectId = ?";
         return jdbcTemplate.queryForObject(sql, new ProjectRowMapper(), id);
     }
 
-    // Efter redigering - Gem
     public void update(Project project) {
         String sql = "UPDATE Project SET name = ?, description = ?, startDate = ?, endDate = ?, projectLeaderId = ? WHERE projectId = ?";
 
@@ -67,7 +63,6 @@ public class ProjectRepository {
                 project.getId()
         );
     }
-
 
     public List<Project> findSubprojects(int parentId) {
         String sql = "SELECT * FROM Project WHERE parentProjectId = ?";
@@ -104,6 +99,7 @@ public class ProjectRepository {
         return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId, taskId);
     }
 
+    // NYE METODER TIL EMPLOYEE ASSIGNMENT
     public void assignEmployeeToProject(int projectId, int employeeId) {
         String sql = "INSERT IGNORE INTO ProjectEmployee (projectId, employeeId) VALUES (?, ?)";
         jdbcTemplate.update(sql, projectId, employeeId);
@@ -116,15 +112,26 @@ public class ProjectRepository {
 
     public List<Employee> getAvailableEmployeesForProject(int projectId) {
         String sql = """
-        SELECT e.*
-        FROM Employee e
-        WHERE e.employeeId NOT IN (
-            SELECT pe.employeeId
-            FROM ProjectEmployee pe
-            WHERE pe.projectId = ?
-        )
-    """;
+            SELECT e.*
+            FROM Employee e
+            WHERE e.employeeId NOT IN (
+                SELECT pe.employeeId
+                FROM ProjectEmployee pe
+                WHERE pe.projectId = ?
+            )
+        """;
 
         return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId);
+    }
+
+    public List<Project> getProjectsForEmployee(int employeeId) {
+        String sql = """
+            SELECT DISTINCT p.*
+            FROM Project p
+            LEFT JOIN ProjectEmployee pe ON p.projectId = pe.projectId
+            WHERE p.projectLeaderId = ? OR pe.employeeId = ?
+        """;
+
+        return jdbcTemplate.query(sql, new ProjectRowMapper(), employeeId, employeeId);
     }
 }
