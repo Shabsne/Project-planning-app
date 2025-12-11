@@ -3,8 +3,10 @@ package org.example.projectplanningapp.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
+import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
+import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +18,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final TaskService taskService;
+    private final ProjectService projectService;
 
 
-    public EmployeeController(EmployeeService employeeService, TaskService taskService) {
+    public EmployeeController(EmployeeService employeeService, TaskService taskService, ProjectService projectService) {
         this.taskService = taskService;
         this.employeeService = employeeService;
+        this.projectService = projectService;
     }
 
     // Login side
@@ -75,7 +81,29 @@ public class EmployeeController {
         return "homepage";
     }
 
+    //Status
+    @GetMapping("/status")
+    public String showStatus(HttpSession session, Model model) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
 
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
+
+        List<Project> assignedProjects = projectService.getProjectsForEmployee(loggedIn.getEmployeeId());
+
+        Map<Integer, Integer> completionMap = new HashMap<>();
+        for (Project project : assignedProjects) {
+            int completionPercentage = projectService.calculateCompletionPercentage(project.getId());
+            completionMap.put(project.getId(), completionPercentage);
+        }
+
+        model.addAttribute("employee", loggedIn);
+        model.addAttribute("projects", assignedProjects);
+        model.addAttribute("completionMap", completionMap);
+
+        return "status";
+    }
 
 
 

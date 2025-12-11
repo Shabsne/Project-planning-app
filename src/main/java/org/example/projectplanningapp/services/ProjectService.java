@@ -2,6 +2,8 @@ package org.example.projectplanningapp.services;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
+import org.example.projectplanningapp.models.Status;
+import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +77,23 @@ public class ProjectService {
         return projectRepository.getAvailableEmployeesForProject(projectId);
     }
 
+    public List<Project> getProjectsForEmployee(int employeeId) {
+        return projectRepository.findProjectsByEmployee(employeeId);
+    }
 
+    public int calculateCompletionPercentage(int projectId) {
+        List<Task> tasks = projectRepository.findTasksByProject(projectId);
+
+        if (tasks == null || tasks.isEmpty()) {
+            return 0;
+        }
+
+        long completedTasks = tasks.stream()
+                .filter(task -> task.getStatus() == Status.DONE)
+                .count();
+
+        return (int) Math.round((completedTasks * 100.0) / tasks.size());
+    }
 }
 
 

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Status – Alpha Solutions</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header-container">
+    <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </a>
+    <div class="nav-links">
+        <a th:href="@{/employee/home/{id}(id=${employee.employeeId})}">Hjem</a>
+        <a th:href="@{/employee/{id}/myTasks(id=${employee.employeeId})}">Mine Opgaver</a>
+        <a th:href="@{/templates/status}">Status</a>
+        <a th:href="@{/employee/logout}" class="logout-btn">Log ud</a>
+    </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-container">
+
+    <h1>Status over dine projekter</h1>
+
+    <!-- Hvis ingen projekter -->
+    <div th:if="${#lists.isEmpty(projects)}" class="empty-box">
+        <p>Der er endnu ikke tildelt nogle projekter til dig.</p>
+    </div>
+
+    <!-- LISTE OVER PROJEKTER -->
+    <div class="card-container" th:if="${!#lists.isEmpty(projects)}">
+
+        <div class="card" th:each="project : ${projects}">
+            <h2 th:text="${project.name}">Projekt navn</h2>
+
+            <p><strong>Beskrivelse:</strong></p>
+            <p th:text="${project.description}">Projekt beskrivelse</p>
+
+            <p>
+                <strong>Start:</strong>
+                <span th:text="${project.startDate}">Dato</span> –
+                <strong>Slut:</strong>
+                <span th:text="${project.endDate}">Dato</span>
+            </p>
+
+            <div class="progress-bar">
+                <div class="progress"
+                     th:style="'width:' + ${completionMap[project.id]} + '%'"></div>
+            </div>
+
+            <p class="progress-label">
+                Status: <span th:text="${completionMap[project.id]} + '%'"></span>
+            </p>
+
+            <a th:href="@{/project/details/{id}(id=${project.id})}" class="button-primary">
+                Se detaljer
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

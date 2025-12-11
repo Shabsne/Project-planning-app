@@ -127,4 +127,15 @@ public class ProjectRepository {
 
         return jdbcTemplate.query(sql, new EmployeeRowMapper(), projectId);
     }
+
+    public List<Project> findProjectsByEmployee(int employeeId) {
+        String sql = """
+                SELECT p.*
+                FROM Project p
+                INNER JOIN ProjectEmployee pe ON p.projectId = pe.projectId
+                WHERE pe.employeeId = ?
+                ORDER BY p.endDate ASC""";
+
+        return jdbcTemplate.query(sql, new ProjectRowMapper(), employeeId);
+    }
 }
