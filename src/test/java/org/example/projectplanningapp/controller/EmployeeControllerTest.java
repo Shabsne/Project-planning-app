@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.controllers.EmployeeController;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.services.EmployeeService;
+import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ public class EmployeeControllerTest {
 
     private EmployeeService employeeService;
     private TaskService taskService;
+    private ProjectService projectService;
     private EmployeeController employeeController;
     private org.springframework.ui.Model model;
     private HttpSession session;
@@ -25,7 +27,7 @@ public class EmployeeControllerTest {
     @BeforeEach
     void setup() {
         employeeService = mock(EmployeeService.class);
-        employeeController = new EmployeeController(employeeService, taskService);
+        employeeController = new EmployeeController(employeeService, taskService, projectService);
 
         model = mock(Model.class);
         session = mock(HttpSession.class);
