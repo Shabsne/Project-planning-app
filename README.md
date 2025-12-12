@@ -14,3 +14,7 @@
 * Java Spring Boot
 * Thymeleaf
 * MySQL
+
+# Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
