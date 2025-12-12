@@ -64,6 +64,7 @@
                     </div>
                     <!-- Status dropdown med live update -->
                     <div class="form-group">
+                        <label for="status-[[${task.taskId}]]">Status</label>
                         <select id="status-[[${task.taskId}]]" name="status"
                                 th:value="${task.status}"
                                 th:attr="onchange=|updateStatus(this, ${task.projectId}, ${task.taskId})|">
