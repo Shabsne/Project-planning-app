@@ -3,3 +3,14 @@
 
  Dette projekt er en simpel **project planning app**, hvor medarbejdere kan oprette sig, projektledere kan oprette nye projekter og opgaver, som kan tildeles udviklere.
  Applikationen er bygget i **Java Spring Boot** med **Thymeleaf** som frontend og **MySQL** som database.
+
+## Funktioner
+* Brugersystem med roller og tilladelser
+* Opret et projekt med opgaver og eventuelt delprojekter og delopgaver
+* Tildel udviklere til projekt
+* Status baseret på projektets færdiggjorte opgaver og timer brugt
+
+## Teknologier
+* Java Spring Boot
+* Thymeleaf
+* MySQL
