@@ -46,6 +46,7 @@ public class ProjectController {
                 .toList();
 
         model.addAttribute("projects", parentProjects);
+        model.addAttribute("employee", loggedIn);
         return "project/list";
     }
 
