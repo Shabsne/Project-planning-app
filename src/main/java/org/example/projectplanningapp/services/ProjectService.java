@@ -77,8 +77,8 @@ public class ProjectService {
         return projectRepository.getAvailableEmployeesForProject(projectId);
     }
 
-    public List<Project> getProjectsForEmployee(int employeeId) {
-        return projectRepository.getProjectsForEmployee(employeeId);
+    public List<Project> findProjectsByEmployee(int employeeId) {
+        return projectRepository.findProjectsByEmployee(employeeId);
     }
 
     public int calculateCompletionPercentage(int projectId) {

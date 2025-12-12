@@ -90,7 +90,7 @@ public class EmployeeController {
             return "redirect:/";
         }
 
-        List<Project> assignedProjects = projectService.getProjectsForEmployee(loggedIn.getEmployeeId());
+        List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
         Map<Integer, Integer> completionMap = new HashMap<>();
         for (Project project : assignedProjects) {
