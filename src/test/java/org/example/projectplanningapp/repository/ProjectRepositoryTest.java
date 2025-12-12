@@ -4,37 +4,50 @@ import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.repositories.ProjectRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDate;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Brug H2 in-memory
-@Transactional // Ruller tilbage efter hver test
+@SpringBootTest
+@ActiveProfiles("test")
+@Sql(scripts = "classpath:h2init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class ProjectRepositoryTest {
 
     @Autowired
     private ProjectRepository projectRepository;
 
     @Test
-    void testCreateAndGetProject() {
-        Project project = new Project();
-        project.setName("Test Project");
-        project.setDescription("H2 test project");
-        project.setStartDate(LocalDate.now());
+    void readAllProjects_returnsAllFromDatabase() {
+        // When: Hent alle projekter
+        List<Project> allProjects = projectRepository.getAllProjects();
 
-        // Gem projekt i H2
-        projectRepository.createProject(project);
+        // Debug output (vises i test logs)
+        System.out.println("DEBUG: Found " + allProjects.size() + " projects in database");
+        allProjects.forEach(p ->
+                System.out.println("  - " + p.getName() + " (" + p.getDescription() + ")")
+        );
 
-        // Hent alle projekter
-        List<Project> projects = projectRepository.getAllProjects();
+        // Then: Verificer resultater
+        assertNotNull(allProjects);
+        assertThat(allProjects).hasSize(5); // Tilpas efter hvor mange projekter din H2-init indeholder
 
-        assertEquals(1, projects.size());
-        assertEquals("Test Project", projects.get(0).getName());
+        // Tjek specifikke projekter
+        Project projectAlpha = allProjects.stream()
+                .filter(p -> "Website Redesign".equals(p.getName()))
+                .findFirst().orElse(null);
+        assertThat(projectAlpha).isNotNull();
+        assertThat(projectAlpha.getDescription()).isEqualTo("Redesign af virksomhedens website");
+
+        Project projectBeta = allProjects.stream()
+                .filter(p -> "Mobil App".equals(p.getName()))
+                .findFirst().orElse(null);
+        assertThat(projectBeta).isNotNull();
+        assertThat(projectBeta.getDescription()).isEqualTo("Udvikling af mobil app til kunder");
     }
 }

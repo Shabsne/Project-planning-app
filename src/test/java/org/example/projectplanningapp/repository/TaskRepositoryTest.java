@@ -30,12 +30,11 @@ public class TaskRepositoryTest {
         expected.setTaskId(5);
         expected.setTitle("Test task");
 
-        when(jdbcTemplate.queryForObject(
+        when(jdbcTemplate.query(
                 anyString(),
                 any(TaskRowMapper.class),
-                eq(1),
                 eq(5)
-        )).thenReturn(expected);
+        )).thenReturn(List.of(expected));
 
         Task result = taskRepository.getTaskFromId(5);
 

@@ -40,3 +40,25 @@ INSERT INTO Employee (employeeRoleId, name, email, password) VALUES
                                                                  (NULL, 'Test User Uden Rolle', 'test.norole@example.com', 'password123'),
                                                                  (2, 'Test Langt Navn', 'longname@example.com', 'pass123'),
                                                                  (2, 'Ægir Ørnulf Åse', 'special.chars@example.com', 'pass123');
+
+
+DROP TABLE IF EXISTS Project;
+
+CREATE TABLE Project (
+                         projectId INT PRIMARY KEY AUTO_INCREMENT,
+                         projectLeaderId INT,
+                         parentProjectId INT NULL,
+                         name VARCHAR(150) NOT NULL,
+                         description VARCHAR(2000),
+                         startDate DATE,
+                         endDate TIMESTAMP
+);
+
+-- Indsæt nogle testprojekter
+INSERT INTO Project (projectLeaderId, parentProjectId, name, description, startDate, endDate)
+VALUES
+    (1, NULL, 'Website Redesign', 'Redesign af virksomhedens website', '2025-01-15', '2025-06-30 17:00:00'),
+    (2, NULL, 'Mobil App', 'Udvikling af mobil app til kunder', '2025-02-01', '2025-08-31 18:00:00'),
+    (3, 1, 'Frontend Modul', 'Frontend udvikling til website', '2025-01-20', '2025-04-30 16:00:00'),
+    (1, 2, 'API Integration', 'Integrer API mellem systemer', '2025-03-01', '2025-07-15 17:30:00'),
+    (2, NULL, 'Marketing Kampagne', 'Planlægning og udførelse af kampagne', '2025-04-01', '2025-09-01 12:00:00');
