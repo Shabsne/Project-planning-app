@@ -24,6 +24,10 @@
         <a href="/employee/register" class="button-accent menu-button">+ Opret Medarbejder</a>
     </div>
 
+    <div class="back-link">
+        <a th:href="@{/employee/{id}(id=${session.employee.getEmployeeId()})}" class="button">Tilbage </a>
+    </div>
+
     <div class="employees-grid">
         <div th:each="emp : ${employees}" class="employee-card">
             <div class="employee-card-header">

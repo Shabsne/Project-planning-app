@@ -3,38 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="card">
-    <h1>Medarbejderoplysninger</h1>
+    <div class="header-container">
+        <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
+            <div class="logo-icon">α</div>
+            <div class="logo-text">
+                <span class="logo-text-main">Alpha Solutions</span>
+                <span class="logo-text-sub">Project Management</span>
+            </div>
+        </a>
+        <a href="/logout" class="logout-link">Log ud</a>
+    </div>
 
-    <table>
-        <tr>
-            <th>Navn</th>
-            <td th:text="${employee.name}"></td>
-        </tr>
-        <tr>
-            <th>Mail</th>
-            <td th:text="${employee.email}"></td>
-        </tr>
-        <tr>
-            <th>Rolle</th>
-            <td th:text="${employee.role.getDisplayName()}"></td>
-        </tr>
-        <tr>
-            <th>Medarbejder Id</th>
-            <td th:text="${employee.employeeId}"></td>
-        </tr>
-    </table>
+    <div class="table-container">
+        <table class="data-table">
+            <tr>
+                <th>Navn</th>
+                <td th:text="${employee.name}"></td>
+            </tr>
+            <tr>
+                <th>Mail</th>
+                <td th:text="${employee.email}"></td>
+            </tr>
+            <tr>
+                <th>Rolle</th>
+                <td th:text="${employee.role.getDisplayName()}"></td>
+            </tr>
+            <tr>
+                <th>Medarbejder Id</th>
+                <td th:text="${employee.employeeId}"></td>
+            </tr>
+        </table>
+    </div>
 
     <div class="actions">
-        <a th:href="@{/employee/{id}/edit(id=${employee.employeeId})}" class="button">Rediger oplysninger</a>
+        <a th:href="@{/employee/{id}/edit(id=${employee.employeeId})}" class="button-accent menu-button">Rediger oplysninger</a>
 
         <a th:if="${session.employee != null and session.employee.role?.name() == 'ADMIN'}"
            th:href="@{/employee/list}"
-           class="button">Vis alle medarbejdere</a>
+           class="button-accent menu-button">Vis alle medarbejdere</a>
 
-        <a th:href="@{/employee/home/{id}(id=${employee.employeeId})}" class="button secondary">Tilbage til oversigt</a>
+        <a th:href="@{/employee/home/{id}(id=${employee.employeeId})}" class="button ">Tilbage til oversigt</a>
     </div>
 </div>
 
