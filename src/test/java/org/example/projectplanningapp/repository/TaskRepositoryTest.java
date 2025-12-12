@@ -1,4 +1,4 @@
-package org.example.projectplanningapp.repositoryTest;
+package org.example.projectplanningapp.repository;
 
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.TaskRepository;
@@ -46,6 +46,9 @@ public class TaskRepositoryTest {
 
     @Test
     void testGetTasksForProject_returnsList() {
+        Task t = new Task();
+        t.setTaskId(1);
+        t.setTitle("Some Task");
 
         when(jdbcTemplate.query(
                 anyString(),

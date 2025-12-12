@@ -1,4 +1,4 @@
-package org.example.projectplanningapp.controllerTest;
+package org.example.projectplanningapp.controller;
 
 import org.example.projectplanningapp.controllers.ProjectController;
 import org.example.projectplanningapp.models.Project;

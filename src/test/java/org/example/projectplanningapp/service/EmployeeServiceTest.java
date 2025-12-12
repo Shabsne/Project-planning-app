@@ -1,13 +1,10 @@
-package org.example.projectplanningapp.serviceTests;
+package org.example.projectplanningapp.service;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.repositories.EmployeeRepository;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.test.util.AssertionErrors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;

@@ -1,4 +1,4 @@
-package org.example.projectplanningapp.controllerTest;
+package org.example.projectplanningapp.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.controllers.EmployeeController;

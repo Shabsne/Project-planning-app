@@ -1,4 +1,4 @@
-package org.example.projectplanningapp.repositoryTest;
+package org.example.projectplanningapp.repository;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.repositories.EmployeeRepository;

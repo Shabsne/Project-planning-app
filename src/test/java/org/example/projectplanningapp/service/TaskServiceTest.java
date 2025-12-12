@@ -1,4 +1,4 @@
-package org.example.projectplanningapp.serviceTests;
+package org.example.projectplanningapp.service;
 
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.TaskRepository;

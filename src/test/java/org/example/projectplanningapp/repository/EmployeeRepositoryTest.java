@@ -1,15 +1,12 @@
-package org.example.projectplanningapp.repositoryTest;
+package org.example.projectplanningapp.repository;
 
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.repositories.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-
-import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
