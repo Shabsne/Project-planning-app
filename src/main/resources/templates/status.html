@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Status – Alpha Solutions</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Status - Alpha Solutions</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<!-- HEADER -->
 <div class="header-container">
     <a th:href="@{/employee/home/{id}(id=${session.employee.employeeId})}" class="logo-container" style="text-decoration: none;">
         <div class="logo-icon">α</div>
@@ -16,56 +16,83 @@
             <span class="logo-text-sub">Project Management</span>
         </div>
     </a>
-    <div class="nav-links">
-        <a th:href="@{/employee/home/{id}(id=${employee.employeeId})}">Hjem</a>
-        <a th:href="@{/employee/{id}/myTasks(id=${employee.employeeId})}">Mine Opgaver</a>
-        <a th:href="@{/templates/status}">Status</a>
-        <a th:href="@{/employee/logout}" class="logout-btn">Log ud</a>
-    </div>
+    <a href="/logout" class="logout-link">Log ud</a>
 </div>
 
-<!-- PAGE CONTENT -->
-<div class="page-container">
-
-    <h1>Status over dine projekter</h1>
-
-    <!-- Hvis ingen projekter -->
-    <div th:if="${#lists.isEmpty(projects)}" class="empty-box">
-        <p>Der er endnu ikke tildelt nogle projekter til dig.</p>
+<div class="main-content">
+    <div class="menu-container">
+        <a class="menu-button" href="/projects">Projekter</a>
+        <a class="menu-button" th:href="@{/employee/{id}/myTasks(id=${employee.employeeId})}">Mine opgaver</a>
+        <a class="menu-button" href="/status" style="background: linear-gradient(135deg, var(--alpha-orange) 0%, var(--alpha-orange-light) 100%);">Status</a>
+        <a class="menu-button" th:href="@{/employee/{id}/edit(id=${employee.employeeId})}">Profil</a>
     </div>
 
-    <!-- LISTE OVER PROJEKTER -->
-    <div class="card-container" th:if="${!#lists.isEmpty(projects)}">
+    <div class="page-header">
+        <h1>Status over dine projekter</h1>
+    </div>
 
-        <div class="card" th:each="project : ${projects}">
-            <h2 th:text="${project.name}">Projekt navn</h2>
+    <!-- Hvis ingen projekter -->
+    <div th:if="${projects == null or projects.isEmpty()}" class="details-card">
+        <p class="empty-state">Der er endnu ikke tildelt nogle projekter til dig.</p>
+    </div>
 
-            <p><strong>Beskrivelse:</strong></p>
-            <p th:text="${project.description}">Projekt beskrivelse</p>
+    <!-- PROJEKTER GRID -->
+    <div th:if="${projects != null and !projects.isEmpty()}" class="projects-grid">
 
-            <p>
-                <strong>Start:</strong>
-                <span th:text="${project.startDate}">Dato</span> –
-                <strong>Slut:</strong>
-                <span th:text="${project.endDate}">Dato</span>
-            </p>
-
-            <div class="progress-bar">
-                <div class="progress"
-                     th:style="'width:' + ${completionMap[project.id]} + '%'"></div>
+        <div th:each="project : ${projects}" class="project-card">
+            <div class="project-card-header">
+                <a th:href="@{/projects/{id}(id=${project.id})}" class="project-title">
+                    <strong th:text="${project.name}">Projekt Navn</strong>
+                </a>
+                <div class="project-status" th:text="${completionMap.get(project.id)} + '% færdig'">0% færdig</div>
             </div>
 
-            <p class="progress-label">
-                Status: <span th:text="${completionMap[project.id]} + '%'"></span>
-            </p>
+            <div class="project-card-body">
+                <div class="project-info">
+                    <div class="info-row" th:if="${project.description != null and !project.description.isEmpty()}">
+                        <span class="info-label">Beskrivelse:</span>
+                        <span th:text="${project.description}">Beskrivelse</span>
+                    </div>
 
-            <a th:href="@{/project/details/{id}(id=${project.id})}" class="button-primary">
-                Se detaljer
-            </a>
+                    <div class="info-row">
+                        <span class="info-label">Start:</span>
+                        <span th:text="${project.startDate != null ? #temporals.format(project.startDate, 'dd/MM/yyyy') : 'Ikke angivet'}">01/01/2024</span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Deadline:</span>
+                        <span th:text="${project.endDate != null ? #temporals.format(project.endDate, 'dd/MM/yyyy HH:mm') : 'Ikke angivet'}">01/12/2024</span>
+                    </div>
+
+                    <div class="info-row" style="margin-top: 16px;">
+                        <span class="info-label">Færdiggørelse:</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div style="width: 100%; height: 28px; background-color: var(--alpha-gray-light); border-radius: 14px; overflow: hidden; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); margin-top: 8px;">
+                    <div style="height: 100%; transition: width 0.6s ease; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 13px;"
+                         th:style="'width: ' + ${completionMap.get(project.id)} + '%; background: ' +
+                         (${completionMap.get(project.id) == 100} ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' :
+                         (${completionMap.get(project.id) > 0} ? 'linear-gradient(135deg, var(--alpha-orange) 0%, var(--alpha-orange-light) 100%)' :
+                         'linear-gradient(135deg, var(--alpha-blue) 0%, var(--alpha-blue-light) 100%)')) + ';'">
+                        <span th:if="${completionMap.get(project.id) > 15}"
+                              th:text="${completionMap.get(project.id)} + '%'">
+                        </span>
+                    </div>
+                    <div th:if="${completionMap.get(project.id) <= 15}"
+                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--alpha-gray); font-weight: 600; font-size: 13px; pointer-events: none;">
+                        <span th:text="${completionMap.get(project.id)} + '%'"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card-footer">
+                <a th:href="@{/projects/{id}(id=${project.id})}" class="action-link">Se detaljer</a>
+            </div>
         </div>
 
     </div>
-
 </div>
 
 </body>
