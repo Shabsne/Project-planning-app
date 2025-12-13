@@ -4,6 +4,11 @@
  Dette projekt er en simpel **project planning app**, hvor medarbejdere kan oprette sig, projektledere kan oprette nye projekter og opgaver, som kan tildeles udviklere.
  Applikationen er bygget i **Java Spring Boot** med **Thymeleaf** som frontend og **MySQL** som database.
 
+## Kom i gang
+For at køre projektet lokalt skal du:
+1. Udfylde de nødvendige miljøvariabler i IntelliJ
+2. Køre schema.sql og data.sql i din MySQL-database for at oprette de nødvendige tabeller og indsætte testdata
+
 ## Funktioner
 * Brugersystem med roller og tilladelser
 * Opret et projekt med opgaver og eventuelt delprojekter og delopgaver
