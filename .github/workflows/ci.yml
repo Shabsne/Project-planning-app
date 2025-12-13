@@ -1,32 +1,27 @@
-name: CI - ProjectPlanner
+name: CI - Project planner
 
 on:
-  push:
-    branches: main
   pull_request:
-    branches: main
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Tjek koden ud
-        uses: actions/checkout@v3
+      - name: Hent repository
+        uses: actions/checkout@v4
 
-      - name: Sæt Java version op
-        uses: actions/setup-java@v3
+      - name: Sæt Java op
+        uses: actions/setup-java@v4
         with:
-          java-version: "21"
-          distribution: "temurin"
-          cache: maven
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Byg projekt + kør tests
-        run: mvn -B clean verify
+      - name: Byg projekt
+        run: mvn -B clean install
 
-      - name: Upload test reports (JUnit)
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: junit-test-reports
-          path: target/surefire-reports/
+      - name: Kør tests
+        run: mvn test
