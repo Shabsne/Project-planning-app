@@ -1,4 +1,4 @@
-# Project Planning Application
+# Project Planning Application - Alpha Solutions
 > Udviklet af **Gruppe 3 - Frederik Ullersted, Isak Alishiri, Nikolaj Pedersen & Sebastian Vijeyaratnam**
 
  Dette projekt er en simpel **project planning app**, hvor medarbejdere kan oprette sig, projektledere kan oprette nye projekter og opgaver, som kan tildeles udviklere.
@@ -11,9 +11,12 @@
 * Status baseret på projektets færdiggjorte opgaver og timer brugt
 
 ## Teknologier
-* Java Spring Boot
+* Java 21
+* Spring Boot
 * Thymeleaf
 * MySQL
+* GitHub Actions til CI/CD
+* Microsoft Azure til hosting og deployment
 
 # Contributing
 
