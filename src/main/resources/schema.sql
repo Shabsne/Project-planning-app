@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS projectplanning;
 CREATE DATABASE projectplanning;
 USE projectplanning;
-
+c
 -- ------------------------------------------------------
 -- ROLE
 -- ------------------------------------------------------
