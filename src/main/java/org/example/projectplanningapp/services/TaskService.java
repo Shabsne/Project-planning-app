@@ -113,4 +113,8 @@ public class TaskService {
     public List<Task> getRootTasks(int projectId) {
         return taskRepository.getRootTasks(projectId);
     }
+
+    public boolean hasAnyTasksInProject(int projectId) {
+        return taskRepository.countTasksByProjectId(projectId) > 0;
+    }
 }
