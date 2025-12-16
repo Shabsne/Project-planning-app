@@ -172,7 +172,7 @@ public class TaskRepository {
         String sql = "SELECT COUNT(*) FROM Task WHERE projectId = ?";
 
 
-        return jdbc.queryForObject(sql, Integer.class, projectId);
+        return jdbc.queryForObject(sql, int.class, projectId);
     }
 
 
