@@ -197,10 +197,7 @@ public class EmployeeController {
     @PostMapping("employee/{id}/delete")
     public String deleteEmployee(@PathVariable int id, HttpSession session) {
         Employee loggedIn = SessionUtils.requireLogin(session);
-
-        if (!loggedIn.isAdmin()) {
-            throw new UnauthorizedException("Kun administratorer kan slette medarbejdere");
-        }
+        SessionUtils.requireAdmin(loggedIn);
 
         //Valider at employee eksisterer før sletning
         employeeService.getEmployeeFromId(id);
