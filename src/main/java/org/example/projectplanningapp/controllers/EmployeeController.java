@@ -230,13 +230,27 @@ public class EmployeeController {
     }
 
     @PostMapping("employee/{id}/role")
-    public String changeRole(@PathVariable int id, @RequestParam String role) {
+    public String changeRole(@PathVariable int id, @RequestParam String role, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            throw new UnauthorizedException("Du skal være logget ind");
+        }
+
+        if (!loggedIn.isAdmin()) {
+            throw new UnauthorizedException("Kun administratorer kan ændre roller");
+        }
+
+        //Valider at employee eksisterer
+        employeeService.getEmployeeFromId(id);
+
         Role newRole;
         if ("admin".equalsIgnoreCase(role)) {
             newRole = Role.ADMIN;
         } else {
             newRole = Role.DEVELOPER;
         }
+
         employeeService.changeRole(id, newRole);
         return "redirect:/employee/list";
     }
@@ -247,20 +261,30 @@ public class EmployeeController {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) {
-            return "redirect:/";
+            throw new UnauthorizedException("Du skal være logget ind");
         }
 
         List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
         Map<Integer, Integer> completionMap = new HashMap<>();
+        Map<Integer, Integer> estimatedHoursMap = new HashMap<>();
+        Map<Integer, Integer> actualHoursMap = new HashMap<>();
+
         for (Project project : assignedProjects) {
             int completionPercentage = projectService.calculateCompletionPercentage(project.getId());
+            int estimatedHours = projectService.calculateEstimatedHours(project.getId());
+            int actualHours = projectService.calculateTotalHours(project.getId());
+
             completionMap.put(project.getId(), completionPercentage);
+            estimatedHoursMap.put(project.getId(), estimatedHours);
+            actualHoursMap.put(project.getId(), actualHours);
         }
 
         model.addAttribute("employee", loggedIn);
         model.addAttribute("projects", assignedProjects);
         model.addAttribute("completionMap", completionMap);
+        model.addAttribute("estimatedHoursMap", estimatedHoursMap);
+        model.addAttribute("actualHoursMap", actualHoursMap);
 
         return "status";
     }
