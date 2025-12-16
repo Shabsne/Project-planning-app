@@ -27,7 +27,6 @@ public class ProjectController {
         this.taskService = taskService;
     }
 
-
     // list projects - Kun mine projekter
     @GetMapping("/projects")
     public String listProjects(Model model, HttpSession session) {
@@ -143,7 +142,7 @@ public class ProjectController {
     }
 
 
-    // Project Details - FIXED VERSION
+    // Projekt detaljer
     @GetMapping("/projects/{id}")
     public String projectDetails(@PathVariable int id, Model model, HttpSession session) {
         Employee loggedIn = (Employee) session.getAttribute("employee");

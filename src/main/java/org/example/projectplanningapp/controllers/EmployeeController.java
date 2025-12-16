@@ -2,6 +2,7 @@ package org.example.projectplanningapp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.example.projectplanningapp.exceptions.UnauthorizedException;
 import org.example.projectplanningapp.models.*;
 import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
@@ -112,11 +113,13 @@ public class EmployeeController {
     public String showEditProfileForm(@PathVariable int id, Model model, HttpSession session) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
-        if (loggedIn == null) return "redirect:/";
+        if (loggedIn == null) {
+            return "redirect:/";
+        }
 
-        //Employee kan kun redigere sig selv
+        //Tjek om Employee må redigere denne profil
         if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
-            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+            throw new UnauthorizedException("Du har ikke tilladelse til at redigere denne profil");
         }
 
         Employee target = employeeService.getEmployeeFromId(id);
