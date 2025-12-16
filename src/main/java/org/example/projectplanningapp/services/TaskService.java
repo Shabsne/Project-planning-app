@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.services;
 
+import org.example.projectplanningapp.exceptions.ResourceNotFoundException;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
@@ -29,12 +30,20 @@ public class TaskService {
     }
 
     //Getters unsorted
-    public Task getTaskFromId(int taskId){
-        return taskRepository.getTaskFromId(taskId);
+    public Task getTaskFromId(int taskId) {
+        Task task = taskRepository.getTaskFromId(taskId);
+
+        if (task == null) {
+            throw new ResourceNotFoundException("Task", taskId);
+        }
+
+        return task;
     }
-    public List<Task> getTasksInProject(int projectId){
+
+    public List<Task> getTasksInProject(int projectId) {
         return taskRepository.getTasksInProject(projectId);
     }
+
     public List<Task> getAssignedTasksForEmployee (int employeeId) {
         List<Task> tasks = taskRepository.getAssignedTasksForEmployee(employeeId);
         return tasks.isEmpty() ? Collections.emptyList() : tasks;

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>500 - Server Fejl | Alpha Solutions</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="header-container">
+    <a href="/" class="logo-container" style="text-decoration: none;">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </a>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
+
+<div class="main-content">
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-code">500</h1>
+        <h2 class="error-title">Noget gik galt</h2>
+        <p class="error-message" th:text="${errorMessage}">
+            Der opstod en uventet fejl på serveren. Vores team er blevet informeret.
+        </p>
+        <div style="display: flex; gap: 16px; margin-top: 20px;">
+            <a href="/" class="button-primary">Gå til forsiden</a>
+        </div>
+
+        <details class="technical-details" th:if="${technicalMessage}">
+            <summary>🔧 Tekniske detaljer (kun til udviklere)</summary>
+            <pre th:text="${technicalMessage}">Fejlbesked</pre>
+        </details>
+    </div>
+</div>
+
+</body>
+</html>

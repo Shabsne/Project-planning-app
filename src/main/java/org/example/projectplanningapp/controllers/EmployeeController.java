@@ -2,9 +2,12 @@ package org.example.projectplanningapp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.example.projectplanningapp.exceptions.UnauthorizedException;
+import org.example.projectplanningapp.exceptions.ValidationException;
 import org.example.projectplanningapp.models.*;
 import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
+import org.example.projectplanningapp.utils.SessionUtils;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.projectplanningapp.services.EmployeeService;
@@ -49,31 +52,34 @@ public class EmployeeController {
     @PostMapping("/")
     public String loginUser(@RequestParam String email, @RequestParam String password,
                             Model model, HttpSession session) {
-        Employee employee = employeeService.login(email, password);
 
-        if (employee == null) {
+        try {
+            //Service kaster ValidationException hvis login fejler
+            Employee employee = employeeService.login(email, password);
+
+            session.setAttribute("employee", employee);
+            return "redirect:/employee/home/" + employee.getEmployeeId();
+
+        } catch (ValidationException e) {
+            //Vis fejl på login-siden
             model.addAttribute("error", true);
+            model.addAttribute("errorMessage", e.getMessage());
             return "logIn";
         }
-
-        session.setAttribute("employee", employee);
-        return "redirect:/employee/home/" + employee.getEmployeeId();
     }
 
     @GetMapping("/employee/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
-        if (loggedIn == null) return "redirect:/";
-        if (loggedIn.getEmployeeId() != employeeId)
-            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+        if (loggedIn.getEmployeeId() != employeeId) {
+            throw new UnauthorizedException("Du har ikke adgang til denne medarbejders side");
+        }
 
         List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
         model.addAttribute("tasks", nextTasks);
         model.addAttribute("employee", loggedIn);
-
-        // Tilføj referer-header til modelen
-        model.addAttribute("referer", request.getHeader("referer"));
+        model.addAttribute("referer", request.getHeader("referer")); // Tilføj referer-header til modelen
 
         return "homepage";
     }
@@ -84,41 +90,35 @@ public class EmployeeController {
         return "redirect:/";
     }
 
-
     @PostMapping("/employee/register")
     public String registerEmployee(@ModelAttribute Employee employee,
                                    @RequestParam String confirmPassword, Model model) {
-        if (employeeService.emailExists(employee.getEmail())) {
-            model.addAttribute("error", "Emailen findes allerede");
+        try {
+            if (!employee.getPassword().equals(confirmPassword)) {
+                throw new ValidationException("Adgangskoder matcher ikke");
+            }
+
+            employee.setRole(Role.DEVELOPER);
+            employeeService.registerEmployee(employee); //Service validerer resten
+
+            return "redirect:/employee/list";
+
+        } catch (ValidationException e) {
+            //Vis fejl på registreringssiden
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("employee", employee);
             model.addAttribute("confirmPassword", confirmPassword);
             return "employee/register";
         }
-
-        if (!employee.getPassword().equals(confirmPassword)) {
-            model.addAttribute("error", "Adgangskoder matcher ikke!");
-            model.addAttribute("employee", employee);
-            model.addAttribute("confirmPassword", confirmPassword);
-            return "employee/register";
-        }
-
-        employee.setRole(Role.DEVELOPER);
-        employeeService.registerEmployee(employee);
-        return "redirect:/employee/list";
     }
 
     // Rediger profil
     @GetMapping("/employee/{id}/edit")
     public String showEditProfileForm(@PathVariable int id, Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
+        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireSelfOrAdmin(loggedIn, id);
 
-        if (loggedIn == null) return "redirect:/";
-
-        //Employee kan kun redigere sig selv
-        if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
-            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
-        }
-
+        //getEmployeeFromId kaster ResourceNotFoundException hvis ikke fundet
         Employee target = employeeService.getEmployeeFromId(id);
 
         model.addAttribute("employee", target);
@@ -128,102 +128,96 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee/{id}/edit")
-    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee,
-                                @RequestParam(required = false) Integer roleId, HttpSession session) {
+    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee, HttpSession session) {
 
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        //Employee må kun ændre sin egen profil
-        if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
-            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
-        }
-
-        //Admin ændrer rolle
-        if (loggedIn.isAdmin() && roleId != null) {
-            employeeService.updateEmployeeRole(id, roleId);
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireSelfOrAdmin(loggedIn, id);
 
         employee.setEmployeeId(id);
-        employeeService.updateOwnProfile(employee);
+        employeeService.updateOwnProfile(employee); //Validerer automatisk at employee eksiterer
 
         return "redirect:/employee/" + id;
     }
 
-    // Liste af medarbejdere
-    @GetMapping("/employee/list")
-    public String listEmployees(Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) return "redirect:/";
-        model.addAttribute("employees", employeeService.getAllEmployees());
-        return "employee/list";
-    }
-
-    @GetMapping("/employee/{id}/myTasks")
-    public String myTasks(@PathVariable int id, HttpSession session, Model model) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
-
-        //SPØRG NICOLAI OM NØDVENDIGT
-
-        if (loggedIn.getEmployeeId() != id) {
-            return "redirect:/employee/" + loggedIn.getEmployeeId() + "/myTasks";
-        }
-
-        List<Task> tasks = taskService.getAssignedTasksForEmployee(id);
-        model.addAttribute("tasks", tasks);
-
-        model.addAttribute("employee", loggedIn);
-
-        return "task/myTasks"; // mapper til templates/task/myTasks.html
-    }
-
-    @GetMapping("/employee/{id}")
-    public String viewEmployeeMenu(@PathVariable int id, Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) return "redirect:/";
-
-        Employee employee = employeeService.getEmployeeFromId(id);
-        if (employee == null) return "redirect:/employee/home/" + loggedIn.getEmployeeId();
-
-        model.addAttribute("employee", employee);
-        return "employee/employeeInformation";
-    }
-
-    @PostMapping("employee/{id}/delete")
-    public String deleteEmployee(@PathVariable int id) {
-        employeeService.deleteEmployee(id);
-        return "redirect:/employee/list";
-    }
-
     @PostMapping("employee/{id}/role")
-    public String changeRole(@PathVariable int id, @RequestParam String role) {
+    public String changeRole(@PathVariable int id, @RequestParam String role, HttpSession session) {
+
+        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireAdmin(loggedIn);
+
+        //Valider at employee eksisterer
+        employeeService.getEmployeeFromId(id);
+
         Role newRole;
         if ("admin".equalsIgnoreCase(role)) {
             newRole = Role.ADMIN;
         } else {
             newRole = Role.DEVELOPER;
         }
+
         employeeService.changeRole(id, newRole);
         return "redirect:/employee/list";
     }
 
+    // Liste af medarbejdere
+    @GetMapping("/employee/list")
+    public String listEmployees(Model model, HttpSession session) {
+        Employee loggedIn = SessionUtils.requireLogin(session);
+
+        model.addAttribute("employees", employeeService.getAllEmployees());
+        return "employee/list";
+    }
+
+    @GetMapping("/employee/{id}/myTasks")
+    public String myTasks(@PathVariable int id, HttpSession session, Model model) {
+        Employee loggedIn = SessionUtils.requireLogin(session);
+
+        if (loggedIn.getEmployeeId() != id) {
+            throw new UnauthorizedException("Du kan kun se dine egne opgaver");
+        }
+
+        List<Task> tasks = taskService.getAssignedTasksForEmployee(id);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("employee", loggedIn);
+
+        return "task/myTasks";
+    }
+
+    @GetMapping("/employee/{id}")
+    public String viewEmployeeMenu(@PathVariable int id, Model model, HttpSession session) {
+        Employee loggedIn = SessionUtils.requireLogin(session);
+
+        //Employee kaster ResourceNotFoundException hvis ikke fundet
+        Employee employee = employeeService.getEmployeeFromId(id);
+
+        model.addAttribute("employee", employee);
+        return "employee/employeeInformation";
+    }
+
+    @PostMapping("employee/{id}/delete")
+    public String deleteEmployee(@PathVariable int id, HttpSession session) {
+        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireAdmin(loggedIn);
+
+        //Valider at employee eksisterer før sletning
+        employeeService.getEmployeeFromId(id);
+        employeeService.deleteEmployee(id);
+
+        return "redirect:/employee/list";
+    }
+
+
+
     //Status
     @GetMapping("/status")
     public String showStatus(HttpSession session, Model model) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
         Map<Integer, Integer> completionMap = new HashMap<>();
+
+
         for (Project project : assignedProjects) {
             int completionPercentage = projectService.calculateCompletionPercentage(project.getId());
             completionMap.put(project.getId(), completionPercentage);

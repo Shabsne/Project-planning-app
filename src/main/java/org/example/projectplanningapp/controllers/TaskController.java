@@ -97,6 +97,12 @@ public class TaskController {
                                  @PathVariable int taskId,
                                  @PathVariable int employeeId) {
 
+        //Tjek om task eksisterer
+        Task task = taskService.getTaskFromId(taskId);
+
+        //Tjek om employee eksisterer
+        Employee employee = employeeService.getEmployeeFromId(employeeId);
+
         taskService.assignEmployeeToTask(taskId, employeeId);
 
         return "redirect:/projects/" + projectId + "/tasks/" + taskId;

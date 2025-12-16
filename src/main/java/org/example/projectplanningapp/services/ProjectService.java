@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.services;
 
+import org.example.projectplanningapp.exceptions.ResourceNotFoundException;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.models.Status;
@@ -32,7 +33,13 @@ public class ProjectService {
     }
 
     public Project findById(int id) {
-        return projectRepository.findProjectById(id);
+        Project project = projectRepository.findProjectById(id);
+
+        if (project == null) {
+            throw new ResourceNotFoundException("Projekt", id);
+        }
+
+        return project;
     }
 
     public void updateProject(Project project) {
@@ -67,6 +74,8 @@ public class ProjectService {
                 .mapToInt(task -> task.getEstimatedHours() != null ? task.getEstimatedHours() : 0)
                 .sum();
     }
+
+
 
     public int calculateCompletionPercentage(int projectId) {
         List<Task> tasks = projectRepository.findTasksByProject(projectId);

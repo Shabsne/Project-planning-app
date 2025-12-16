@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Ikke Fundet | Alpha Solutions</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="header-container">
+    <a href="/" class="logo-container" style="text-decoration: none;">
+        <div class="logo-icon">α</div>
+        <div class="logo-text">
+            <span class="logo-text-main">Alpha Solutions</span>
+            <span class="logo-text-sub">Project Management</span>
+        </div>
+    </a>
+    <a href="/logout" class="logout-link">Log ud</a>
+</div>
+
+<div class="main-content">
+    <div class="error-container">
+        <div class="error-icon">🔍</div>
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Siden blev ikke fundet</h2>
+        <p class="error-message" th:text="${errorMessage}">
+            Den side du leder efter eksisterer ikke eller er blevet flyttet.
+        </p>
+        <div style="display: flex; gap: 16px; margin-top: 20px;">
+            <a href="/" class="button-primary">Gå til forsiden</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
