@@ -31,30 +31,33 @@ public class EmployeeService {
         employeeRepository.registerEmployee(employee);
     }
 
+    public Employee login(String email, String password) {
+        Employee employee = employeeRepository.findByEmail(email);
+
+        if (employee == null) {
+            throw new ValidationException("Ugyldig email eller adgangskode");
+        }
+
+        if (!employee.getPassword().equals(password)) {
+            throw new ValidationException("Ugyldig email eller adgangskode");
+        }
+
+        return employee;
+    }
+
     public boolean emailExists(String email) {
         return employeeRepository.getEmployeeFromEmail(email) != null;
     }
 
-    public void updateOwnProfile(Employee updatedEmployee) {
-        employeeRepository.updateOwnProfile(updatedEmployee);
+    public void updateOwnProfile(Employee employee) {
+        //Tjek at employee eksisterer
+        getEmployeeFromId(employee.getEmployeeId());
+        employeeRepository.updateOwnProfile(employee);
     }
     public void updateEmployeeRole(int employeeId, int newRoleId) {
         employeeRepository.updateEmployeeRole(employeeId, newRoleId);
     }
 
-    public Employee login(String email, String password) {
-        Employee employee = employeeRepository.findByEmail(email);
-
-        if (employee == null) {
-            return null;
-        }
-
-        if (!employee.getPassword().equals(password)) {
-            return null;
-        }
-
-        return employee;
-    }
     public List<Employee> getAllEmployees() {
         return employeeRepository.getAllEmployees();
     }
