@@ -168,4 +168,13 @@ public class TaskRepository {
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
+    public int countTasksByProjectId(int projectId) {
+        String sql = "SELECT COUNT(*) FROM Task WHERE projectId = ?";
+
+
+        return jdbc.queryForObject(sql, Integer.class, projectId);
+    }
+
+
+
 }

@@ -206,27 +206,4 @@ public class EmployeeController {
         return "redirect:/employee/list";
     }
 
-
-
-    //Status
-    @GetMapping("/status")
-    public String showStatus(HttpSession session, Model model) {
-        Employee loggedIn = SessionUtils.requireLogin(session);
-
-        List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
-
-        Map<Integer, Integer> completionMap = new HashMap<>();
-
-
-        for (Project project : assignedProjects) {
-            int completionPercentage = projectService.calculateCompletionPercentage(project.getId());
-            completionMap.put(project.getId(), completionPercentage);
-        }
-
-        model.addAttribute("employee", loggedIn);
-        model.addAttribute("projects", assignedProjects);
-        model.addAttribute("completionMap", completionMap);
-
-        return "status";
-    }
 }
