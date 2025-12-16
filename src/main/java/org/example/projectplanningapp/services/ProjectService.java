@@ -75,6 +75,8 @@ public class ProjectService {
                 .sum();
     }
 
+
+
     public int calculateCompletionPercentage(int projectId) {
         List<Task> tasks = projectRepository.findTasksByProject(projectId);
 

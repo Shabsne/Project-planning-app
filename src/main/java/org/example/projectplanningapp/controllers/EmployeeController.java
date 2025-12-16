@@ -229,24 +229,16 @@ public class EmployeeController {
         List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
         Map<Integer, Integer> completionMap = new HashMap<>();
-        Map<Integer, Integer> estimatedHoursMap = new HashMap<>();
-        Map<Integer, Integer> actualHoursMap = new HashMap<>();
+
 
         for (Project project : assignedProjects) {
             int completionPercentage = projectService.calculateCompletionPercentage(project.getId());
-            int estimatedHours = projectService.calculateEstimatedHours(project.getId());
-            int actualHours = projectService.calculateTotalHours(project.getId());
-
             completionMap.put(project.getId(), completionPercentage);
-            estimatedHoursMap.put(project.getId(), estimatedHours);
-            actualHoursMap.put(project.getId(), actualHours);
         }
 
         model.addAttribute("employee", loggedIn);
         model.addAttribute("projects", assignedProjects);
         model.addAttribute("completionMap", completionMap);
-        model.addAttribute("estimatedHoursMap", estimatedHoursMap);
-        model.addAttribute("actualHoursMap", actualHoursMap);
 
         return "status";
     }
