@@ -116,11 +116,8 @@ public class EmployeeController {
     @GetMapping("/employee/{id}/edit")
     public String showEditProfileForm(@PathVariable int id, Model model, HttpSession session) {
         Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireSelfOrAdmin(loggedIn, id);
 
-        //Tjek om Employee må redigere denne profil
-        if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
-            throw new UnauthorizedException("Du har ikke tilladelse til at redigere denne profil");
-        }
         //getEmployeeFromId kaster ResourceNotFoundException hvis ikke fundet
         Employee target = employeeService.getEmployeeFromId(id);
 
@@ -131,25 +128,25 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee/{id}/edit")
-    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee,
-                                @RequestParam(required = false) Integer roleId, HttpSession session) {
+    public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee, HttpSession session) {
 
         Employee loggedIn = SessionUtils.requireLogin(session);
-
-        //Employee må kun ændre sin egen profil
-        if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
-            throw new UnauthorizedException("Du kan kun redigere din egen profil");
-        }
-
-        //Admin ændrer rolle
-        if (loggedIn.isAdmin() && roleId != null) {
-            employeeService.updateEmployeeRole(id, roleId);
-        }
+        SessionUtils.requireSelfOrAdmin(loggedIn, id);
 
         employee.setEmployeeId(id);
         employeeService.updateOwnProfile(employee); //Validerer automatisk at employee eksiterer
 
         return "redirect:/employee/" + id;
+    }
+
+    @PostMapping("/employee/{id}/role")
+    public String changeRole(@PathVariable int id, @RequestParam Role role, HttpSession session) {
+        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireAdmin(loggedIn);
+
+        employeeService.changeRole(id, role);
+
+        return "redirect:/employee/list";
     }
 
     // Liste af medarbejdere
