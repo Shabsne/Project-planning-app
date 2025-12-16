@@ -1,5 +1,7 @@
 package org.example.projectplanningapp.services;
 
+import org.example.projectplanningapp.exceptions.ResourceNotFoundException;
+import org.example.projectplanningapp.exceptions.ValidationException;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Role;
 import org.example.projectplanningapp.repositories.EmployeeRepository;
@@ -17,6 +19,15 @@ public class EmployeeService {
     }
 
     public void registerEmployee(Employee employee) {
+        //Valider email
+        if (emailExists(employee.getEmail())) {
+            throw new ValidationException("En medarbejder med denne email eksisterer allerede");
+        }
+
+        if (employee.getPassword() == null || employee.getPassword().length() < 4) {
+            throw new ValidationException("Adgangskoden skal være mindst 4 tegn");
+        }
+
         employeeRepository.registerEmployee(employee);
     }
 
@@ -49,7 +60,13 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeFromId(int id) {
-        return employeeRepository.getEmployeeFromId(id);
+        Employee employee = employeeRepository.getEmployeeFromId(id);
+
+        if (employee == null) {
+            throw new ResourceNotFoundException("Medarbejder", id);
+        }
+
+        return employee;
     }
 
     public void changeRole(int employeeId, Role role) {
