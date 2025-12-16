@@ -20,11 +20,25 @@ public class EmployeeService {
 
     public void registerEmployee(Employee employee) {
         //Valider email
+        if (employee.getEmail() == null || employee.getEmail().trim().isEmpty()) {
+            throw new ValidationException("Email er påkrævet");
+        }
+
         if (emailExists(employee.getEmail())) {
             throw new ValidationException("En medarbejder med denne email eksisterer allerede");
         }
 
-        if (employee.getPassword() == null || employee.getPassword().length() < 4) {
+        //Valider navn
+        if (employee.getName() == null || employee.getName().trim().isEmpty()) {
+            throw new ValidationException("Navn er påkrævet");
+        }
+
+        //Valider password
+        if (employee.getPassword() == null || employee.getPassword().trim().isEmpty()) {
+            throw new ValidationException("Adgangskode er påkrævet");
+        }
+
+        if (employee.getPassword().length() < 4) {
             throw new ValidationException("Adgangskoden skal være mindst 4 tegn");
         }
 
@@ -32,6 +46,15 @@ public class EmployeeService {
     }
 
     public Employee login(String email, String password) {
+        //Valider input
+        if (email == null || email.trim().isEmpty()) {
+            throw new ValidationException("Email er påkrævet");
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            throw new ValidationException("Adgangskode er påkrævet");
+        }
+
         Employee employee = employeeRepository.findByEmail(email);
 
         if (employee == null) {
@@ -50,11 +73,29 @@ public class EmployeeService {
     }
 
     public void updateOwnProfile(Employee employee) {
+        //Valider input
+        if (employee.getName() == null || employee.getName().trim().isEmpty()) {
+            throw new ValidationException("Navn er påkrævet");
+        }
+
+        if (employee.getEmail() == null || employee.getEmail().trim().isEmpty()) {
+            throw new ValidationException("Email er påkrævet");
+        }
+
         //Tjek at employee eksisterer
         getEmployeeFromId(employee.getEmployeeId());
+
         employeeRepository.updateOwnProfile(employee);
     }
     public void updateEmployeeRole(int employeeId, int newRoleId) {
+        //Valider at employee eksisterer
+        getEmployeeFromId(employeeId);
+
+        //Valider rolle ID
+        if (newRoleId < 1 || newRoleId > 2) {
+            throw new ValidationException("Ugyldig rolle ID");
+        }
+
         employeeRepository.updateEmployeeRole(employeeId, newRoleId);
     }
 
@@ -73,10 +114,21 @@ public class EmployeeService {
     }
 
     public void changeRole(int employeeId, Role role) {
+        //Valider at employee eksisterer
+        getEmployeeFromId(employeeId);
+
+        //Valider rolle
+        if (role == null) {
+            throw new ValidationException("Rolle er påkrævet");
+        }
+
         employeeRepository.updateRole(employeeId, role);
     }
 
     public void deleteEmployee(int employeeId) {
+        //Valider at employee eksisterer før sletning
+        getEmployeeFromId(employeeId);
+
         employeeRepository.deleteEmployee(employeeId);
     }
 }
