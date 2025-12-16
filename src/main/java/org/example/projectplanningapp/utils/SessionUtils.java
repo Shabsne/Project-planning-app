@@ -3,7 +3,6 @@ package org.example.projectplanningapp.utils;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.exceptions.UnauthorizedException;
 import org.example.projectplanningapp.models.Employee;
-import org.hibernate.Session;
 
 public final class SessionUtils {
 
