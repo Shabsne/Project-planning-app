@@ -139,13 +139,23 @@ public class EmployeeController {
         return "redirect:/employee/" + id;
     }
 
-    @PostMapping("/employee/{id}/role")
-    public String changeRole(@PathVariable int id, @RequestParam Role role, HttpSession session) {
+    @PostMapping("employee/{id}/role")
+    public String changeRole(@PathVariable int id, @RequestParam String role, HttpSession session) {
+
         Employee loggedIn = SessionUtils.requireLogin(session);
         SessionUtils.requireAdmin(loggedIn);
 
-        employeeService.changeRole(id, role);
+        //Valider at employee eksisterer
+        employeeService.getEmployeeFromId(id);
 
+        Role newRole;
+        if ("admin".equalsIgnoreCase(role)) {
+            newRole = Role.ADMIN;
+        } else {
+            newRole = Role.DEVELOPER;
+        }
+
+        employeeService.changeRole(id, newRole);
         return "redirect:/employee/list";
     }
 
@@ -199,27 +209,7 @@ public class EmployeeController {
         return "redirect:/employee/list";
     }
 
-    @PostMapping("employee/{id}/role")
-    public String changeRole(@PathVariable int id, @RequestParam String role, HttpSession session) {
-        Employee loggedIn = SessionUtils.requireLogin(session);
 
-        if (!loggedIn.isAdmin()) {
-            throw new UnauthorizedException("Kun administratorer kan ændre roller");
-        }
-
-        //Valider at employee eksisterer
-        employeeService.getEmployeeFromId(id);
-
-        Role newRole;
-        if ("admin".equalsIgnoreCase(role)) {
-            newRole = Role.ADMIN;
-        } else {
-            newRole = Role.DEVELOPER;
-        }
-
-        employeeService.changeRole(id, newRole);
-        return "redirect:/employee/list";
-    }
 
     //Status
     @GetMapping("/status")
