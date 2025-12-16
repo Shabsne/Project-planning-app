@@ -3,6 +3,7 @@ package org.example.projectplanningapp.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.exceptions.UnauthorizedException;
+import org.example.projectplanningapp.exceptions.ValidationException;
 import org.example.projectplanningapp.models.*;
 import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
@@ -50,31 +51,38 @@ public class EmployeeController {
     @PostMapping("/")
     public String loginUser(@RequestParam String email, @RequestParam String password,
                             Model model, HttpSession session) {
-        Employee employee = employeeService.login(email, password);
 
-        if (employee == null) {
+        try {
+            //Service kaster ValidationException hvis login fejler
+            Employee employee = employeeService.login(email, password);
+
+            session.setAttribute("employee", employee);
+            return "redirect:/employee/home/" + employee.getEmployeeId();
+
+        } catch (ValidationException e) {
+            //Vis fejl på login-siden
             model.addAttribute("error", true);
+            model.addAttribute("errorMessage", e.getMessage());
             return "logIn";
         }
-
-        session.setAttribute("employee", employee);
-        return "redirect:/employee/home/" + employee.getEmployeeId();
     }
 
     @GetMapping("/employee/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
-        if (loggedIn == null) return "redirect:/";
-        if (loggedIn.getEmployeeId() != employeeId)
-            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+        if (loggedIn == null) {
+            throw new UnauthorizedException("Du skal være logget ind for at se denne side");
+        }
+
+        if (loggedIn.getEmployeeId() != employeeId) {
+            throw new UnauthorizedException("Du har ikke adgang til denne medarbejders side");
+        }
 
         List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
         model.addAttribute("tasks", nextTasks);
         model.addAttribute("employee", loggedIn);
-
-        // Tilføj referer-header til modelen
-        model.addAttribute("referer", request.getHeader("referer"));
+        model.addAttribute("referer", request.getHeader("referer")); // Tilføj referer-header til modelen
 
         return "homepage";
     }
@@ -85,27 +93,25 @@ public class EmployeeController {
         return "redirect:/";
     }
 
-
     @PostMapping("/employee/register")
     public String registerEmployee(@ModelAttribute Employee employee,
                                    @RequestParam String confirmPassword, Model model) {
-        if (employeeService.emailExists(employee.getEmail())) {
-            model.addAttribute("error", "Emailen findes allerede");
+        try {
+            if (!employee.getPassword().equals(confirmPassword)) {
+                throw new ValidationException("Adgangskoder matcher ikke");
+            }
+
+            employee.setRole(Role.DEVELOPER);
+            employeeService.registerEmployee(employee); //Service validerer resten
+
+            return "redirect:/employee/list";
+
+        } catch (ValidationException e) {
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("employee", employee);
             model.addAttribute("confirmPassword", confirmPassword);
             return "employee/register";
         }
-
-        if (!employee.getPassword().equals(confirmPassword)) {
-            model.addAttribute("error", "Adgangskoder matcher ikke!");
-            model.addAttribute("employee", employee);
-            model.addAttribute("confirmPassword", confirmPassword);
-            return "employee/register";
-        }
-
-        employee.setRole(Role.DEVELOPER);
-        employeeService.registerEmployee(employee);
-        return "redirect:/employee/list";
     }
 
     // Rediger profil
