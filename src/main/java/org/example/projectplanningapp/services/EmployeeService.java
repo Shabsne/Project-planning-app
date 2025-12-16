@@ -46,25 +46,9 @@ public class EmployeeService {
     }
 
     public Employee login(String email, String password) {
-        //Valider input
-        if (email == null || email.trim().isEmpty()) {
-            throw new ValidationException("Email er påkrævet");
-        }
-
-        if (password == null || password.trim().isEmpty()) {
-            throw new ValidationException("Adgangskode er påkrævet");
-        }
-
         Employee employee = employeeRepository.findByEmail(email);
-
-        if (employee == null) {
-            throw new ValidationException("Ugyldig email eller adgangskode");
-        }
-
-        if (!employee.getPassword().equals(password)) {
-            throw new ValidationException("Ugyldig email eller adgangskode");
-        }
-
+        if (employee == null) return null;
+        if (!employee.getPassword().equals(password)) return null;
         return employee;
     }
 
