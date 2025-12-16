@@ -7,6 +7,7 @@ import org.example.projectplanningapp.exceptions.ValidationException;
 import org.example.projectplanningapp.models.*;
 import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
+import org.example.projectplanningapp.utils.SessionUtils;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.projectplanningapp.services.EmployeeService;
@@ -69,11 +70,7 @@ public class EmployeeController {
 
     @GetMapping("/employee/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind for at se denne side");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         if (loggedIn.getEmployeeId() != employeeId) {
             throw new UnauthorizedException("Du har ikke adgang til denne medarbejders side");
@@ -118,11 +115,7 @@ public class EmployeeController {
     // Rediger profil
     @GetMapping("/employee/{id}/edit")
     public String showEditProfileForm(@PathVariable int id, Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         //Tjek om Employee må redigere denne profil
         if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
@@ -141,11 +134,7 @@ public class EmployeeController {
     public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee,
                                 @RequestParam(required = false) Integer roleId, HttpSession session) {
 
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         //Employee må kun ændre sin egen profil
         if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
@@ -166,11 +155,7 @@ public class EmployeeController {
     // Liste af medarbejdere
     @GetMapping("/employee/list")
     public String listEmployees(Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         model.addAttribute("employees", employeeService.getAllEmployees());
         return "employee/list";
@@ -178,11 +163,7 @@ public class EmployeeController {
 
     @GetMapping("/employee/{id}/myTasks")
     public String myTasks(@PathVariable int id, HttpSession session, Model model) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         if (loggedIn.getEmployeeId() != id) {
             throw new UnauthorizedException("Du kan kun se dine egne opgaver");
@@ -197,11 +178,7 @@ public class EmployeeController {
 
     @GetMapping("/employee/{id}")
     public String viewEmployeeMenu(@PathVariable int id, Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         //Employee kaster ResourceNotFoundException hvis ikke fundet
         Employee employee = employeeService.getEmployeeFromId(id);
@@ -212,11 +189,7 @@ public class EmployeeController {
 
     @PostMapping("employee/{id}/delete")
     public String deleteEmployee(@PathVariable int id, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         if (!loggedIn.isAdmin()) {
             throw new UnauthorizedException("Kun administratorer kan slette medarbejdere");
@@ -231,11 +204,7 @@ public class EmployeeController {
 
     @PostMapping("employee/{id}/role")
     public String changeRole(@PathVariable int id, @RequestParam String role, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         if (!loggedIn.isAdmin()) {
             throw new UnauthorizedException("Kun administratorer kan ændre roller");
@@ -258,11 +227,7 @@ public class EmployeeController {
     //Status
     @GetMapping("/status")
     public String showStatus(HttpSession session, Model model) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            throw new UnauthorizedException("Du skal være logget ind");
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
