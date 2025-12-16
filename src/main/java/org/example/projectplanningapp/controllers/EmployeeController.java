@@ -107,6 +107,7 @@ public class EmployeeController {
             return "redirect:/employee/list";
 
         } catch (ValidationException e) {
+            //Vis fejl på registreringssiden
             model.addAttribute("error", e.getMessage());
             model.addAttribute("employee", employee);
             model.addAttribute("confirmPassword", confirmPassword);
@@ -120,14 +121,14 @@ public class EmployeeController {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) {
-            return "redirect:/";
+            throw new UnauthorizedException("Du skal være logget ind");
         }
 
         //Tjek om Employee må redigere denne profil
         if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
             throw new UnauthorizedException("Du har ikke tilladelse til at redigere denne profil");
         }
-
+        //getEmployeeFromId kaster ResourceNotFoundException hvis ikke fundet
         Employee target = employeeService.getEmployeeFromId(id);
 
         model.addAttribute("employee", target);
@@ -142,9 +143,13 @@ public class EmployeeController {
 
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
+        if (loggedIn == null) {
+            throw new UnauthorizedException("Du skal være logget ind");
+        }
+
         //Employee må kun ændre sin egen profil
         if (!loggedIn.isAdmin() && loggedIn.getEmployeeId() != id) {
-            return "redirect:/employee/home/" + loggedIn.getEmployeeId();
+            throw new UnauthorizedException("Du kan kun redigere din egen profil");
         }
 
         //Admin ændrer rolle
@@ -153,7 +158,7 @@ public class EmployeeController {
         }
 
         employee.setEmployeeId(id);
-        employeeService.updateOwnProfile(employee);
+        employeeService.updateOwnProfile(employee); //Validerer automatisk at employee eksiterer
 
         return "redirect:/employee/" + id;
     }
@@ -163,7 +168,10 @@ public class EmployeeController {
     public String listEmployees(Model model, HttpSession session) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
-        if (loggedIn == null) return "redirect:/";
+        if (loggedIn == null) {
+            throw new UnauthorizedException("Du skal være logget ind");
+        }
+
         model.addAttribute("employees", employeeService.getAllEmployees());
         return "employee/list";
     }
@@ -173,39 +181,51 @@ public class EmployeeController {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
         if (loggedIn == null) {
-            return "redirect:/";
+            throw new UnauthorizedException("Du skal være logget ind");
         }
 
-        //SPØRG NICOLAI OM NØDVENDIGT
-
         if (loggedIn.getEmployeeId() != id) {
-            return "redirect:/employee/" + loggedIn.getEmployeeId() + "/myTasks";
+            throw new UnauthorizedException("Du kan kun se dine egne opgaver");
         }
 
         List<Task> tasks = taskService.getAssignedTasksForEmployee(id);
         model.addAttribute("tasks", tasks);
-
         model.addAttribute("employee", loggedIn);
 
-        return "task/myTasks"; // mapper til templates/task/myTasks.html
+        return "task/myTasks";
     }
 
     @GetMapping("/employee/{id}")
     public String viewEmployeeMenu(@PathVariable int id, Model model, HttpSession session) {
         Employee loggedIn = (Employee) session.getAttribute("employee");
 
-        if (loggedIn == null) return "redirect:/";
+        if (loggedIn == null) {
+            throw new UnauthorizedException("Du skal være logget ind");
+        }
 
+        //Employee kaster ResourceNotFoundException hvis ikke fundet
         Employee employee = employeeService.getEmployeeFromId(id);
-        if (employee == null) return "redirect:/employee/home/" + loggedIn.getEmployeeId();
 
         model.addAttribute("employee", employee);
         return "employee/employeeInformation";
     }
 
     @PostMapping("employee/{id}/delete")
-    public String deleteEmployee(@PathVariable int id) {
+    public String deleteEmployee(@PathVariable int id, HttpSession session) {
+        Employee loggedIn = (Employee) session.getAttribute("employee");
+
+        if (loggedIn == null) {
+            throw new UnauthorizedException("Du skal være logget ind");
+        }
+
+        if (!loggedIn.isAdmin()) {
+            throw new UnauthorizedException("Kun administratorer kan slette medarbejdere");
+        }
+
+        //Valider at employee eksisterer før sletning
+        employeeService.getEmployeeFromId(id);
         employeeService.deleteEmployee(id);
+
         return "redirect:/employee/list";
     }
 
