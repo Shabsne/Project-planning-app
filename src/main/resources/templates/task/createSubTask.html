@@ -20,7 +20,7 @@
 
 <div class="main-content">
     <div class="page-header">
-        <h1>Opret Delopgave</h1>
+        <h1>Opret delopgave</h1>
         <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${parentTask.taskId})}"
            class="menu-button">← Tilbage til task</a>
     </div>
@@ -80,7 +80,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="button-primary">Opret Delopgave</button>
+                <button type="submit" class="button-primary">Opret delopgave</button>
                 <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id}, taskId=${parentTask.taskId})}"
                    class="button-secondary">Annuller</a>
             </div>
