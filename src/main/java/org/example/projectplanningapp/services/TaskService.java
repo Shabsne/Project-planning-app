@@ -2,7 +2,6 @@ package org.example.projectplanningapp.services;
 
 import org.example.projectplanningapp.exceptions.ResourceNotFoundException;
 import org.example.projectplanningapp.models.Employee;
-import org.example.projectplanningapp.models.Status;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.repositories.TaskRepository;
 import org.example.projectplanningapp.utils.taskComparators.DeadlineComparator;
@@ -17,19 +16,15 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
-    private final Comparator<Task> deadlineComparator = new DeadlineComparator();
-
 
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    //Create task
     public void createTask(Task task) {
         taskRepository.createTask(task);
     }
 
-    //Getters unsorted
     public Task getTaskFromId(int taskId) {
         Task task = taskRepository.getTaskFromId(taskId);
 
@@ -49,30 +44,6 @@ public class TaskService {
         return tasks.isEmpty() ? Collections.emptyList() : tasks;
     }
 
-    public List<Task> getTasksWithSubTasks(int projectId) {
-        List<Task> tasks = taskRepository.getTasksInProject(projectId);
-        for (Task task : tasks) {
-            List<Task> subTasks = taskRepository.getSubTasks(task.getTaskId());
-            task.setSubTasks(subTasks);
-        }
-        return tasks;
-    }
-
-    public Task getTaskWithSubTasks(int taskId) {
-        Task task = taskRepository.getTaskFromId(taskId);
-        if (task != null) {
-            List<Task> subTasks = taskRepository.getSubTasks(taskId);
-            task.setSubTasks(subTasks);
-        }
-        return task;
-    }
-
-    //Getters sorted by deadline
-    public List<Task> getTasksInProjectSortedByDeadline(int projectId){
-        List<Task> tasks = taskRepository.getTasksInProject(projectId);
-        tasks.sort(deadlineComparator);
-        return tasks.isEmpty() ? Collections.emptyList() : tasks;
-    }
 
     public List<Task> getNextTasksForEmployee(int employeeId) {
         return taskRepository.getNextTasksForEmployee(employeeId);
@@ -89,14 +60,12 @@ public class TaskService {
     }
 
 
-    //Update Method
     public void updateTask (Task task){
         taskRepository.updateTask(task);
     }
 
 
 
-    //Delete Method
     public void deleteTask (int taskId){
         taskRepository.deleteTask(taskId);
     }
