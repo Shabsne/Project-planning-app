@@ -120,6 +120,7 @@ public class EmployeeController {
 
         model.addAttribute("employee", target);
         model.addAttribute("canEditRole", loggedIn.isAdmin());
+        model.addAttribute("roles", Role.values());
 
         return "employee/edit";
     }

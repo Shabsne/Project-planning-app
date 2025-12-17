@@ -35,7 +35,7 @@
                     <strong th:text="${emp.name}">Medarbejder Navn</strong>
                 </a>
 
-                <div class="employee-role" th:text="${emp.role.displayName}">Rolle</div>
+                <span th:text="${emp.role != null ? emp.role.displayName : 'UKENDT'}"></span>
             </div>
 
             <div class="employee-card-body">
@@ -45,21 +45,16 @@
                 </div>
             </div>
 
-            <div class="employee-card-footer">
-                <form th:action="@{/employee/{id}/role(id=${emp.employeeId})}" method="post" style="display:inline;">
-                    <input type="hidden" name="role" th:value="${emp.role == T(org.example.projectplanningapp.models.Role).ADMIN ? 'developer' : 'admin'}"/>
-                    <button type="submit" class="action-link">
-                        Ændre rolle
-                    </button>
-                </form>
 
-                <form th:action="@{/employee/{id}/delete(id=${emp.employeeId})}" method="post">
-                    <button type="submit" class="action-link delete-link">
-                        Slet
-                    </button>
-                </form>
 
-            </div>
+            <form th:action="@{/employee/{id}/delete(id=${emp.employeeId})}"
+                  method="post"
+                  onsubmit="return confirm('Er du sikker på du vil slette denne medarbejder?\nDette kan ikke fortrydes');">
+                <button type="submit" class="action-link delete-link">
+                    Slet
+                </button>
+            </form>
+
         </div>
     </div>
 </div>
