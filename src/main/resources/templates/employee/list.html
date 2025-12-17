@@ -39,22 +39,22 @@
             </div>
 
             <div class="employee-card-body">
-                <div class="employee-info-item">
-                    <span class="info-icon">✉</span>
-                    <span th:text="${emp.email}">email@example.com</span>
+                <div class="employee-email-row">
+                    <div class="employee-info-item">
+                        <span class="info-icon">✉</span>
+                        <span th:text="${emp.email}">email@example.com</span>
+                    </div>
+
+                    <form class="employee-delete-form"
+                          th:action="@{/employee/{id}/delete(id=${emp.employeeId})}"
+                          method="post"
+                          onsubmit="return confirm('Er du sikker på du vil slette denne medarbejder?\nDette kan ikke fortrydes');">
+                        <button type="submit" class="menu-button button-accent employee-delete-btn">
+                            Slet
+                        </button>
+                    </form>
                 </div>
             </div>
-
-
-
-            <form th:action="@{/employee/{id}/delete(id=${emp.employeeId})}"
-                  method="post"
-                  onsubmit="return confirm('Er du sikker på du vil slette denne medarbejder?\nDette kan ikke fortrydes');">
-                <button type="submit" class="action-link delete-link">
-                    Slet
-                </button>
-            </form>
-
         </div>
     </div>
 </div>
