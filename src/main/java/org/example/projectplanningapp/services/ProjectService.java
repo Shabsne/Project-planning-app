@@ -91,7 +91,6 @@ public class ProjectService {
         return (int) Math.round((completedTasks * 100.0) / tasks.size());
     }
 
-    // NYE METODER TIL EMPLOYEE ASSIGNMENT
     public void assignEmployeeToProject(int projectId, int employeeId) {
         projectRepository.assignEmployeeToProject(projectId, employeeId);
     }

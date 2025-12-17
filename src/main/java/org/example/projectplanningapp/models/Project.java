@@ -21,7 +21,8 @@ public class Project {
     private List<Employee> assignedEmployees;
 
 
-    public Project() {}
+    public Project() {
+    }
 
     public Project(int id, String name, String description, LocalDate startDate, LocalDateTime endDate, Employee projectLeader) {
         this.id = id;
@@ -116,10 +117,6 @@ public class Project {
     }
 
 
-    public void addTasks(Task task) {
-        tasks.add(task);
-    }
-
     public List<Employee> getAssignedEmployees() {
         return assignedEmployees;
     }
@@ -132,12 +129,4 @@ public class Project {
         return projectLeaderId;
     }
 
-    public void setProjectLeaderId(Integer projectLeaderId) {
-        this.projectLeaderId = projectLeaderId;
-    }
-
-
-    public void addAssignedEmployees(Employee employee) {
-        assignedEmployees.add(employee);
-    }
 }

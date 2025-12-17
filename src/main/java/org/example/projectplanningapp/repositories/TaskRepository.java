@@ -84,10 +84,6 @@ public class TaskRepository {
         );
     }
 
-    public void removeAllAssignedEmployeesFromTask(int taskId) {
-        String sql = "DELETE FROM TaskEmployee WHERE taskId = ?";
-        jdbc.update(sql, taskId);
-    }
 
     public List<Task> getSubTasks(int parentTaskId) {
         String sql = "SELECT * FROM Task WHERE parentTaskId = ?";
@@ -170,7 +166,6 @@ public class TaskRepository {
 
     public int countTasksByProjectId(int projectId) {
         String sql = "SELECT COUNT(*) FROM Task WHERE projectId = ?";
-
 
         return jdbc.queryForObject(sql, int.class, projectId);
     }
