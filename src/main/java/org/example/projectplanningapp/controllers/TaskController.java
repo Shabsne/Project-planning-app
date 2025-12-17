@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.controllers;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.models.Status;
@@ -7,6 +8,7 @@ import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.example.projectplanningapp.services.ProjectService;
 import org.example.projectplanningapp.services.TaskService;
+import org.example.projectplanningapp.utils.SessionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +32,8 @@ public class TaskController {
 
     // Vis create-task formular
     @GetMapping("/create")
-    public String showCreateForm(@PathVariable int projectId, Model model) {
+    public String showCreateForm(@PathVariable int projectId, Model model, HttpSession session) {
+        SessionUtils.requireLogin(session);
         Task task = new Task();
         task.setProjectId(projectId); // <-- sæt projectId her
         model.addAttribute("task", task);
@@ -42,7 +45,8 @@ public class TaskController {
 
     // Opret task
     @PostMapping("/create")
-    public String createTask(@PathVariable int projectId, @ModelAttribute Task task) {
+    public String createTask(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session) {
+        SessionUtils.requireLogin(session);
         // Sæt projektId
         task.setProjectId(projectId);
 
@@ -63,7 +67,8 @@ public class TaskController {
     @GetMapping("/{taskId}")
     public String showTaskDetails(@PathVariable int projectId,
                                   @PathVariable int taskId,
-                                  Model model) {
+                                  Model model, HttpSession session) {
+        SessionUtils.requireLogin(session);
 
         Task task = taskService.getTaskFromId(taskId);
         Project project = projectService.findById(projectId);
@@ -90,12 +95,11 @@ public class TaskController {
     }
 
 
-
-
     @PostMapping("/{taskId}/assign-employee/{employeeId}")
     public String assignEmployeeToTask(@PathVariable int projectId,
-                                 @PathVariable int taskId,
-                                 @PathVariable int employeeId) {
+                                       @PathVariable int taskId,
+                                       @PathVariable int employeeId, HttpSession session) {
+        SessionUtils.requireLogin(session);
 
         //Tjek om task eksisterer
         Task task = taskService.getTaskFromId(taskId);
@@ -111,7 +115,9 @@ public class TaskController {
     @PostMapping("/{taskId}/remove-employee/{employeeId}")
     public String removeEmployee(@PathVariable int projectId,
                                  @PathVariable int taskId,
-                                 @PathVariable int employeeId) {
+                                 @PathVariable int employeeId,
+                                 HttpSession session) {
+        SessionUtils.requireLogin(session);
 
         taskService.removeEmployeeFromTask(taskId, employeeId);
 
@@ -119,13 +125,12 @@ public class TaskController {
     }
 
 
-
     @PostMapping("{taskId}/update")
     public String updateTask(
             @PathVariable int projectId,
             @PathVariable int taskId,
-            @ModelAttribute Task task
-    ) {
+            @ModelAttribute Task task, HttpSession session) {
+        SessionUtils.requireLogin(session);
         // Mapper employeeIds → Employee objects
         if (task.getAssignedEmployeeIds() != null) {
             List<Employee> employees = task.getAssignedEmployeeIds().stream()
@@ -139,15 +144,16 @@ public class TaskController {
 
         taskService.updateTask(task);
 
-        return "redirect:/projects/" +projectId+"/tasks/" +taskId;
+        return "redirect:/projects/" + projectId + "/tasks/" + taskId;
     }
 
 
     @PostMapping("/{taskId}/update-status")
     public String updateTaskStatus(@PathVariable int projectId,
                                    @PathVariable int taskId,
-                                   @RequestParam("status") Status status) {
-
+                                   @RequestParam("status") Status status,
+                                   HttpSession session) {
+        SessionUtils.requireLogin(session);
         Task task = taskService.getTaskFromId(taskId);
         task.setStatus(status);
         taskService.updateTask(task); // Opdater i databasen
@@ -158,7 +164,9 @@ public class TaskController {
     @PostMapping("/{taskId}/updateFromProjectView")
     public String updateTask(@PathVariable int projectId,
                              @PathVariable int taskId,
-                             @RequestParam String status) {
+                             @RequestParam String status,
+                             HttpSession session) {
+        SessionUtils.requireLogin(session);
         Task task = taskService.getTaskFromId(taskId);
         task.setStatus(Status.valueOf(status));
         taskService.updateTask(task);
@@ -168,7 +176,9 @@ public class TaskController {
     @GetMapping("/{taskId}/createSubTask")
     public String showCreateSubTaskForm(@PathVariable int projectId,
                                         @PathVariable int taskId,
-                                        Model model) {
+                                        Model model,
+                                        HttpSession session) {
+        SessionUtils.requireLogin(session);
 
         Task parent = taskService.getTaskFromId(taskId);
 
@@ -190,7 +200,9 @@ public class TaskController {
     @PostMapping("/{parentTaskId}/createSubTask")
     public String createSubTask(@PathVariable int projectId,
                                 @PathVariable int parentTaskId,
-                                @ModelAttribute("task") Task task) {
+                                @ModelAttribute("task") Task task,
+                                HttpSession session) {
+        SessionUtils.requireLogin(session);
 
         // Sæt parent-felter
         task.setProjectId(projectId);
@@ -211,7 +223,8 @@ public class TaskController {
 
 
     @PostMapping("/{taskId}/delete")
-    public String deleteTask(@PathVariable int projectId, @PathVariable int taskId) {
+    public String deleteTask(@PathVariable int projectId, @PathVariable int taskId, HttpSession session) {
+        SessionUtils.requireLogin(session);
         taskService.deleteTask(taskId);
         return "redirect:/projects/" + projectId;
     }
@@ -220,30 +233,19 @@ public class TaskController {
     @ResponseBody
     public String updateTaskStatusAjax(@PathVariable int projectId,
                                        @PathVariable int taskId,
-                                       @RequestParam("status") Status status) {
-
-        Task task = taskService.getTaskFromId(taskId);
-        if(task != null) {
-            task.setStatus(status);
-            taskService.updateTask(task);
-            return "OK"; // Return OK til formen
+                                       @RequestParam("status") Status status,
+                                       HttpSession session) {
+        try {
+            SessionUtils.requireLogin(session);
+            Task task = taskService.getTaskFromId(taskId);
+            if (task != null) {
+                task.setStatus(status);
+                taskService.updateTask(task);
+                return "OK"; // Return OK til formen
+            }
+            return "Error";
+        } catch (Exception e) {
+            return "Error";
         }
-        return "ERROR";
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
