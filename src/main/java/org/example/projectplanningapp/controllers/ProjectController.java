@@ -226,17 +226,17 @@ public class ProjectController {
         List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
         Map<Integer, Integer> completionMap = new HashMap<>();
-        // NY MAP: Til at tjekke, om der findes bare én opgave i projektet
+
+        // Tjekker om der findes en opgave i projektet
         Map<Integer, Boolean> hasTasksMap = new HashMap<>();
 
 
         for (Project project : assignedProjects) {
-            // 1. Beregn færdiggørelsesprocent (0-100)
+            // Færdiggørelse i procent
             int completionPercentage = projectService.calculateCompletionPercentage(project.getId());
             completionMap.put(project.getId(), completionPercentage);
 
-            // 2. Tjek om projektet har NOGEN opgaver
-            // *Du skal oprette denne metode i din ProjectService*
+            // 2. Tjekker om projektet har nogle opgaver
             boolean hasTasks = taskService.hasAnyTasksInProject(project.getId());
             hasTasksMap.put(project.getId(), hasTasks);
         }
@@ -244,7 +244,6 @@ public class ProjectController {
         model.addAttribute("employee", loggedIn);
         model.addAttribute("projects", assignedProjects);
         model.addAttribute("completionMap", completionMap);
-        // TILFØJ DEN NYE MAP
         model.addAttribute("hasTasksMap", hasTasksMap);
 
         return "status";
@@ -261,16 +260,15 @@ public class ProjectController {
         newTask.setProjectId(projectId); // Sætter Project ID på Task objektet
 
         // Hent nødvendige data til formularen (Medarbejdere og Statusser)
-        List<Employee> projectEmployees = projectService.getProjectEmployees(projectId); // Antag at du genbruger denne metode
+        List<Employee> projectEmployees = projectService.getProjectEmployees(projectId);
 
-        // Sætter statusserne, som du bruger i din HTML
+        // Sætter statusserne som der bliver brugt i html.
         List<Status> statusOptions = List.of(Status.values());
 
         model.addAttribute("task", newTask);
         model.addAttribute("projectEmployees", projectEmployees);
         model.addAttribute("status", statusOptions);
 
-        // Retunér Thymeleaf filnavn (ret til "creaTask" hvis det er dit filnavn)
         return "task/createTask";
     }
 
