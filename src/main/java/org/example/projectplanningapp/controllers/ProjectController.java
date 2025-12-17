@@ -31,14 +31,10 @@ public class ProjectController {
         this.taskService = taskService;
     }
 
-    // list projects - Kun mine projekter
+
     @GetMapping("/projects")
     public String listProjects(Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         // Hent kun projekter hvor brugeren er projektleder eller tildelt medarbejder
         List<Project> userProjects = projectService.getProjectsForEmployee(loggedIn.getEmployeeId());
@@ -57,9 +53,7 @@ public class ProjectController {
     // Create project form
     @GetMapping("/projects/create")
     public String showCreateProjectForm(Model model, HttpSession session) {
-        if (session.getAttribute("employee") == null) {
-            return "redirect:/";
-        }
+        SessionUtils.requireLogin(session);
 
         model.addAttribute("project", new Project());
         model.addAttribute("leaders", employeeService.getAllEmployees());
@@ -70,11 +64,7 @@ public class ProjectController {
 
     @PostMapping("/projects/create")
     public String createProject(@ModelAttribute Project project, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         // Sæt projektleder hvis valgt
         if (project.getProjectLeaderId() != null) {
@@ -99,9 +89,7 @@ public class ProjectController {
 
     @GetMapping("/projects/{parentId}/sub/create")
     public String showCreateSubProjectForm(@PathVariable int parentId, Model model, HttpSession session) {
-        if (session.getAttribute("employee") == null) {
-            return "redirect:/";
-        }
+        SessionUtils.requireLogin(session);
 
         Project subProject = new Project();
         Project parentProject = new Project();
@@ -117,11 +105,7 @@ public class ProjectController {
 
     @PostMapping("/projects/{parentId}/sub/create")
     public String createSubProject(@PathVariable int parentId, @ModelAttribute Project project, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         // Hent projektleder hvis valgt
         if (project.getProjectLeaderId() != null) {
@@ -149,10 +133,7 @@ public class ProjectController {
     // Projekt detaljer
     @GetMapping("/projects/{id}")
     public String projectDetails(@PathVariable int id, Model model, HttpSession session) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         Project project = projectService.getProjectDetails(id);
 
@@ -217,16 +198,12 @@ public class ProjectController {
 
     @GetMapping("/status")
     public String showStatus(HttpSession session, Model model) {
-        Employee loggedIn = (Employee) session.getAttribute("employee");
-
-        if (loggedIn == null) {
-            return "redirect:/";
-        }
+        Employee loggedIn = SessionUtils.requireLogin(session);
 
         List<Project> assignedProjects = projectService.findProjectsByEmployee(loggedIn.getEmployeeId());
 
         Map<Integer, Integer> completionMap = new HashMap<>();
-        // NY MAP: Til at tjekke, om der findes bare én opgave i projektet
+        //Til at tjekke, om der findes bare én opgave i projektet
         Map<Integer, Boolean> hasTasksMap = new HashMap<>();
 
 
@@ -236,7 +213,6 @@ public class ProjectController {
             completionMap.put(project.getId(), completionPercentage);
 
             // 2. Tjek om projektet har NOGEN opgaver
-            // *Du skal oprette denne metode i din ProjectService*
             boolean hasTasks = taskService.hasAnyTasksInProject(project.getId());
             hasTasksMap.put(project.getId(), hasTasks);
         }
@@ -253,9 +229,7 @@ public class ProjectController {
     // Viser formularen til oprettelse af opgave
     @GetMapping("/projects/{projectId}/createTask")
     public String getCreateTaskView(@PathVariable int projectId, Model model, HttpSession session) {
-        if (session.getAttribute("employee") == null) {
-            return "redirect:/";
-        }
+        SessionUtils.requireLogin(session);
 
         Task newTask = new Task();
         newTask.setProjectId(projectId); // Sætter Project ID på Task objektet
