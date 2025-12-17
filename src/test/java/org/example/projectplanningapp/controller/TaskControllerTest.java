@@ -1,5 +1,6 @@
 package org.example.projectplanningapp.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.controllers.TaskController;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.services.EmployeeService;
@@ -19,6 +20,7 @@ class TaskControllerTest {
     private ProjectService projectService;
     private TaskController taskController;
     private Model model;
+    private HttpSession session;
 
     @BeforeEach
     void setup() {
@@ -28,6 +30,7 @@ class TaskControllerTest {
 
         taskController = new TaskController(taskService, projectService, employeeService);
         model = mock(Model.class);
+        session = mock(HttpSession.class);
     }
 
     @Test
@@ -38,7 +41,7 @@ class TaskControllerTest {
 
         when(taskService.getTaskFromId(1)).thenReturn(task);
 
-        String viewName = taskController.showTaskDetails(1,1, model);
+        String viewName = taskController.showTaskDetails(1,1, model, session);
 
         assertEquals("task/taskDetails", viewName);
 
