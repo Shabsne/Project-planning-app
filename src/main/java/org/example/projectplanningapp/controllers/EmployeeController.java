@@ -71,10 +71,7 @@ public class EmployeeController {
     @GetMapping("/employee/home/{employeeId}")
     public String homePage(@PathVariable int employeeId, HttpSession session, Model model, HttpServletRequest request) {
         Employee loggedIn = SessionUtils.requireLogin(session);
-
-        if (loggedIn.getEmployeeId() != employeeId) {
-            throw new UnauthorizedException("Du har ikke adgang til denne medarbejders side");
-        }
+        SessionUtils.requireSelfOrAdmin(loggedIn, employeeId);
 
         List<Task> nextTasks = taskService.getNextTasksForEmployee(employeeId);
         model.addAttribute("tasks", nextTasks);
@@ -129,7 +126,6 @@ public class EmployeeController {
 
     @PostMapping("/employee/{id}/edit")
     public String updateProfile(@PathVariable int id, @ModelAttribute Employee employee, HttpSession session) {
-
         Employee loggedIn = SessionUtils.requireLogin(session);
         SessionUtils.requireSelfOrAdmin(loggedIn, id);
 
@@ -162,7 +158,7 @@ public class EmployeeController {
     // Liste af medarbejdere
     @GetMapping("/employee/list")
     public String listEmployees(Model model, HttpSession session) {
-        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireLogin(session);
 
         model.addAttribute("employees", employeeService.getAllEmployees());
         return "employee/list";
@@ -185,7 +181,7 @@ public class EmployeeController {
 
     @GetMapping("/employee/{id}")
     public String viewEmployeeMenu(@PathVariable int id, Model model, HttpSession session) {
-        Employee loggedIn = SessionUtils.requireLogin(session);
+        SessionUtils.requireLogin(session);
 
         //Employee kaster ResourceNotFoundException hvis ikke fundet
         Employee employee = employeeService.getEmployeeFromId(id);
