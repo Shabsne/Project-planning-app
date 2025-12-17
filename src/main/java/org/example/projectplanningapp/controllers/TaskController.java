@@ -32,7 +32,7 @@ public class TaskController {
     @GetMapping("/create")
     public String showCreateForm(@PathVariable int projectId, Model model) {
         Task task = new Task();
-        task.setProjectId(projectId); // <-- sæt projectId her
+        task.setProjectId(projectId);
         model.addAttribute("task", task);
         model.addAttribute("projectEmployees", projectService.getProjectEmployees(projectId));
         model.addAttribute("status", Status.values());
@@ -196,7 +196,7 @@ public class TaskController {
         task.setProjectId(projectId);
         task.setParentTaskId(parentTaskId);
 
-        // 1. Opret subtask (skaber taskId)
+        // 1. Opret subtask
         taskService.createTask(task);
 
         // 2. Assign employees
@@ -226,7 +226,7 @@ public class TaskController {
         if(task != null) {
             task.setStatus(status);
             taskService.updateTask(task);
-            return "OK"; // Return OK til formen
+            return "OK";
         }
         return "ERROR";
     }
