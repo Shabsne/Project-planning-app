@@ -1,6 +1,7 @@
 package org.example.projectplanningapp.controller;
 
 import org.example.projectplanningapp.controllers.ProjectController;
+import org.example.projectplanningapp.exceptions.UnauthorizedException;
 import org.example.projectplanningapp.models.Project;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.example.projectplanningapp.services.ProjectService;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.models.Employee;
@@ -82,13 +84,10 @@ class ProjectControllerTest {
         // Arrange: Mock session uden logged in bruger
         when(session.getAttribute("employee")).thenReturn(null);
 
-        // Act: Kald controller-metoden
-        String viewName = projectController.listProjects(model, session);
+        assertThrows(UnauthorizedException.class, () -> {
+            projectController.listProjects(model, session);
+        });
 
-        // Assert: Tjek at den redirecter til login
-        assertEquals("redirect:/", viewName);
-
-        // Verify: Tjek at projectService IKKE blev kaldt
         verify(projectService, never()).getProjectsForEmployee(anyInt());
     }
 
