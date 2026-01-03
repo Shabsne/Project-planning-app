@@ -2,6 +2,7 @@ package org.example.projectplanningapp.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.projectplanningapp.controllers.TaskController;
+import org.example.projectplanningapp.models.Employee;
 import org.example.projectplanningapp.models.Task;
 import org.example.projectplanningapp.services.EmployeeService;
 import org.example.projectplanningapp.services.ProjectService;
@@ -35,16 +36,22 @@ class TaskControllerTest {
 
     @Test
     void testShowTaskDetails_returnsViewAndAddsAttributes() {
+// Arrange
+        Employee employee = new Employee();
+        employee.setEmployeeId(1);
+
+        when(session.getAttribute("employee")).thenReturn(employee);
 
         Task task = new Task();
         task.setTaskId(5);
 
         when(taskService.getTaskFromId(1)).thenReturn(task);
 
-        String viewName = taskController.showTaskDetails(1,1, model, session);
+        // Act
+        String viewName = taskController.showTaskDetails(1, 1, model, session);
 
+        // Assert
         assertEquals("task/taskDetails", viewName);
-
         verify(model).addAttribute("task", task);
         verify(taskService).getTaskFromId(1);
     }
